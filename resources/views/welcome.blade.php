@@ -1,9 +1,8 @@
 <x-app-layout>
 
-    @livewire('banner-home')
+    {{-- @livewire('banner-home') --}}
 
-
-    <div class="container py-8">
+    {{-- <div class="container py-8">
         @foreach ($categories as $category)
             @if (count($category->products))
                 <section class="mb-6 mx-4">
@@ -11,7 +10,7 @@
                         <h1 class="text-lg uppercase font-semibold text-gray-550">
                             {{ $category->name }}
                         </h1>
-                        {{-- pasar el category selecciona al controllador para que luego la muestre --}}
+
                         <a href="{{ route('categories.show', $category) }}"
                             class="text-violet-350 hover:text-violet-400 hover:underline ml-2 font-semibold">Ver más</a>
                     </div>
@@ -19,10 +18,10 @@
                 </section>
             @endif
         @endforeach
-    </div>
+    </div> --}}
 
     {{-- push es con el stack en el app-layout --}}
-    @push('scripts')
+    {{-- @push('scripts')
         <script>
             Livewire.on('glider', function(id) {
                 // Alpine.start();
@@ -68,5 +67,5 @@
                 });
             });
         </script>
-    @endpush
+    @endpush --}}
 </x-app-layout>

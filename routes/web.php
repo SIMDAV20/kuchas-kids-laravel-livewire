@@ -18,7 +18,6 @@ use App\Http\Livewire\ContactForm;
 
 Route::get('/', WelcomeController::class)->name('welcome');
 
-
 Route::get('search', SearchController::class)->name('search');
 
 Route::get('nosotros',               [SecondaryPagesController::class, 'aboutUs'])->name('about-us');
@@ -88,4 +87,3 @@ Route::middleware(['auth'])->group(function () {
 
 //     return 'success';
 // });
-
