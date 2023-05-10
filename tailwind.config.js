@@ -13,7 +13,7 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ["Nunito", ...defaultTheme.fontFamily.sans],
             },
             colors: {
                 // blue: "#163586",
@@ -42,6 +42,12 @@ module.exports = {
             outline: {
                 gray: "4px solid #D1D5DB",
             },
+        },
+    },
+
+    variants: {
+        extend: {
+            opacity: ["disabled"],
         },
     },
 

@@ -6,30 +6,28 @@
                 <div class="flexslider">
                     <ul class="slides">
                         @if ($product->color_product->count() > 0)
-                        @foreach ($product->color_product->where('color_id', $color->id) as $key => $p_color_prod)
-                        @foreach ($p_color_prod->images as $image)
-                        <li data-thumb="{{ Storage::url($image->url) }}">
-                            <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
-                        </li>
-                        @endforeach
-                        @endforeach
+                            @foreach ($product->color_product->where('color_id', $color->id) as $key => $p_color_prod)
+                                @foreach ($p_color_prod->images as $image)
+                                    <li data-thumb="{{ Storage::url($image->url) }}">
+                                        <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
+                                    </li>
+                                @endforeach
+                            @endforeach
 
-                        {{-- @elseif ($product->product_size->count() > 0)
-                        @foreach ($product->product_size>where('size_id', $size->id) as $key => $p_prod_size)
+                            {{-- @elseif ($product->product_size->count() > 0)
+                        @foreach ($product->product_size > where('size_id', $size->id) as $key => $p_prod_size)
                         @foreach ($p_prod_size->images as $image)
                         <li data-thumb="{{ Storage::url($image->url) }}">
                             <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
                         </li>
                         @endforeach
                         @endforeach --}}
-
-
                         @else
-                        @foreach ($product->images as $image)
-                        <li data-thumb="{{ Storage::url($image->url) }}">
-                            <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
-                        </li>
-                        @endforeach
+                            @foreach ($product->images as $image)
+                                <li data-thumb="{{ Storage::url($image->url) }}">
+                                    <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
+                                </li>
+                            @endforeach
                         @endif
                     </ul>
                 </div>
@@ -41,14 +39,14 @@
                 </div>
 
                 @if (@$product->video)
-                <div>
-                    <h2 class="font-bold text-lg mb-3 text-gray-550">Video</h2>
-                    <div class="video-responsive">
-                        <iframe width="560" height="315" src="{{ $product->video }}" frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen></iframe>
+                    <div>
+                        <h2 class="font-bold text-lg mb-3 text-gray-550">Video</h2>
+                        <div class="video-responsive">
+                            <iframe width="560" height="315" src="{{ $product->video }}" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
                     </div>
-                </div>
                 @endif
             </div>
 
@@ -61,19 +59,19 @@
                     <div class="flexslider sm:block md:hidden">
                         <ul class="slides">
                             @if (count($product->color_product))
-                            @foreach ($product->color_product->where('color_id', $color->id) as $key => $p_color_prod)
-                            @foreach ($p_color_prod->images as $image)
-                            <li data-thumb="{{ Storage::url($image->url) }}">
-                                <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
-                            </li>
-                            @endforeach
-                            @endforeach
+                                @foreach ($product->color_product->where('color_id', $color->id) as $key => $p_color_prod)
+                                    @foreach ($p_color_prod->images as $image)
+                                        <li data-thumb="{{ Storage::url($image->url) }}">
+                                            <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
+                                        </li>
+                                    @endforeach
+                                @endforeach
                             @else
-                            @foreach ($product->images as $image)
-                            <li data-thumb="{{ Storage::url($image->url) }}">
-                                <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
-                            </li>
-                            @endforeach
+                                @foreach ($product->images as $image)
+                                    <li data-thumb="{{ Storage::url($image->url) }}">
+                                        <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
+                                    </li>
+                                @endforeach
                             @endif
                         </ul>
                     </div>
@@ -83,25 +81,24 @@
 
                     {{-- Si tiene marca --}}
                     @if ($product->brand)
-                    <div class="flex mb-2">
-                        <p class="text-violet-350">
-                            <strong>Marca:</strong>
-                            <span>{{ $product->brand->name }}</span>
-                        </p>
-                    </div>
+                        <div class="flex mb-2">
+                            <p class="text-violet-350">
+                                <strong>Marca:</strong>
+                                <span>{{ $product->brand->name }}</span>
+                            </p>
+                        </div>
                     @endif
                     {{-- Si tiene edad --}}
                     @if ($product->age)
-                    <div class="flex mb-2">
-                        <p class="text-violet-350">
-                            <strong>Edades:</strong>
-                            <span>{{ $product->age }}</span>
-                        </p>
-                    </div>
+                        <div class="flex mb-2">
+                            <p class="text-violet-350">
+                                <strong>Edades:</strong>
+                                <span>{{ $product->age }}</span>
+                            </p>
+                        </div>
                     @endif
 
-                    {{-- @if ($product->offer_price > 0 && \Carbon\Carbon::parse($product->offer_date)->format('Y-m-d')
-                    >= \Carbon\Carbon::now()->format('Y-m-d') && $product->offer_date !== null)
+                    {{-- @if ($product->offer_price > 0 && \Carbon\Carbon::parse($product->offer_date)->format('Y-m-d') >= \Carbon\Carbon::now()->format('Y-m-d') && $product->offer_date !== null)
                     <div class="flex">
                         <del class="text-lg font-semibold text-gray-350 mr-3">S/ {{ $product->price }}</del>
                         <p class="text-2xl font-semibold text-violet-350">S/ {{ $product->offer_price }}</p>
@@ -114,18 +111,18 @@
                     @endif --}}
 
                     @if (count($product->sizes) > 0)
-                    @livewire('product-size', ['product' => $product], key($product->id))
+                        @livewire('product-size', ['product' => $product], key($product->id))
                     @else
-                    @if ($product->offer_price)
-                    <div class="flex items-center">
-                        <del class="text-2xl text-gray-500 font-bold mr-2">S/
-                            {{ $product->price }}</del>
-                        <p class="text-2xl text-violet-350 font-bold">S/ {{ $product->offer_price }}</p>
-                    </div>
-                    @else
-                    <p class="text-2xl font-bold text-violet-350">S/ {{ $product->price }}</p>
-                    @endif
-                    {{-- <p class="text-2xl font-semibold text-gray-350 my-4">S/ {{ $product->price }}</p> --}}
+                        @if ($product->offer_price)
+                            <div class="flex items-center">
+                                <del class="text-2xl text-gray-500 font-bold mr-2">S/
+                                    {{ $product->price }}</del>
+                                <p class="text-2xl text-violet-350 font-bold">S/ {{ $product->offer_price }}</p>
+                            </div>
+                        @else
+                            <p class="text-2xl font-bold text-violet-350">S/ {{ $product->price }}</p>
+                        @endif
+                        {{-- <p class="text-2xl font-semibold text-gray-350 my-4">S/ {{ $product->price }}</p> --}}
                     @endif
 
                     {{-- TODO: terminar esta sección MARCAR LA FECHA DE OFERTA HASTA --}}
@@ -142,15 +139,16 @@
 
                     {{-- MOSTRAR LAS OPCIONES DE COLORES --}}
                     @if (count($product->colors) > 0)
-                    <div class="flex mb-2 mt-4">
-                        @foreach ($product->colors as $colorh)
-                        <a style="background-color: {{ $colorh->hex }}" class="w-8 h-8 mr-3 rounded-full cursor-pointer
+                        <div class="flex mb-2 mt-4">
+                            @foreach ($product->colors as $colorh)
+                                <a style="background-color: {{ $colorh->hex }}"
+                                    class="w-8 h-8 mr-3 rounded-full cursor-pointer
                                         hover:border-white hover:outline-gray
                                         {{ $colorh->slug == $color->slug ? 'outline-gray' : '' }}
                                         "
-                            href="{{ route('products.show', ['product' => $product, 'color' => $colorh->slug]) }}"></a>
-                        @endforeach
-                    </div>
+                                    href="{{ route('products.show', ['product' => $product, 'color' => $colorh->slug]) }}"></a>
+                            @endforeach
+                        </div>
                     @endif
 
                     {{-- MOSTRAR LA INFO DE ENTREGAS --}}
@@ -169,18 +167,17 @@
 
                     {{-- INICIO DEL BOTON DE AGREGAR AL CARRITO SEGUN SUS VARIANTES --}}
                     @if (count($product->sizes) > 0)
-                    @livewire('add-cart-item-size', ['product' => $product])
+                        @livewire('add-cart-item-size', ['product' => $product])
                     @elseif (count($product->colors) > 0)
-                    @livewire('add-cart-item-color', ['product' => $product, 'color' => $color])
+                        @livewire('add-cart-item-color', ['product' => $product, 'color' => $color])
                     @else
-                    @livewire('add-cart-item', ['product' => $product])
+                        @livewire('add-cart-item', ['product' => $product])
                     @endif
                 </div>
             </div>
         </div>
 
-        @livewire('whatsapp-contact', ['product' => $product, 'color' => @$color, 'size' =>
-        @$product->product_size->first()->size->name], key($product->id))
+        @livewire('whatsapp-contact', ['product' => $product, 'color' => @$color, 'size' => @$product->product_size->first()->size->name], key($product->id))
 
         {{-- PARA VISTA MOBIL --}}
         <div class="md:hidden sm:block mt-16">
@@ -190,14 +187,14 @@
             </div>
 
             @if (@$product->video)
-            <div>
-                <h2 class="font-bold text-lg mb-3">Video</h2>
-                <div class="video-responsive">
-                    <iframe width="560" height="315" src="{{ $product->video }}" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen></iframe>
+                <div>
+                    <h2 class="font-bold text-lg mb-3">Video</h2>
+                    <div class="video-responsive">
+                        <iframe width="560" height="315" src="{{ $product->video }}" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    </div>
                 </div>
-            </div>
             @endif
         </div>
 
@@ -209,9 +206,9 @@
     </div>
 
     @push('scripts')
-    <script>
-        Livewire.on('glider', function(id) {
-                // Alpine.start();
+        <script>
+            Livewire.on('glider', function(id) {
+                Alpine.start();
                 new Glider(document.querySelector('.glider-' + id), {
                     // ~ es para llamar a las tags hermanas
                     slidesToShow: 1,
@@ -262,6 +259,6 @@
                     // itemMargin: 5
                 });
             });
-    </script>
+        </script>
     @endpush
 </x-app-layout>

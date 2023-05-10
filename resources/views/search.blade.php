@@ -30,7 +30,7 @@
     @push('scripts')
         <script>
             Livewire.on('glider', function(id) {
-                // Alpine.start();
+                Alpine.start();
                 new Glider(document.querySelector('.glider-' + id), {
                     // ~ es para llamar a las tags hermanas
                     slidesToShow: 1,

@@ -51,8 +51,9 @@ class RouteServiceProvider extends ServiceProvider
 
     public function mapAdminRoutes()
     {
+        // en el kernel agrego los roles para la auth con permissions
         Route::prefix('admin')
-            ->middleware('web', 'auth', 'role:admin')
+            ->middleware(['web', 'auth', 'role:admin'])
             // ->namespace($this->namespace)
             ->group(base_path('routes/admin.php'));
     }
