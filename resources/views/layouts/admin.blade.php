@@ -67,6 +67,9 @@
     {{-- Pickaday https://github.com/Pikaday/Pikaday --}}
     <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
 
+    {{-- AlpineJs --}}
+    {{-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
+
 </head>
 
 <body class="font-sans antialiased">

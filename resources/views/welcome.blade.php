@@ -1,8 +1,8 @@
 <x-app-layout>
 
-    {{-- @livewire('banner-home') --}}
+    @livewire('banner-home')
 
-    {{-- <div class="container py-8">
+    <div class="container py-8">
         @foreach ($categories as $category)
             @if (count($category->products))
                 <section class="mb-6 mx-4">
@@ -18,13 +18,13 @@
                 </section>
             @endif
         @endforeach
-    </div> --}}
+    </div>
 
     {{-- push es con el stack en el app-layout --}}
-    {{-- @push('scripts')
+    @push('scripts')
         <script>
             Livewire.on('glider', function(id) {
-                // Alpine.start();
+                Alpine.start();
                 new Glider(document.querySelector('.glider-' + id), {
                     // ~ es para llamar a las tags hermanas
                     slidesToShow: 1,
@@ -67,5 +67,5 @@
                 });
             });
         </script>
-    @endpush --}}
+    @endpush
 </x-app-layout>
