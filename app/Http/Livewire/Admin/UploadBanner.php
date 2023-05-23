@@ -53,6 +53,6 @@ class UploadBanner extends Component
 
     public function render()
     {
-        return view('livewire.admin.upload-banner');
+        return view('livewire.admin.upload-banner')->layout('layouts.admin');
     }
 }

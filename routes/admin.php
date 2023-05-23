@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
@@ -16,6 +15,7 @@ use App\Http\Livewire\Admin\ShowDepartment;
 use App\Http\Livewire\Admin\UserComponent;
 use App\Http\Livewire\Admin\DeliveryZone;
 use App\Http\Livewire\Admin\SettingsComponent;
+use App\Http\Livewire\Admin\UploadBanner;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', ShowProducts::class)->name('admin.index');
@@ -44,4 +44,4 @@ Route::get('users', UserComponent::class)->name('admin.users.index');
 
 Route::get('settings', SettingsComponent::class)->name('admin.settings.index');
 
-Route::get('/banners', [BannerController::class, 'index'])->name('admin.banners.index');
+Route::get('/banners', UploadBanner::class)->name('admin.banners.index');

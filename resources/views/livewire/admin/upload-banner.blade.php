@@ -8,7 +8,7 @@
             <p class="text-gray-400 my-2 text-sm">Tamaño: 731px * 316px</p>
 
             @error($photo)
-            <p class="text-sm text-red-600">{{ $message }}</p>
+                <p class="text-sm text-red-600">{{ $message }}</p>
             @enderror
         </div>
 
@@ -19,19 +19,19 @@
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
             @foreach ($banners as $banner)
-            <div class="relative p-2">
-                <img src="{{ Storage::url($banner->photo) }}" alt="{{ $banner->photo }}">
+                <div class="relative p-2">
+                    <img src="{{ Storage::url($banner->photo) }}" alt="{{ $banner->photo }}">
 
-                <i class="fas fa-trash text-red-500 absolute top-1 cursor-pointer"
-                    wire:click="$emit('deleteBanner', {{ $banner->id }})"></i>
-            </div>
+                    <i class="fas fa-trash text-red-500 absolute top-1 cursor-pointer"
+                        wire:click="$emit('deleteBanner', {{ $banner->id }})"></i>
+                </div>
             @endforeach
         </div>
     </div>
 
     @push('scripts')
-    <script>
-        Livewire.on('deleteBanner', bannerId => {
+        <script>
+            Livewire.on('deleteBanner', bannerId => {
                 Swal.fire({
                     title: 'Esta seguro de eliminar el registro?',
                     text: "Acción irreversible",
@@ -53,6 +53,6 @@
                     }
                 })
             })
-    </script>
+        </script>
     @endpush
 </div>
