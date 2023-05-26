@@ -212,15 +212,19 @@ class Product extends Model
 
     public function onStockToSell()
     {
+        // crea una nueva prop al modelo principal
         if (count($this->color_product) > 0) {
             $this->color_product = $this->color_product()->where('quantity', '>', 0)->get();
             $this->colors = Color::whereIn('id', $this->color_product->pluck('color_id'))->get();
+            // $this->images = $this->color_product->images ?? [];
         }
         if (count($this->product_size) > 0) {
             $this->product_size = $this->product_size()->where('quantity', '>', 0)->get();
             $this->sizes = Size::whereIn('id', $this->product_size->pluck('size_id'))->get();
+            // $this->images = $this->product_size->images ?? [];
         }
         if (count($this->color_product_size) > 0) {
+            //TODO: falta complementar
             $this->color_product_size = $this->color_product_size()->where('quantity', '>', 0)->get();
         }
     }

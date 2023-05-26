@@ -48,7 +48,9 @@ class GalleryImagesProducts extends Component
 
     public function delete(Image $image)
     {
-        Storage::delete($image->path); // ruta de la photo
+        if (Storage::exists($image->url)) {
+            Storage::delete($image->url); // ruta de la photo
+        }
         $image->delete();
         $this->refreshImages();
     }

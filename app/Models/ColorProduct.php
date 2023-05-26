@@ -14,6 +14,8 @@ class ColorProduct extends Model
 
     protected $table = "color_product";
 
+    protected $with = ['images'];
+
     // Relacion uno a muchos inversa
     public function color()
     {

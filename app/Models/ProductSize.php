@@ -16,6 +16,8 @@ class ProductSize extends Model
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    protected $with = ['images'];
+
     // protected $fillabe = ['id','size_id', 'quantity', 'price', 'offer_price'];
 
     // Relacion uno a muchos inversa
