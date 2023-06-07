@@ -12,55 +12,85 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function showProduct(Product $product, $color_url = null)
+    public function showProduct(Request $request)
     {
-        // $product->onStockToSell();
+        $models = ['Product', 'ColorProduct', 'ProductSize', 'ColorProductSize'];
+        $var_product = null;
 
-        // if (count($this->color_product) > 0) {
-        //     $this->color_product = $this->color_product()->where('quantity', '>', 0)->get();
-        //     $this->colors = Color::whereIn('id', $this->color_product->pluck('color_id'))->get();
-        //     // $this->images = $this->color_product->images ?? [];
-        // }
-        // if (count($this->product_size) > 0) {
-        //     $this->product_size = $this->product_size()->where('quantity', '>', 0)->get();
-        //     $this->sizes = Size::whereIn('id', $this->product_size->pluck('size_id'))->get();
-        //     // $this->images = $this->product_size->images ?? [];
-        // }
-
-
-        // return $product->with('color_product', 'product_size');
-
-        $config = [
-            'color_product',
-            'product_size',
-            'colors_sizes',
-        ];
-
-        $colors = [];
-        $sizes = [];
-
-        foreach ($config as $key => $value) {
-            $property = $product->{$value};
-            if (is_array($property) || $property instanceof Countable) {
-                $count = count($property);
-                if ($count > 0) {
-                    $vars = $product->{$value}()->where('quantity', '>', 0)->get();
-                    $colors = Color::whereIn('id', @$vars->pluck('color_id'))->get();
-                    $sizes = Size::whereIn('id', @$vars->pluck('size_id'))->get();
-                    break;
-                }
+        foreach ($models as $key => $model) {
+            $model_name = '\\App\\Models\\' . $model;
+            $base = $model;
+            $var_product = $model_name::where('slug', $request->{'slugProduct'})->first();
+            if (!is_null($var_product)) {
+                break;
             }
         }
 
-        // return [$product, $colors, $sizes];
+        if (is_null($var_product)) return view('errors.404');
 
-        if (count($colors) && isset($color_url)) {
+        $images = collect([]);
+        $main_vars = collect([]);
+
+        // return $main_vars['main_color'];
+
+        if ($base !== 'Product') {
+            $product = $var_product->product;
+            $images = collect($var_product->images);
+
+            switch ($base) {
+                case 'ColorProduct':
+                    $main_vars['main_color'] = $var_product->color_id;
+                    break;
+                case 'ProductSize':
+                    $main_vars['main_size'] = $var_product->size_id;
+                    break;
+                case 'ColorProductSize':
+                    $main_vars['main_color'] = $var_product->color_id;
+                    $main_vars['main_size'] = $var_product->size_id;
+                    break;
+            }
+        } else {
+            $product = $var_product;
         }
+
+        $images->push(...$product->images);
+
+        $colors = $product->colors;
+        $sizes = $product->sizes;
+
+        // return compact('base', 'colors', 'images', 'sizes', 'var_product', 'product');
 
         return view(
             'products.show',
-            compact('product', 'colors', 'sizes')
+            compact('base', 'colors', 'sizes', 'var_product', 'product', 'images', 'main_vars')
         );
+
+        // $config = [
+        //     'color_product',
+        //     'product_size',
+        //     'colors_sizes',
+        // ];
+
+        // $colors = [];
+        // $sizes = [];
+
+        // foreach ($config as $key => $value) {
+        //     $property = $product->{$value};
+        //     if (is_array($property) || $property instanceof Countable) {
+        //         $count = count($property);
+        //         if ($count > 0) {
+        //             $vars = $product->{$value}()->where('quantity', '>', 0)->get();
+        //             $colors = Color::whereIn('id', @$vars->pluck('color_id'))->get();
+        //             $sizes = Size::whereIn('id', @$vars->pluck('size_id'))->get();
+        //             break;
+        //         }
+        //     }
+        // }
+
+        // // return [$product, $colors, $sizes];
+
+        // if (count($colors) && isset($color_url)) {
+        // }
 
         // if ($color_url == null) {
         //     # code...

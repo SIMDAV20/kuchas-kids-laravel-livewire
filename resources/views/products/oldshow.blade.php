@@ -5,11 +5,30 @@
             <div class="col-span-1 hidden md:block">
                 <div class="flexslider">
                     <ul class="slides">
-                        @foreach ($images as $image)
-                            <li data-thumb="{{ Storage::url($image->url) }}">
-                                <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
-                            </li>
+                        @if ($product->color_product->count() > 0)
+                            @foreach ($product->color_product->where('color_id', $color->id) as $key => $p_color_prod)
+                                @foreach ($p_color_prod->images as $image)
+                                    <li data-thumb="{{ Storage::url($image->url) }}">
+                                        <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
+                                    </li>
+                                @endforeach
+                            @endforeach
+
+                            {{-- @elseif ($product->product_size->count() > 0)
+                        @foreach ($product->product_size > where('size_id', $size->id) as $key => $p_prod_size)
+                        @foreach ($p_prod_size->images as $image)
+                        <li data-thumb="{{ Storage::url($image->url) }}">
+                            <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
+                        </li>
                         @endforeach
+                        @endforeach --}}
+                        @else
+                            @foreach ($product->images as $image)
+                                <li data-thumb="{{ Storage::url($image->url) }}">
+                                    <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
+                                </li>
+                            @endforeach
+                        @endif
                     </ul>
                 </div>
                 {{-- FIN VISTA DESKTOP --}}
@@ -37,7 +56,7 @@
                     <h1 class="text-4xl font-bold text-violet-350">{{ $product->name }} </h1>
 
                     {{-- VISTA MOBIL --}}
-                    {{-- <div class="flexslider sm:block md:hidden">
+                    <div class="flexslider sm:block md:hidden">
                         <ul class="slides">
                             @if (count($product->color_product))
                                 @foreach ($product->color_product->where('color_id', $color->id) as $key => $p_color_prod)
@@ -55,7 +74,7 @@
                                 @endforeach
                             @endif
                         </ul>
-                    </div> --}}
+                    </div>
                     {{-- FIN VISTA MOBIL --}}
 
                     <hr class="my-3">
@@ -118,38 +137,8 @@
                     </p>
                     @endif --}}
 
-                    {{-- {{ $main_vars['main_color'] }} --}}
-
                     {{-- MOSTRAR LAS OPCIONES DE COLORES --}}
-                    @switch($base)
-                        @case('ColorProduct')
-                            {{ $product->color_product }}
-                            {{ $colors }}
-                            <div class="flex mb-2 mt-4">
-                                @foreach ($colors as $colorh)
-                                    <a style="background-color: {{ $colorh->hex }}"
-                                        class="w-8 h-8 mr-3 rounded-full cursor-pointer
-                                        hover:border-white hover:outline-gray
-                                        {{ $colorh->id == $main_vars['main_color'] ? 'outline-gray' : '' }}
-                                        "
-                                        href="{{ route('products.show', ['slugProduct' => $product->color_product->where('color_id', $colorh->id)->first()->slug]) }}"></a>
-                                @endforeach
-                            </div>
-                        @break
-
-                        @case('ProductSize')
-                            {{ $main_vars['main_size'] }}
-                        @break
-
-                        @case('ColorProductSize')
-                            {{ $main_vars['main_color'] }}
-                            {{ $main_vars['main_size'] }}
-                        @break
-
-                        @default
-                    @endswitch
-
-                    {{-- @if (count($colors) > 0)
+                    @if (count($product->colors) > 0)
                         <div class="flex mb-2 mt-4">
                             @foreach ($product->colors as $colorh)
                                 <a style="background-color: {{ $colorh->hex }}"
@@ -160,7 +149,7 @@
                                     href="{{ route('products.show', ['product' => $product, 'color' => $colorh->slug]) }}"></a>
                             @endforeach
                         </div>
-                    @endif --}}
+                    @endif
 
                     {{-- MOSTRAR LA INFO DE ENTREGAS --}}
                     <div class="bg-white rounded-lg shadow-lg my-6">
@@ -177,18 +166,43 @@
                     </div>
 
                     {{-- INICIO DEL BOTON DE AGREGAR AL CARRITO SEGUN SUS VARIANTES --}}
-                    {{-- @if (count($product->sizes) > 0)
+                    @if (count($product->sizes) > 0)
                         @livewire('add-cart-item-size', ['product' => $product])
                     @elseif (count($product->colors) > 0)
                         @livewire('add-cart-item-color', ['product' => $product, 'color' => $color])
                     @else
                         @livewire('add-cart-item', ['product' => $product])
-                    @endif --}}
+                    @endif
                 </div>
             </div>
         </div>
 
-        {{-- DESDE WSP CONTACT --}}
+        @livewire('whatsapp-contact', ['product' => $product, 'color' => @$color, 'size' => @$product->product_size->first()->size->name], key($product->id))
+
+        {{-- PARA VISTA MOBIL --}}
+        <div class="md:hidden sm:block mt-16">
+            <div class="-mt-10 text-gray-700 mb-6 description">
+                <h2 class="font-bold text-lg mb-3">Descripción</h2>
+                {!! $product->description !!}
+            </div>
+
+            @if (@$product->video)
+                <div>
+                    <h2 class="font-bold text-lg mb-3">Video</h2>
+                    <div class="video-responsive">
+                        <iframe width="560" height="315" src="{{ $product->video }}" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <div class="sm:mt-10 md:mt-56">
+            <h2 class="text-violet-350 text-xl font-bold">Productos Relacionados</h2>
+            <hr class="my-2">
+            @livewire('category-products', ['category' => $product->subcategory->category, 'product' => $product])
+        </div>
     </div>
 
     @push('scripts')

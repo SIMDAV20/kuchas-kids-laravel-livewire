@@ -1,14 +1,14 @@
 <article x-data="{ p_color: 0 }">
     <figure>
         @forelse ($product->color_product as $key => $p_color_prod)
-            <a href="{{ route('products.show', ['product' => $product, 'color' => $p_color_prod->color->slug]) }}">
+            <a href="{{ route('products.show', ['slugProduct' => $p_color_prod->slug]) }}">
                 <img class="h-48 w-full object-contain object-center rounded-t product-image"
                     :class="p_color == {{ $key }} ? '' : 'hidden'"
                     src="{{ @Storage::url($p_color_prod->images->first()->url) }}"
                     alt="{{ @$p_color_prod->images->first()->url }}">
             </a>
         @empty
-            <a href="{{ route('products.show', ['product' => $product]) }}">
+            <a href="{{ route('products.show', ['slugProduct' => $product]) }}">
                 <img class="h-48 w-full object-contain object-center rounded-t product-image"
                     src="{{ Storage::url(@$product->images->first()->url) }}" alt="{{ @$product->images->first()->url }}">
             </a>
@@ -21,14 +21,14 @@
         @forelse ($product->color_product as $key => $p_color_prod)
             <h1 class="text-lg font-semibold mb-2 text-gray-550">
                 <a :class="p_color == {{ $key }} ? '' : 'hidden'"
-                    href="{{ route('products.show', ['product' => $product, 'color' => $p_color_prod->color->slug]) }}">
+                    href="{{ route('products.show', ['slugProduct' => $product]) }}">
                     {{ Str::limit($product->name, 40) }}
                 </a>
             </h1>
         @empty
             <h1 class="text-lg font-semibold mb-2 text-gray-550">
                 <a
-                    href="{{ route('products.show', ['product' => $product]) }}">{{ Str::limit($product->name, 25) }}</a>
+                    href="{{ route('products.show', ['slugProduct' => $product]) }}">{{ Str::limit($product->name, 25) }}</a>
             </h1>
         @endforelse
 
