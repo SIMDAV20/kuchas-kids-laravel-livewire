@@ -32,6 +32,7 @@
             </h1>
         @endforelse
 
+        {{-- BOLITAS DE COLORES --}}
         @if (count($product->color_product))
             <div class="flex mb-4 justify-center items-center">
                 @foreach ($product->color_product as $key => $p_color_prod)
@@ -45,7 +46,7 @@
         {{-- PRECIO --}}
         @if (count($product->product_size) > 0 || count($product->color_product_size) > 0)
             <p class="font-bold text-gray-550">Desde</p>
-            <span class="font-bold text-violet-350">S/{{ $low_price }}</span>
+            <span class="font-bold text-violet-350">S/{{ $product->getMinPrice() }}</span>
         @else
             @if ($product->offer_price)
                 <div class="flex justify-center items-center">

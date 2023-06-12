@@ -1,12 +1,9 @@
 {{-- x-data le digo que puedo usar alphine en todo el div que lleva dentro --}}
 <div x-data>
-    <div class="text-gray-550">
-        @if ($quantity > 10)
-            <p class="mb-4">Stock disponible</p>
-        @else
-            <p class="mb-2">
-                <span class="font-semibold text-lg">Stock disponible:</span> {{ $quantity }}
-            </p>
+    <div class="text-gray-550 my-4">
+        <span class="font-semibold text-lg">Stock {{ $quantity > 0 ? '' : 'no' }} disponible</span>
+        @if ($quantity)
+            {{ $quantity < 10 ?: '' }}
         @endif
     </div>
     <div class="flex">

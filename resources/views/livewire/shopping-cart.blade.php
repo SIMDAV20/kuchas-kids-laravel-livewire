@@ -66,13 +66,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-500">
-                                    {{-- @if ($item->options['base_price'])
-
-                                        <span>S/ {{ $item->options['base_price'] }}</span>
-                                        <span>S/ {{ $item->price }}</span>
-                                    @else --}}
                                     <span>S/ {{ $item->price }}</span>
-                                    {{-- @endif --}}
                                     <a class="ml-6 cursor-pointer hover:text-red-600"
                                         wire:click="delete('{{ $item->rowId }}')"
                                         wire:target="delete('{{ $item->rowId }}')"
@@ -86,8 +80,7 @@
                                     @if ($item->options->size)
                                         @livewire('update-cart-item-size', ['rowId' => $item->rowId], key($item->rowId))
                                     @elseif ($item->options->color)
-                                        @livewire('update-cart-item-color', ['rowId' => $item->rowId],
-                                        key($item->rowId))
+                                        @livewire('update-cart-item-color', ['rowId' => $item->rowId], key($item->rowId))
                                     @else
                                         @livewire('update-cart-item', ['rowId' => $item->rowId], key($item->rowId))
                                     @endif
@@ -147,7 +140,5 @@
                 @endif
             </div> --}}
         </div>
-
-
     @endif
 </div>

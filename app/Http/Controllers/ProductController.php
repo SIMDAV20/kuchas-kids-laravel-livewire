@@ -31,11 +31,8 @@ class ProductController extends Controller
         $images = collect([]);
         $main_vars = collect([]);
 
-        // return $main_vars['main_color'];
-
         if ($base !== 'Product') {
             $product = $var_product->product;
-            $images = collect($var_product->images);
 
             switch ($base) {
                 case 'ColorProduct':
@@ -51,9 +48,43 @@ class ProductController extends Controller
             }
         } else {
             $product = $var_product;
+            $product->onStockToSell();
+
+            // verificar por 2da vez que no tiene variantes
+            $slug = '';
+            do {
+                if (count($product->colors) > 0 &&  count($product->sizes) == 0) {
+                    $slug = $product->color_product->first()->slug;
+                    break;
+                } else if (count($product->sizes) > 0 && count($product->colors) == 0) {
+                    $slug = $product->product_size->first()->slug;
+                    break;
+                } else if (count($product->colors) > 0 && count($product->sizes) > 0) {
+                    $slug = $product->color_product_size->first()->slug;
+                    break;
+                }
+            } while (false);
+
+            if ($slug != '') {
+                return redirect()->route('products.show', ['slugProduct' => $slug]);
+            }
         }
 
-        $images->push(...$product->images);
+        // GET PRICES
+        if ($base == 'Product' || $base == 'ColorProduct') {
+            $price = $product->price;
+            $offer_price = $product->offer_price;
+        } else {
+            $price = $var_product->price;
+            $offer_price = $var_product->offer_price;
+        }
+
+        // GET IMAGES
+        if ($var_product->images->count() > 0) {
+            $images->push(...$var_product->images);
+        } else {
+            $images->push(...$product->images);
+        }
 
         $colors = $product->colors;
         $sizes = $product->sizes;
@@ -62,7 +93,7 @@ class ProductController extends Controller
 
         return view(
             'products.show',
-            compact('base', 'colors', 'sizes', 'var_product', 'product', 'images', 'main_vars')
+            compact('base', 'colors', 'sizes', 'var_product', 'product', 'images', 'main_vars', 'price', 'offer_price')
         );
 
         // $config = [

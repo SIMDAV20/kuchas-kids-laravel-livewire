@@ -5,8 +5,9 @@ use App\Models\Product;
 use App\Models\ColorProduct;
 use App\Models\ColorProductSize;
 use App\Models\ProductSize;
+use Carbon\Carbon;
 use Gloudemans\Shoppingcart\Facades\Cart;
-
+use Mockery\Undefined;
 
 if (!function_exists('current_quantity')) {
     function current_quantity($product_id, $color_id = null, $size_id = null)
@@ -167,5 +168,31 @@ if (!function_exists('findProduct')) {
         }
 
         return $item;
+    }
+}
+
+
+if (!function_exists('applyOffer')) {
+    function applyOffer($var_prod)
+    {
+        $base_price = null;
+        $price = 0;
+        if (
+            $var_prod->offer_price > 0 &&
+            (Carbon::parse($var_prod->offer_date)->format('Y-m-d') >= Carbon::now()->format('Y-m-d')) &&
+            $var_prod->offer_date !== null
+        ) {
+            $price = $var_prod->offer_price;
+            $base_price = $var_prod->price;
+
+            // SI LA FECHA LIMITE ES INDEFINIDO
+        } else if ($var_prod->offer_price > 0 && $var_prod->offer_date == null) {
+            $price = $var_prod->offer_price;
+            $base_price = $var_prod->price;
+        } else {
+            $price = $var_prod->price;
+        }
+
+        return [$base_price, $price];
     }
 }

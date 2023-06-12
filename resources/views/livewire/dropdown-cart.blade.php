@@ -17,7 +17,7 @@
             </span>
         </x-slot>
         <x-slot name="content">
-            <ul>
+            <ul class="overflow-y-auto" style="max-height: calc(100vh - 200px)">
                 @forelse (Cart::content() as $item)
                     {{-- {{ @$item }} --}}
                     <li class="flex p-2 border-b border-gray-200">
@@ -77,7 +77,6 @@
                         </a>
                     </div>
                 </div>
-            @else
             @endif
         </x-slot>
     </x-dropdown>

@@ -64,9 +64,9 @@ Route::middleware(['auth'])->group(function () {
 //     return view('dashboard');
 // })->name('dashboard');
 
-// Route::get('prueba', function () {
-//     Cart::destroy();
-// });
+Route::get('destroy', function () {
+    Cart::destroy();
+});
 
 // Route::get('/prueba', function () {
 //     $days = now()->subDay(5);

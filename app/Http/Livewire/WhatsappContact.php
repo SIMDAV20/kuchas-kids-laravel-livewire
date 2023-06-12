@@ -2,49 +2,46 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Color;
+use App\Models\Size;
 use Livewire\Component;
 
 class WhatsappContact extends Component
 {
 
-    public $product, $color, $size;
+    public $product, $color_id = null, $size_id = null;
 
     public $mensaje = '';
 
-    protected $listeners = ['update_wsp'];
+    // protected $listeners = ['update_wsp'];
 
-    public function update_wsp($value)
-    {
-        $this->size = $value['name'];
-        $this->mensaje = '';
-        if ($this->product !== null) {
-            $this->mensaje .= ' Deseo información sobre *' . $this->product->name;
-        }
-        if ($this->size !== null) {
-            $this->mensaje .= ' ' . $this->size;
-        }
-        $this->mensaje .= '*';
-    }
+    // public function update_wsp($value)
+    // {
+    //     $this->size = $value['name'];
+    //     $this->mensaje = '';
+    //     if ($this->product !== null) {
+    //         $this->mensaje .= ' Deseo información sobre *' . $this->product->name;
+    //     }
+    //     if ($this->size !== null) {
+    //         $this->mensaje .= ' ' . $this->size;
+    //     }
+    //     $this->mensaje .= '*';
+    // }
 
     public function mount()
     {
         $this->mensaje = '';
         if ($this->product !== null) {
             $this->mensaje .= ' Deseo información sobre *' . $this->product->name;
-            if (count($this->product->color_product)) {
-                $this->mensaje .= ' ' . $this->color->name;
-            }
-            // else if (count($this->product->product_size)) {
-            //     // buscar la primera talla donde
 
-            // } else if (count($this->product->color_product_size)) {
-            // }
-            if ($this->size !== null) {
-                $this->mensaje .= ' ' . $this->size;
+            if ($this->color_id !== null) {
+                $this->mensaje .= ' ' . Color::where('id', $this->color_id)->first()->name;
+            }
+
+            if ($this->size_id !== null) {
+                $this->mensaje .= ' ' . Size::where('id', $this->size_id)->first()->name;
             }
         }
-
-
         $this->mensaje .= '*';
     }
 

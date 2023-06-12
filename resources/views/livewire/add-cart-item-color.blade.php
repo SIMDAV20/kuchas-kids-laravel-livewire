@@ -1,10 +1,8 @@
 <div x-data>
     <p class="text-gray-550 my-4">
-        <span class="font-semibold text-lg">Stock disponible</span>
+        <span class="font-semibold text-lg">Stock {{ $quantity > 0 ? '' : 'no' }} disponible</span>
         @if ($quantity)
             {{ $quantity < 10 ?: '' }}
-        @else
-            {{ $product->stock < 10 ?: '' }}
         @endif
     </p>
 

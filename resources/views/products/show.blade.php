@@ -91,7 +91,7 @@
                     </div>
                     @endif --}}
 
-                    @if (count($product->sizes) > 0)
+                    {{-- @if (count($product->sizes) > 0)
                         @livewire('product-size', ['product' => $product], key($product->id))
                     @else
                         @if ($product->offer_price)
@@ -103,8 +103,8 @@
                         @else
                             <p class="text-2xl font-bold text-violet-350">S/ {{ $product->price }}</p>
                         @endif
-                        {{-- <p class="text-2xl font-semibold text-gray-350 my-4">S/ {{ $product->price }}</p> --}}
-                    @endif
+                        <p class="text-2xl font-semibold text-gray-350 my-4">S/ {{ $product->price }}</p>
+                    @endif --}}
 
                     {{-- TODO: terminar esta sección MARCAR LA FECHA DE OFERTA HASTA --}}
                     {{-- @if ($showOfferDate && $product->offer_date !== null)
@@ -118,27 +118,30 @@
                     </p>
                     @endif --}}
 
-                    {{-- {{ $main_vars['main_color'] }} --}}
-
                     {{-- MOSTRAR LAS OPCIONES DE COLORES --}}
                     @switch($base)
                         @case('ColorProduct')
-                            {{ $product->color_product }}
-                            {{ $colors }}
                             <div class="flex mb-2 mt-4">
                                 @foreach ($colors as $colorh)
                                     <a style="background-color: {{ $colorh->hex }}"
-                                        class="w-8 h-8 mr-3 rounded-full cursor-pointer
-                                        hover:border-white hover:outline-gray
-                                        {{ $colorh->id == $main_vars['main_color'] ? 'outline-gray' : '' }}
-                                        "
+                                        class="w-8 h-8 mr-3 rounded-full cursor-pointer hover:outline hover:outline-gray-300 {{ $colorh->id == $main_vars['main_color'] ? 'outline outline-gray-300 outline-3' : '' }}"
                                         href="{{ route('products.show', ['slugProduct' => $product->color_product->where('color_id', $colorh->id)->first()->slug]) }}"></a>
                                 @endforeach
                             </div>
                         @break
 
                         @case('ProductSize')
-                            {{ $main_vars['main_size'] }}
+                            <div class="mb-2 mt-4">
+
+                                <div class="flex">
+                                    @foreach ($sizes as $key => $sizeh)
+                                        <a class="{{ $main_vars['main_size'] == $sizeh->id ? ' p-2 mr-2 bg-white border-2 border-violet-350' : 'p-2 mr-2 bg-white' }}"
+                                            href="{{ route('products.show', ['slugProduct' => $product->product_size->where('size_id', $sizeh->id)->first()->slug]) }}">
+                                            {{ $sizeh->name }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
                         @break
 
                         @case('ColorProductSize')
@@ -148,6 +151,15 @@
 
                         @default
                     @endswitch
+
+                    <div class="mb-2 flex">
+                        @if ($offer_price > 0)
+                            <del class="text-lg font-semibold text-gray-550 mr-3">S/ {{ $price }}</del>
+                            <p class="text-2xl font-semibold text-violet-350">S/ {{ $offer_price }}</p>
+                        @else
+                            <p class="text-2xl font-semibold text-gray-550">S/ {{ $price }}</p>
+                        @endif
+                    </div>
 
                     {{-- @if (count($colors) > 0)
                         <div class="flex mb-2 mt-4">
@@ -180,15 +192,60 @@
                     {{-- @if (count($product->sizes) > 0)
                         @livewire('add-cart-item-size', ['product' => $product])
                     @elseif (count($product->colors) > 0)
-                        @livewire('add-cart-item-color', ['product' => $product, 'color' => $color])
+                        
                     @else
-                        @livewire('add-cart-item', ['product' => $product])
+                        
                     @endif --}}
+
+                    @switch($base)
+                        @case('ColorProduct')
+                            @livewire('add-cart-item-color', ['product' => $product, 'color_id' => $main_vars['main_color']])
+                        @break
+
+                        @case('ProductSize')
+                            {{-- {{ $main_vars['main_size'] }} --}}
+                            @livewire('add-cart-item-size', ['product' => $product, 'size_id' => $main_vars['main_size']])
+                        @break
+
+                        @case('ColorProductSize')
+                            {{ $main_vars['main_color'] }}
+                            {{ $main_vars['main_size'] }}
+                        @break
+
+                        @default
+                            @livewire('add-cart-item', ['product' => $product])
+                    @endswitch
                 </div>
             </div>
         </div>
 
         {{-- DESDE WSP CONTACT --}}
+        @livewire('whatsapp-contact', ['product' => $product, 'color_id' => @$main_vars['main_color'], 'size_id' => @$main_vars['main_size']], key($product->id))
+
+        {{-- PARA VISTA MOBIL --}}
+        <div class="md:hidden sm:block mt-16">
+            <div class="-mt-10 text-gray-700 mb-6 description">
+                <h2 class="font-bold text-lg mb-3">Descripción</h2>
+                {!! $product->description !!}
+            </div>
+
+            @if (@$product->video)
+                <div>
+                    <h2 class="font-bold text-lg mb-3">Video</h2>
+                    <div class="video-responsive">
+                        <iframe width="560" height="315" src="{{ $product->video }}" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <div class="sm:mt-10 md:mt-56">
+            <h2 class="text-violet-350 text-xl font-bold">Productos Relacionados</h2>
+            <hr class="my-2">
+            @livewire('category-products', ['category' => $product->subcategory->category, 'product' => $product])
+        </div>
     </div>
 
     @push('scripts')

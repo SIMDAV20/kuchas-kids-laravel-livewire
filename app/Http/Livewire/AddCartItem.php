@@ -10,26 +10,12 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 class AddCartItem extends Component
 {
 
-    public $product, $quantity;
-
-    public $options = [
-        'size_id' => null,
-        'color_id' => null
-    ];
-
-    public $qty = 1;
+    public $product, $quantity, $qty = 1, $options = [];
 
     public function mount()
     {
         $this->quantity = qty_available($this->product->id);
-
-        if (count($this->product->color_product)) {
-            foreach ($this->product->color_product as $key => $p_color_prod) {
-                $this->options['image'] = Storage::url($p_color_prod->images->first()->url);
-            }
-        } else {
-            $this->options['image'] = Storage::url($this->product->images->first()->url);
-        }
+        $this->options['image'] = Storage::url($this->product->images->first()->url);
     }
 
     public function decrement()
@@ -43,22 +29,8 @@ class AddCartItem extends Component
     }
     public function addItem()
     {
-        $price = 0;
-        if (
-            $this->product->offer_price > 0 &&
-            (Carbon::parse($this->product->offer_date)->format('Y-m-d') >= Carbon::now()->format('Y-m-d')) &&
-            $this->product->offer_date !== null
-        ) {
-            $price = $this->product->offer_price;
-            $this->options['base_price'] = $this->product->price;
-
-            // SI LA FECHA LIMITE ES INDEFINIDO
-        } else if ($this->product->offer_price > 0 && $this->product->offer_date == null) {
-            $price = $this->product->offer_price;
-            $this->options['base_price'] = $this->product->price;
-        } else {
-            $price = $this->product->price;
-        }
+        [$base_price, $price] = applyOffer($this->product);
+        $this->options['base_price'] = $base_price;
 
         Cart::add([
             'id'          => $this->product->id,
