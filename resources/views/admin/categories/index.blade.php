@@ -5,7 +5,7 @@
         @livewire('admin.create-category')
     </div>
 
-    @push('scripts')
+@push('scripts')
         <script>
             Livewire.on('deleteCategory', categorySlug => {
                 Swal.fire({

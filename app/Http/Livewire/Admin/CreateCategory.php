@@ -18,7 +18,6 @@ class CreateCategory extends Component
 
     protected  $listeners = ['delete'];
 
-    // TODO: falta colocarle por las edades
     public $createForm = [
         'name' => null,
         'slug' => null,
@@ -39,7 +38,7 @@ class CreateCategory extends Component
     protected $rules = [
         'createForm.name'   => 'required',
         'createForm.slug'   => 'required|unique:categories,slug',
-        'createForm.image'  => 'required|image|max:1024', //1MB
+        'createForm.image'  => 'required|image|max:5120', //5MB
         'createForm.brands' => 'required'
     ];
 
@@ -92,6 +91,7 @@ class CreateCategory extends Component
         $category = Category::create([
             'name'  => $this->createForm['name'],
             'slug'  => $this->createForm['slug'],
+            'position' => Category::getLastPosition(),
             'image' => $image,
         ]);
 
