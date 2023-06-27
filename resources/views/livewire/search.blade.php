@@ -16,7 +16,7 @@
                     {{-- SI TIENE COLORES --}}
                     @if (count($product->color_product))
                         @foreach ($product->color_product as $key => $p_color_prod)
-                            <a href="{{ route('products.show', ['product' => $product, 'color' => $p_color_prod->color->slug]) }}"
+                            <a href="{{ route('products.show', ['slugProduct' => $product, 'color' => $p_color_prod->color->slug]) }}"
                                 class="flex">
                                 <img class="h-16 w-16 object-contain object-center"
                                     src="{{ @Storage::url($p_color_prod->images->first()->url) }}"
@@ -40,7 +40,7 @@
                             </a>
                         @endforeach
                     @else
-                        <a href="{{ route('products.show', ['product' => $product]) }}" class="flex">
+                        <a href="{{ route('products.show', ['slugProduct' => $product]) }}" class="flex">
                             <img class="h-16 w-16 object-contain object-center"
                                 src="{{ @Storage::url($product->images->first()->url) }}"
                                 alt="{{ @$product->images->first()->url }}">
