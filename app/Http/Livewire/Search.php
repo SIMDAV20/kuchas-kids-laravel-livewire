@@ -34,7 +34,9 @@ class Search extends Component
                 foreach ($subcategories as $key => $subcategory) {
                     $products = $products->merge(
                         Product::where('subcategory_id', $subcategory->id)
-                            ->search($this->search)->take($take)
+                            ->where('status', Product::PUBLICADO)
+                            ->search($this->search)
+                            ->take($take)
                             ->get()
                     );
                     // $products = $products->merge($subcategory->products()
@@ -42,7 +44,8 @@ class Search extends Component
                 }
                 $products = $products->unique()->take($take);
             } else {
-                $products = Product::name($this->search)
+                $products = Product::search($this->search)
+                    ->where('status', Product::PUBLICADO)
                     ->orderBy('name', 'asc')
                     ->take(8)
                     ->get();

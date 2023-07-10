@@ -19,11 +19,26 @@ class CreateProduct extends Component
     public $name, $slug, $description, $price, $offer_price, $offer_date, $quantity;
 
     protected $rules = [
-        'category_id' => 'required',
+        'category_id'    => 'required',
         'subcategory_id' => 'required',
-        'name' => 'required',
-        'slug' => 'required|unique:products',
-        'description' => 'required',
+        'name'           => 'required',
+        'slug'           => 'required|unique:products',
+        'description'    => 'required',
+        'price'          => 'required|min:2|numeric',
+        'offer_price'    => 'nullable|lt:price',
+        'quantity'       => 'required|min:0|numeric',
+        'brand_id'       => 'required',
+    ];
+
+    protected $validationAttributes = [
+        'category_id'    => 'categoría',
+        'subcategory_id' => 'subcategoría',
+        'name'           => 'nombre',
+        'description'    => 'descripción',
+        'price'          => 'precio',
+        'offer_price'    => 'precio oferta',
+        'quantity'       => 'cantidad',
+        'brand_id'       => 'marca',
     ];
 
     public function updatingCategoryId($value)
@@ -53,17 +68,17 @@ class CreateProduct extends Component
 
     public function save()
     {
-        $rules = $this->rules;
+        // $rules = $this->rules;
         // if ($this->options == '' || $this->options == 'colors') {
         // }
         // if ($this->options == '')
-        $rules['price'] = 'required|min:2|numeric';
-        $rules['offer_price'] = 'lt:price';
-        $rules['quantity'] = 'required|min:0|numeric';
-        if (count($this->brands) > 0)
-            $rules['brand_id'] = 'required';
+        // $rules['price'] = 'required|min:2|numeric';
+        // $rules['offer_price'] = 'lt:price';
+        // $rules['quantity'] = 'required|min:0|numeric';
+        // if (count($this->brands) > 0)
+        //     $rules['brand_id'] = 'required';
 
-        $this->validate($rules);
+        $this->validate();
 
         $product = new Product();
         $product->name           = $this->name;
@@ -71,12 +86,12 @@ class CreateProduct extends Component
         $product->description    = $this->description;
         $product->subcategory_id = $this->subcategory_id;
         $product->brand_id       = $this->brand_id ?: null;
-        if ($this->price > 0)
-            $product->price    = $this->price;
-        if ($this->price > 0)
-            $product->offer_price    = $this->offer_price;
-        if ($this->quantity > 0)
-            $product->quantity = $this->quantity;
+        // if ($this->price > 0)
+        $product->price    = $this->price > 0 ? $this->price : null;
+        // if ($this->offer_price > 0)
+        $product->offer_price = $this->offer_price > 0 ? $this->offer_price : null;
+        // if ($this->quantity > 0)
+        $product->quantity = $this->quantity > 0 ? $this->quantity : null;
         $product->save();
 
         $this->reset();

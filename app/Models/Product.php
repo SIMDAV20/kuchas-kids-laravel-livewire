@@ -122,60 +122,6 @@ class Product extends Model
                 $this->$value()->delete();
             }
         }
-
-
-        // switch ($newValue) {
-        //     case 'base':
-
-        //         if (count($this->color_product) > 0) {
-        //             $this->color_product()->delete();
-        //         }
-
-        //         if (count($this->product_size) > 0) {
-        //             $this->product_size()->delete();
-        //         }
-
-        //         if (count($this->color_product_size) > 0) {
-        //             $this->color_product_size()->delete();
-        //         }
-        //         break;
-
-        //     case 'colors':
-        //         // if (count($this->images) > 0) {
-        //         //     $this->images()->delete();
-        //         // }
-        //         if (count($this->product_size) > 0)
-        //             $this->product_size()->delete();
-
-        //         if (count($this->color_product_size) > 0)
-        //             $this->color_product_size()->delete();
-        //         break;
-
-        //     case 'sizes':
-        //         // if (count($this->images) > 0) {
-        //         //     $this->images()->delete();
-        //         // }
-        //         if (count($this->color_product) > 0)
-        //             $this->color_product()->delete();
-
-        //         if (count($this->color_product_size) > 0)
-        //             $this->color_product_size()->delete();
-        //         break;
-
-        //     case 'colors_sizes':
-        //         // if (count($this->images) > 0) {
-        //         //     $this->images()->delete();
-        //         // }
-        //         if (count($this->color_product) > 0)
-        //             $this->color_product()->delete();
-
-        //         if (count($this->product_size) > 0)
-        //             $this->product_size()->delete();
-        //         break;
-
-        //     default:
-        //         break;
-        // }
     }
 
     public function saveDelete()
