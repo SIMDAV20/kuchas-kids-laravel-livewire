@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="container py-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            {{-- VISTA DESKTOP --}}
+            {{-- VISTA DESKTOP IMAGES --}}
             <div class="col-span-1 hidden md:block">
                 <div class="flexslider">
                     <ul class="slides">
@@ -12,7 +12,7 @@
                         @endforeach
                     </ul>
                 </div>
-                {{-- FIN VISTA DESKTOP --}}
+                {{-- FIN VISTA DESKTOP IMAGES --}}
 
                 <div class="-mt-10 text-gray-550 mb-6 description">
                     <h2 class="font-bold text-lg mb-3">Descripción</h2>
@@ -37,25 +37,15 @@
                     <h1 class="text-4xl font-bold text-violet-350">{{ $product->name }} </h1>
 
                     {{-- VISTA MOBIL --}}
-                    {{-- <div class="flexslider sm:block md:hidden">
+                    <div class="flexslider sm:block md:hidden">
                         <ul class="slides">
-                            @if (count($product->color_product))
-                                @foreach ($product->color_product->where('color_id', $color->id) as $key => $p_color_prod)
-                                    @foreach ($p_color_prod->images as $image)
-                                        <li data-thumb="{{ Storage::url($image->url) }}">
-                                            <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
-                                        </li>
-                                    @endforeach
-                                @endforeach
-                            @else
-                                @foreach ($product->images as $image)
-                                    <li data-thumb="{{ Storage::url($image->url) }}">
-                                        <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
-                                    </li>
-                                @endforeach
-                            @endif
+                            @foreach ($images as $image)
+                                <li data-thumb="{{ Storage::url($image->url) }}">
+                                    <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
+                                </li>
+                            @endforeach
                         </ul>
-                    </div> --}}
+                    </div>
                     {{-- FIN VISTA MOBIL --}}
 
                     <hr class="my-3">

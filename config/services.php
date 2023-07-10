@@ -31,4 +31,21 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'mercadopago' => [
+        'key' => env('MP_PUBLIC_KEY'),
+        'token' => env('MP_ACCESS_TOKEN'),
+    ],
+
+    'izipay' => [
+        'code_user' => env('IZIPAY_CODE_USER'),
+        'key' => env('IZIPAY_PUBLIC_KEY'),
+        'password' => env('IZIPAY_PASSWORD'),
+        'hash' => env('IZIPAY_HASH'),
+    ],
+
+    'paypal' => [
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'secret' => env('PAYPAL_SECRET'),
+    ]
+
 ];
