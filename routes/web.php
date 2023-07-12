@@ -68,6 +68,25 @@ Route::get('destroy', function () {
     Cart::destroy();
 });
 
+// Route::get('linkstorage', function () {
+//     \Artisan::call('storage:link');
+//     dd("Cache is cleared");
+// });
+
+// Route::get('clear_cache', function () {
+
+//     \Artisan::call('cache:clear');
+
+//     dd("Cache is cleared");
+// });
+
+// Route::get('clear_config', function () {
+
+//     \Artisan::call('config:clear');
+
+//     dd("config is cleared");
+// });
+
 // Route::get('/prueba', function () {
 //     $days = now()->subDay(5);
 
