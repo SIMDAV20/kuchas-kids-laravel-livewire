@@ -42,6 +42,7 @@ class EditProduct extends Component
         'product.brand_id'       => '',
         'product.price'          => 'required|numeric|min:2',
         'product.offer_price'    => 'nullable|lt:product.price',
+        'product.video'          => 'nullable',
     ];
 
     protected $validationAttributes = [

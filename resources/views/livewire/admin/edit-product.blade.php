@@ -75,19 +75,30 @@
             </div>
             <x-input-error for="product.description" />
         </div>
-        {{-- Marca --}}
-        @if ($brands->count() > 0)
-            <div class="mb-4 md:w-1/2">
-                <x-label value="Marca" />
-                <select class="form-control w-full" wire:model="product.brand_id">
-                    <option value="" selected>Seleccione una marca</option>
-                    @foreach ($brands as $brand)
-                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
-                    @endforeach
-                </select>
-                <x-input-error for="product.brand_id" />
+
+        <div class="grid md:grid-cols-2 gap-6 mb-3">
+            {{-- Marca --}}
+            @if ($brands->count() > 0)
+                <div>
+                    <x-label value="Marca" />
+                    <select class="form-control w-full" wire:model="product.brand_id">
+                        <option value="" selected>Seleccione una marca</option>
+                        @foreach ($brands as $brand)
+                            <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                        @endforeach
+                    </select>
+                    <x-input-error for="product.brand_id" />
+                </div>
+            @endif
+
+            {{-- Video --}}
+            <div>
+                <x-label value="Video" />
+                <x-input type="text" wire:model="product.video" class="w-full"
+                    placeholder="Ingrese el link del video" />
+                <x-input-error for="product.video" />
             </div>
-        @endif
+        </div>
 
         <div class="grid md:grid-cols-3 gap-6 mb-4">
             @if (count($product->color_product) == 0 &&
