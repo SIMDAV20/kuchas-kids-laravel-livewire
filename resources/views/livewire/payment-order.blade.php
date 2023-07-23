@@ -1,24 +1,26 @@
 <div>
     @php
+
+        // dd(base_path('vendor/autoload.php'));
         // require_once __DIR__ . '/vendor/autoload.php';
         require base_path('/vendor/autoload.php');
         /**
          * Define configuration
          */
-        
+
         /* Username, password and endpoint used for server to server web-service calls */
         Lyra\Client::setDefaultUsername(config('services.izipay.code_user'));
         Lyra\Client::setDefaultPassword(config('services.izipay.password'));
         // prod prodpassword_U3AmZdtfezRmRhLEdUqxKnW4TKfsYHetDDanD5RW37Yh2
         Lyra\Client::setDefaultEndpoint('https://api.micuentaweb.pe');
-        
+
         Lyra\Client::setDefaultPublicKey(config('services.izipay.key'));
         Lyra\Client::setDefaultSHA256Key(config('services.izipay.hash'));
-        
+
         // NDg3MTY5NDg6dGVzdHBhc3N3b3JkX3pEUnlLMnpYTTlERkVGTkdVUFAwUDRvVXdVVEJKS21OdWM0ajlSYnc4SURmZg==
-        
+
         $client = new Lyra\Client();
-        
+
         /**
          * I create a formToken
          */
@@ -33,7 +35,7 @@
         header('Authorization', 'NDg3MTY5NDg6dGVzdHBhc3N3b3JkX3pEUnlLMnpYTTlERkVGTkdVUFAwUDRvVXdVVEJKS21OdWM0ajlSYnc4SURmZg==');
         header('Content-Type', 'application/json');
         $response = $client->post('V4/Charge/CreatePayment', $store);
-        
+
         /* I check if there are some errors */
         if ($response['status'] != 'SUCCESS') {
             /* an error occurs, I throw an exception */
@@ -41,61 +43,20 @@
             $error = $response['answer'];
             throw new Exception('error ' . $error['errorCode'] . ': ' . $error['errorMessage']);
         }
-        
+
         /* everything is fine, I extract the formToken */
         $formToken = $response['answer']['formToken'];
     @endphp
 
 
     @push('izipay')
-        <script src="https://krypton.purebilling.io/static/js/krypton-client/dev/stable/kr-payment-form.min.js"
+        <script src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js"
             kr-public-key="{{ config('services.izipay.key') }}"
             kr-post-url-success="{{ route('orders.izipay', ['order_id' => $order]) }}" kr-language="es-ES"></script>
 
-        <link href="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic-reset.css" rel="stylesheet">
-
-        <script src="https://krypton.purebilling.io/static/js/krypton-client/dev/ext/classic.js"></script>
+        <link rel="stylesheet" href="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic-reset.css">
+        <script src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic.js"></script>
     @endpush
-    {{-- @php
-
-        // SDK de Mercado Pago
-        require base_path('/vendor/autoload.php');
-        // Agrega credenciales
-        MercadoPago\SDK::setAccessToken(config('services.mercadopago.token'));
-
-        // Crea un objeto de preferencia
-        $preference = new MercadoPago\Preference();
-
-        $shipments = new MercadoPago\Shipments();
-
-        $shipments->cost = $order->shipping_cost;
-        $shipments->mode = 'not_specified';
-
-        $preference->shipments = $shipments;
-
-        // Crea un ítem en la preferencia
-        foreach ($items as $product) {
-            $item = new MercadoPago\Item();
-            $item->title = $product->name;
-            $item->quantity = $product->qty;
-            $item->unit_price = $product->price;
-            $products[] = $item; // lo guardo en un array products
-        }
-
-        $preference->items = $products;
-
-        $preference->back_urls = [
-            'success' => url('api/webhooks', $order),
-            'pending' => url('api/webhooks', $order),
-            'failure' => url('api/webhooks', $order),
-            // 'success' => route('orders.pay', $order),
-            // 'pending' => route('orders.pay', $order),
-            // 'failure' => route('orders.pay', $order),
-        ];
-        $preference->auto_return = 'approved';
-
-        $preference->save();
-    @endphp --}}
 
     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-6 container py-8">
         <div class="order-2 lg:order-1 xl:col-span-3">
@@ -216,15 +177,7 @@
                     elige un método de pago
                 </p>
                 <hr class="mb-4">
-                {{-- <ul> --}}
                 <ul x-data="{ payment_method: 0 }">
-                    {{-- <input x-model="payment_method" type="radio" value="1" name="payment_method"
-                        class="text-gray-600 mr-2"> --}}
-                    {{-- <li class="flex justify-between items-center flex-wrap">
-                        <img width="200" height="80" src="{{ asset('img/mercado-pago-peru.jpg') }}" alt="">
-                        <div wire:ignore class="cho-container ml-auto mr-auto mb-2"></div>
-                    </li> --}}
-
                     <li class="flex flex-col">
                         <div class="flex justify-between items-center mb-3">
                             <label for="izipay">
@@ -249,17 +202,6 @@
                             </div>
                         </div>
                     </li>
-                    {{-- <li>
-                        <div>
-                            <div id="paymentForm" class="kr-embedded" style="display: none;">
-                                <div class="kr-pan"></div>
-                                <div class="kr-expiry"></div>
-                                <div class="kr-security-code"></div>
-                                <button class="kr-payment-button"></button>
-                                <div class="kr-form-error"></div>
-                            </div>
-                        </div>
-                    </li> --}}
                     <hr class="mb-4">
 
                     <li class="mb-3">
@@ -309,8 +251,4 @@
             </div>
         </div>
     </div>
-
-    {{-- @push('scripts') --}}
-    {{-- <script src="https://sdk.mercadopago.com/js/v2"></script> --}}
-    {{-- @endpush --}}
 </div>

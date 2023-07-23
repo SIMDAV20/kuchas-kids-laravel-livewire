@@ -15,7 +15,7 @@
         <aside>
             <h2 class="font-semibold text-center mb-2 text-gray-550">Subcategorías</h2>
             <ul class="divide-y divide-gray-200 text-gray-550">
-                @foreach ($category->subcategories as $subcategory)
+                @foreach ($category->subcategories()->orderBy('position', 'ASC')->get() as $subcategory)
                     <li class="py-2 text-sm">
                         {{-- $set('subcategoria', '{{ $subcategory->name }}') se qda almacenado el nombre --}}
                         <a class="cursor-pointer hover:text-violet-350 capitalize {{ $subcategoria == $subcategory->slug ? 'text-violet-350 font-semibold' : '' }}"
@@ -41,7 +41,7 @@
 
             @endif
             <x-button class="mt-4 {{ $showButton ? '' : 'hidden' }} bg-violet-350 hover:bg-violet-500"
-                wire:click="limpiar">
+                wire:click="resetFilters">
                 Eliminar filtros
             </x-button>
         </aside>

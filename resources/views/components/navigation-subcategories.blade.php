@@ -5,7 +5,7 @@
         <div>
             <p class="text-lg font-bold text-center text-gray-550 mb-3">Subcategorías</p>
             <ul>
-                @foreach ($category->subcategories as $subcategory)
+                @foreach ($category->subcategories()->orderBy('position', 'ASC')->get() as $subcategory)
                     <li class="mb-4">
                         <a href="{{ route('categories.show', $category) . '?subcategoria=' . $subcategory->slug }}"
                             class="font-semibold inline-block py-1 px-4 text-gray-550 hover:text-violet-350 ">

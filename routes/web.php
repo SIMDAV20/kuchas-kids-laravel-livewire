@@ -55,6 +55,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('orders/izipay', [OrderController::class, 'izipay'])->name('orders.izipay');
 
+    // Route::get('orders/izipay', [OrderController::class, 'izipay'])->name('orders.izipay');
+
     Route::post('webhooks', [WebhooksController::class])->name('webhooks.pay');
 
     Route::get('orders/failure', [OrderController::class, 'orderFailure'])->name('orders.failure');

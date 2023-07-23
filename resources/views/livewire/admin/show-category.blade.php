@@ -55,7 +55,8 @@
                     @foreach ($subcategories as $subcategory)
                         <tr wire:sortable.item="{{ $subcategory->id }}" wire:key="subcategory-{{ $subcategory->id }}">
                             <td class="py-2">
-                                <span class="uppercase">
+                                <i class="fas fa-allergies cursor-pointer"></i>
+                                <span class="uppercase hover:text-blue-600">
                                     {{ $subcategory->name }}
                                 </span>
                             </td>

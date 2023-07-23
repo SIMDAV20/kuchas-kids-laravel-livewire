@@ -8,7 +8,7 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Storage;
 use Gloudemans\Shoppingcart\Facades\Cart;
 
-class AddCartItemSize extends Component
+class OldAddCartItemSize extends Component
 {
     public $product, $sizes;
     public $qty = 1;

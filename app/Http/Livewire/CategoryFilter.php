@@ -18,7 +18,7 @@ class CategoryFilter extends Component
 
     protected $queryString = ['subcategoria', 'marca'];
 
-    public function limpiar()
+    public function resetFilters()
     {
         $this->reset(['subcategoria', 'marca', 'page']); // elimina la paginacion
         $this->showButton = false;

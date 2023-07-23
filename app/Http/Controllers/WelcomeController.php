@@ -21,7 +21,7 @@ class WelcomeController extends Controller
             //     ->select('o.*')->where('payments.status', '!==', 1);
             $pendiente = $orders->count();
             if ($pendiente) {
-                $mensaje = "Usted tiene $pendiente ordenes pendientes . <a class='font-bold' href='". route('orders.index')."?status=1'>Ir a pagar</a>";
+                $mensaje = "Usted tiene $pendiente órdenes pendientes . <a class='font-bold' href='". route('orders.index')."?status=1'>Ir a pagar</a>";
                 // generar el mensaje flash
                 session()->flash('flash.banner', $mensaje);
             }

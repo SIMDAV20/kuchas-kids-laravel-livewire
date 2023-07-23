@@ -90,10 +90,6 @@
                     @foreach ($categories as $category)
                         <tr wire:sortable.item="{{ $category->id }}" wire:key="category-{{ $category->id }}">
                             <td class="py-2">
-                                {{-- <span class="inline-block w-8 text-center mr-4"> --}}
-                                {{-- muentra como texto html --}}
-                                {{-- {!! $category->icon !!} --}}
-                                {{-- </span> --}}
                                 <i class="fas fa-allergies cursor-pointer"></i>
                                 <a href="{{ route('admin.categories.show', $category) }}"
                                     class="uppercase underline hover:text-blue-600">

@@ -96,7 +96,7 @@
     {{-- class dinamico si open es true o false --}}
     <nav id="navigation-menu" :class="{ 'block': open, 'hidden': !open }" x-show="open"
         class="bg-trueGray-700 w-full bg-opacity-25 absolute hidden">
-        {{-- Menu computadora --}}
+        {{-- Menu desktop --}}
         <div class="container h-full hidden md:block">
             <div x-on:click.away="close()" class="grid grid-cols-4 h-full relative">
                 <ul class="bg-white">
@@ -109,7 +109,6 @@
                                 </span>
                                 {{ $category->name }}
                             </a>
-
                             <div class="navigation-submenu bg-gray-100 absolute w-3/4 h-full top-0 right-0 hidden">
                                 <x-navigation-subcategories :category="$category" />
                             </div>
@@ -117,7 +116,7 @@
                     @endforeach
                 </ul>
                 <div class="col-span-3 bg-gray-100">
-                    {{-- pasar el objecto con : --}}
+                    {{-- pasar por prop con : --}}
                     <x-navigation-subcategories :category="$categories->first()" />
                 </div>
             </div>
