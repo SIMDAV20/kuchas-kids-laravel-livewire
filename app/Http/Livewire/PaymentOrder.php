@@ -51,13 +51,11 @@ class PaymentOrder extends Component
             'order' => $this->order
         ];
 
-        if (env('APP_URL') !== 'http://127.0.0.1:8000') {
-            Mail::to('atencionalclientekuchaskids@gmail.com')
-                ->queue(new MessageRecieved(
-                    $data,
-                    'Nueva Venta Página web Kuchas Kids'
-                ));
-        }
+        Mail::to(env('MAIN_EMAIL'))
+            ->queue(new MessageRecieved(
+                $data,
+                'Nueva Venta Página web Kuchas Kids'
+            ));
 
         return redirect()->route('orders.show', $this->order);
     }

@@ -173,9 +173,11 @@ class OrderController extends Controller
             'order' => $order
         ];
 
-        // Mail::to('atencionalclientekuchaskids@gmail.com')
-        //     ->queue(new MessageRecieved($data,
-        //         'Nueva Venta Página web Kuchas Kids'));
+        Mail::to(env('MAIN_EMAIL'))
+            ->queue(new MessageRecieved(
+                $data,
+                'Nueva Venta Página web Kuchas Kids'
+            ));
 
         return redirect()->route('orders.show', $order);
     }
