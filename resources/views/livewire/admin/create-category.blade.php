@@ -79,27 +79,30 @@
             Aqui encontrará todas las categorías agregadas
         </x-slot>
         <x-slot name="content">
-            <table class="text-gray-600">
+
+            <table class="text-gray-600 mb-3">
                 <thead class="border-b border-gray-300s">
                     <tr class="text-left">
                         <th class="py-2 w-full">Nombre</th>
-                        <th class="py-2">Acción</th>
+                        <th class="py-2 text-center">Acción</th>
                     </tr>
                 </thead>
-                <tbody wire:sortable="updateCategoriesPosition()" class="divide-y divide-gray-300">
+                <tbody class="divide-y divide-gray-300">
                     @foreach ($categories as $category)
-                        <tr wire:sortable.item="{{ $category->id }}" wire:key="category-{{ $category->id }}">
+                        <tr wire:key="category-{{ $category->id }}">
                             <td class="py-2">
-                                <i class="fas fa-allergies cursor-pointer"></i>
-                                <a href="{{ route('admin.categories.show', $category) }}"
-                                    class="uppercase underline hover:text-blue-600">
+                                <span class="uppercase">
                                     {{ $category->name }}
-                                </a>
+                                </span>
                             </td>
                             <td class="py-2">
                                 <div wire:ignore class="flex divide-x divide-gray-300 font-semibold">
+                                    <a href="{{ route('admin.categories.show', $category) }}"
+                                        class="pr-2 hover:text-purple-600 cursor-pointer">
+                                        Ver
+                                    </a>
                                     <a wire:click="edit('{{ $category->slug }}')"
-                                        class="pr-2 hover:text-blue-600 cursor-pointer">
+                                        class="px-2 hover:text-blue-600 cursor-pointer">
                                         Editar
                                     </a>
                                     {{-- tiene q estar entre comillas el $category->slug sino no se va enviar como cadena --}}
@@ -108,6 +111,30 @@
                                         Eliminar
                                     </a>
                                 </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <table class="text-gray-600">
+                <thead class="border-b border-gray-300s">
+                    <tr class="text-left">
+                        <th class="py-2 w-full">Nombre</th>
+                        <th class="py-2">Orden</th>
+                    </tr>
+                </thead>
+                <tbody wire:sortable="updateCategoriesPosition()" class="divide-y divide-gray-300">
+                    @foreach ($categories as $category)
+                        <tr wire:sortable.item="{{ $category->id }}" wire:key="category-{{ $category->id }}">
+                            <td class="py-2">
+                                <i class="fas fa-allergies cursor-pointer"></i>
+                                <span class="uppercase">
+                                    {{ $category->name }}
+                                </span>
+                            </td>
+                            <td class="py-2 text-center">
+                                {{  $category->position }}
                             </td>
                         </tr>
                     @endforeach
