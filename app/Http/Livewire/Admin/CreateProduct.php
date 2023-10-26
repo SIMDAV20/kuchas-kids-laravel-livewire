@@ -27,7 +27,7 @@ class CreateProduct extends Component
         'price'          => 'required|min:2|numeric',
         'offer_price'    => 'nullable|lt:price',
         'quantity'       => 'required|min:0|numeric',
-        'brand_id'       => 'required',
+        // 'brand_id'       => 'required',
     ];
 
     protected $validationAttributes = [
@@ -68,16 +68,11 @@ class CreateProduct extends Component
 
     public function save()
     {
-        // $rules = $this->rules;
-        // if ($this->options == '' || $this->options == 'colors') {
-        // }
-        // if ($this->options == '')
-        // $rules['price'] = 'required|min:2|numeric';
-        // $rules['offer_price'] = 'lt:price';
-        // $rules['quantity'] = 'required|min:0|numeric';
-        // if (count($this->brands) > 0)
-        //     $rules['brand_id'] = 'required';
-
+        if (count($this->brands) > 0) {
+            $rules['brand_id'] = 'required';
+        } else {
+            $this->brand_id = null;
+        }
         $this->validate();
 
         $product = new Product();
@@ -86,11 +81,8 @@ class CreateProduct extends Component
         $product->description    = $this->description;
         $product->subcategory_id = $this->subcategory_id;
         $product->brand_id       = $this->brand_id ?: null;
-        // if ($this->price > 0)
         $product->price    = $this->price > 0 ? $this->price : null;
-        // if ($this->offer_price > 0)
         $product->offer_price = $this->offer_price > 0 ? $this->offer_price : null;
-        // if ($this->quantity > 0)
         $product->quantity = $this->quantity > 0 ? $this->quantity : null;
         $product->save();
 

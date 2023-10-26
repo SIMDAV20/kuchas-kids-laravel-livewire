@@ -59,6 +59,7 @@ class GalleryImagesProducts extends Component
     {
         $this->item = $this->item->fresh();
         $this->images = $this->item->images;
+        $this->photo = null;
     }
 
     public function mount()
