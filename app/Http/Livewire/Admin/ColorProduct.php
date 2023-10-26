@@ -17,26 +17,59 @@ class ColorProduct extends Component
 
     protected $listeners = ['delete'];
 
-    protected $rules = [
-        'color_id' => 'required',
-        'quantity' => 'required|numeric|min:1'
+    public $createForm = [
+        'color_id' => null,
+        'slug' => null,
+        'quantity' => null,
+        'price' => null,
+        'offer_price' => null,
+    ];
+
+    public $editForm = [
+        'id' => -1, // id del ProductSize
+        'color_id' => -1,
+        'slug' => null,
+        'quantity' => null,
+        'price' => null,
+        'offer_price' => null,
     ];
 
     protected $validationAttributes = [
-        'color_id' => 'color',
-        'quantity' => 'cantidad'
+        'createForm.size_id'     => 'color',
+        'createForm.slug'        => 'slug',
+        'createForm.quantity'    => 'cantidad',
+        'createForm.price'       => 'precio',
+        'createForm.offer_price' => 'precio oferta',
+
+        'editForm.size_id'     => 'color',
+        'editForm.slug'        => 'slug',
+        'editForm.quantity'    => 'cantidad',
+        'editForm.price'       => 'precio',
+        'editForm.offer_price' => 'precio oferta',
     ];
+
+    protected $rules = [
+        'createForm.color_id'     => 'required',
+        'createForm.slug'        => 'required||unique:color_product,slug',
+        'createForm.quantity'    => 'required|numeric|min:1',
+        'createForm.price'       => 'required|numeric|min:2',
+        'createForm.offer_price' => 'nullable|lt:createForm.price',
+    ];
+
 
     public function save()
     {
         $this->validate();
+
+        $offer = $this->createForm['offer_price'];
+        $this->createForm['offer_price'] = $offer > 0 ? $offer : null;
 
         $pivot = Pivot::where('color_id', $this->color_id)
             ->where('product_id', $this->product->id)
             ->first();
 
         if ($pivot) {
-            $pivot->quantity = $pivot->quantity + $this->quantity;
+            $pivot->quantity += $this->quantity;
             $pivot->save(); // se aumenta el quantity
         } else {
             // attach sirve para introducir un registro en la tabla intermedia
@@ -48,7 +81,7 @@ class ColorProduct extends Component
             ]);
         }
 
-        $this->reset(['color_id', 'quantity']);
+        $this->reset(['createForm']);
 
         $this->emit('saved'); // para el mensaje
 
@@ -57,6 +90,7 @@ class ColorProduct extends Component
 
     public function edit($pivot_id)
     {
+        $this->resetValidation();
         $pivot = Pivot::find($pivot_id);
 
         $this->open = true;
@@ -64,6 +98,18 @@ class ColorProduct extends Component
         $this->pivot = $pivot;
         $this->pivot_color_id = $pivot->color_id;
         $this->pivot_quantity = $pivot->quantity;
+    }
+
+    public function updatingCreateFormColorId($id)
+    {
+        // $prod_size = Pivot::find($id);
+        $this->createForm['slug'] = Str::slug($this->product->slug . '-' . Color::find($id)->name) ?: '';
+    }
+
+    public function updatingEditFormColorId($id)
+    {
+        $prod_color = Pivot::find($id);
+        $this->editForm['slug'] = Str::slug($this->product->slug . '-' . Color::find($prod_color->size_id)->name) ?: '';
     }
 
     public function update()
@@ -92,8 +138,7 @@ class ColorProduct extends Component
 
     public function render()
     {
-        $product_colors = $this->product->colors;
-
-        return view('livewire.admin.color-product', compact('product_colors'));
+        $color_products = $this->product->colors;
+        return view('livewire.admin.color-product', compact('color_products'));
     }
 }
