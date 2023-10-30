@@ -13,7 +13,8 @@ return new class extends Migration
    */
   public function up()
   {
-    Schema::table('color_product', function (Blueprint $table) {
+
+    Schema::table('color_product_size', function (Blueprint $table) {
       $table->decimal('price')->after('quantity');
       $table->decimal('offer_price')->nullable()->after('price');
     });
@@ -26,7 +27,7 @@ return new class extends Migration
    */
   public function down()
   {
-    Schema::table('color_product', function (Blueprint $table) {
+    Schema::table('color_product_size', function (Blueprint $table) {
       $table->dropColumn('price');
       $table->dropColumn('offer_price');
     });
