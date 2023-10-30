@@ -6,6 +6,7 @@ use App\Http\Livewire\Admin\ColorSize;
 use App\Traits\ProductScopes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
@@ -95,10 +96,12 @@ class Product extends Model
     return $this->hasMany(ColorProductSize::class);
   }
 
-  // Relacion uno a muchos polimórfica
-  public function images()
+  protected function gallery(): Attribute
   {
-    return $this->morphMany(Image::class, "imageable");
+    return Attribute::make(
+      get: fn ($value) => !is_null($value) ?  json_decode($value) : null,
+      set: fn ($value) => !is_null($value) ? json_encode($value) : null,
+    );
   }
 
   public function deleteVariants($newValue)

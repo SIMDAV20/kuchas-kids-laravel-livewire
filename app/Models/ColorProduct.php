@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,10 +28,12 @@ class ColorProduct extends Model
     return $this->belongsTo(Product::class);
   }
 
-  // Relacion uno a muchos polimórfica
-  public function images()
+  protected function gallery(): Attribute
   {
-    return $this->morphMany(Image::class, "imageable");
+    return Attribute::make(
+      get: fn ($value) => !is_null($value) ?  json_decode($value) : null,
+      set: fn ($value) => !is_null($value) ? json_encode($value) : null,
+    );
   }
 
   // URL AMIGABLES

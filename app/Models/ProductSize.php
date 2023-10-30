@@ -2,44 +2,43 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ProductSize extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    const BORRADOR = 1;
-    const PUBLICADO = 2;
+  const BORRADOR = 1;
+  const PUBLICADO = 2;
 
-    protected $table = "product_size";
+  protected $table = "product_size";
 
-    protected $guarded = ['id', 'created_at', 'updated_at'];
+  protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    protected $with = ['images'];
+  // Relacion uno a muchos inversa
+  public function size()
+  {
+    return $this->belongsTo(Size::class);
+  }
 
-    // protected $fillabe = ['id','size_id', 'quantity', 'price', 'offer_price'];
+  public function product()
+  {
+    return $this->belongsTo(Product::class);
+  }
 
-    // Relacion uno a muchos inversa
-    public function size()
-    {
-        return $this->belongsTo(Size::class);
-    }
+  protected function gallery(): Attribute
+  {
+    return Attribute::make(
+      get: fn ($value) => !is_null($value) ?  json_decode($value) : null,
+      set: fn ($value) => !is_null($value) ? json_encode($value) : null,
+    );
+  }
 
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
-
-    // Relacion uno a muchos polimórfica
-    public function images()
-    {
-        return $this->morphMany(Image::class, "imageable");
-    }
-
-    // URL AMIGABLES
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
+  // URL AMIGABLES
+  public function getRouteKeyName()
+  {
+    return 'slug';
+  }
 }
