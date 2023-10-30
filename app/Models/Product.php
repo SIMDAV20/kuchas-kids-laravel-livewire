@@ -96,13 +96,13 @@ class Product extends Model
     return $this->hasMany(ColorProductSize::class);
   }
 
-  protected function gallery(): Attribute
-  {
-    return Attribute::make(
-      get: fn ($value) => !is_null($value) ?  json_decode($value) : null,
-      set: fn ($value) => !is_null($value) ? json_encode($value) : null,
-    );
-  }
+  // protected function gallery(): Attribute
+  // {
+  //   return Attribute::make(
+  //     get: fn ($value) => !is_null($value) ?  json_decode($value) : null,
+  //     set: fn ($value) => !is_null($value) ? json_encode($value) : null,
+  //   );
+  // }
 
   public function deleteVariants($newValue)
   {
@@ -182,6 +182,12 @@ class Product extends Model
       //TODO: falta complementar
       $this->color_product_size = $this->color_product_size()->where('quantity', '>', 0)->get();
     }
+  }
+
+  // Relacion uno a muchos polimórfica
+  public function images()
+  {
+    return $this->morphMany(Image::class, "imageable");
   }
 
   // URL AMIGABLES
