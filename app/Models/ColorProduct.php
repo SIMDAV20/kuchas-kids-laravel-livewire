@@ -28,12 +28,18 @@ class ColorProduct extends Model
     return $this->belongsTo(Product::class);
   }
 
-  protected function gallery(): Attribute
+  // protected function gallery(): Attribute
+  // {
+  //   return Attribute::make(
+  //     get: fn ($value) => !is_null($value) ?  json_decode($value) : null,
+  //     set: fn ($value) => !is_null($value) ? json_encode($value) : null,
+  //   );
+  // }
+
+  // Relacion uno a muchos polimórfica
+  public function images()
   {
-    return Attribute::make(
-      get: fn ($value) => !is_null($value) ?  json_decode($value) : null,
-      set: fn ($value) => !is_null($value) ? json_encode($value) : null,
-    );
+    return $this->morphMany(Image::class, "imageable");
   }
 
   // URL AMIGABLES

@@ -63,19 +63,19 @@ class ShowProducts extends Component
 
     foreach ($products as $key => $prod) {
       if ($prod->type_variant == Product::VARBASE) {
-        $prod->gallery = @$prod->gallery[0];
+        $prod->gallery = json_decode(@$prod->gallery);
       }
 
       if ($prod->type_variant == Product::VARCOLORS) {
-        $prod->gallery =  @$prod->color_product->first()->gallery[0];
+        $prod->gallery =  json_decode(@$prod->color_product->first()->gallery);
       }
 
       if ($prod->type_variant == Product::VARSIZES) {
-        $prod->gallery =  @$prod->product_size->first()->gallery[0];
+        $prod->gallery =  json_decode(@$prod->product_size->first()->gallery);
       }
 
       if ($prod->type_variant == Product::VARCOLORSSIZES) {
-        $prod->gallery =  @$prod->color_product_size->first()->gallery[0];
+        $prod->gallery =  json_decode(@$prod->color_product_size->first()->gallery);
       }
     }
 
