@@ -29,7 +29,8 @@ Route::get('terminos-y-condiciones', [SecondaryPagesController::class, 'termsAnd
 // muestra el id de la categoria
 Route::get('categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
 
-Route::get('products/{slugProduct}', [ProductController::class, 'showProduct'])->name('products.show');
+Route::get('products/{slug}', [ProductController::class, 'show'])->name('products.show');
+// Route::get('products/{}', [ProductController::class, 'showProduct'])->name('products.show');
 
 Route::get('contact', ContactForm::class)->name('contact.index');
 
@@ -37,29 +38,29 @@ Route::get('contact', ContactForm::class)->name('contact.index');
 Route::get('shopping-cart', ShoppingCart::class)->name('shopping-cart');
 
 Route::middleware(['auth'])->group(function () {
-    //  php artisan make:policy OrderPolicy para restrigir los usuarios por su order
+  //  php artisan make:policy OrderPolicy para restrigir los usuarios por su order
 
-    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+  Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
 
-    // administrado por livewire
-    Route::get('orders/create', CreateOrder::class)->name('orders.create');
+  // administrado por livewire
+  Route::get('orders/create', CreateOrder::class)->name('orders.create');
 
-    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::post('orders/{order}/annuled', [OrderController::class, 'annuled'])->name('orders.annuled');
+  Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+  Route::post('orders/{order}/annuled', [OrderController::class, 'annuled'])->name('orders.annuled');
 
-    // administrado por livewire
-    Route::get('orders/{order}/payment', PaymentOrder::class)->name('orders.payment');
+  // administrado por livewire
+  Route::get('orders/{order}/payment', PaymentOrder::class)->name('orders.payment');
 
-    // solo para el desarrollo
-    Route::get('orders/pay', [OrderController::class, 'pay'])->name('orders.pay');
+  // solo para el desarrollo
+  Route::get('orders/pay', [OrderController::class, 'pay'])->name('orders.pay');
 
-    Route::post('orders/izipay', [OrderController::class, 'izipay'])->name('orders.izipay');
+  Route::post('orders/izipay', [OrderController::class, 'izipay'])->name('orders.izipay');
 
-    // Route::get('orders/izipay', [OrderController::class, 'izipay'])->name('orders.izipay');
+  // Route::get('orders/izipay', [OrderController::class, 'izipay'])->name('orders.izipay');
 
-    Route::post('webhooks', [WebhooksController::class])->name('webhooks.pay');
+  Route::post('webhooks', [WebhooksController::class])->name('webhooks.pay');
 
-    Route::get('orders/failure', [OrderController::class, 'orderFailure'])->name('orders.failure');
+  Route::get('orders/failure', [OrderController::class, 'orderFailure'])->name('orders.failure');
 });
 
 // Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
@@ -67,7 +68,7 @@ Route::middleware(['auth'])->group(function () {
 // })->name('dashboard');
 
 Route::get('destroy', function () {
-    Cart::destroy();
+  Cart::destroy();
 });
 
 // Route::get('linkstorage', function () {
