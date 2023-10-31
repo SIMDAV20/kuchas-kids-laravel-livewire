@@ -165,7 +165,8 @@
                 </x-secondary-button>
 
                 <div>
-                  @livewire('admin.gallery-images-products', ['item_id' => $variant->id, 'model' => $model_str[$type_variant]], key($variant->id))
+                  {{-- @livewire('admin.ga-images-products', ['item_id' => $variant->id, 'model' => $model_str[$type_variant]], key($variant->id)) --}}
+                  @livewire('admin.global-gallery', ['item_id' => $variant->id, 'type_variant' => $type_variant], key($variant->id))
                 </div>
 
                 <x-danger-button wire:click="$emit('deleteVariant', {{ $variant->id }})">

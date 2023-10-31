@@ -62,9 +62,6 @@ class ShowProducts extends Component
       ->paginate(10);
 
     foreach ($products as $key => $prod) {
-
-
-
       if ($prod->type_variant == Product::VARBASE) {
         $prod->gallery = @$prod->gallery[0];
       }

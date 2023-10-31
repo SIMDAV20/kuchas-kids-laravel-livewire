@@ -152,7 +152,7 @@
     </div>
 
     @if ($type_variant == 'base')
-      @livewire('admin.gallery-images-products', ['item_id' => $product->id, 'model' => 'Product'], key($product->id))
+      @livewire('admin.global-gallery', ['item_id' => $product->id, 'type_variant' => $type_variant], key($product->id))
     @else
       @livewire('admin.upsert-product-variant', ['product' => $product, 'type_variant' => $type_variant], key('upsert-product-variant' . $product->id))
     @endif
