@@ -47,8 +47,6 @@ return new class extends Migration
         $prod->save();
       }
     }
-
-
     DB::table('image_products')->insert($gallery);
   }
 

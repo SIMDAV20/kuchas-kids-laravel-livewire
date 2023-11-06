@@ -1,11 +1,11 @@
 <x-app-layout>
-  <div class="container py-8">
-    @livewire('product-view', ['product' => $product])
-  </div>
+  @livewire('product-view', ['product' => $product])
 
-  @push('scripts')
+  {{-- @push('scripts')
     <script>
       Livewire.on('glider', function(id) {
+
+        console.log('estoy en afuera');
         Alpine.start();
         new Glider(document.querySelector('.glider-' + id), {
           // ~ es para llamar a las tags hermanas
@@ -58,5 +58,6 @@
         });
       });
     </script>
-  @endpush
+  @endpush --}}
+
 </x-app-layout>

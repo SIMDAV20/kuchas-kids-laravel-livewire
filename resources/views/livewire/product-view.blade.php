@@ -1,21 +1,34 @@
 <div>
-
   <div class="container py-8">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
       {{-- VISTA DESKTOP IMAGES --}}
       <div class="col-span-1 hidden md:block">
-        <div class="flexslider">
-          <ul class="slides">
-            @foreach ($images as $image)
-              <li data-thumb="{{ Storage::url($image) }}">
-                <img src="{{ Storage::url($image) }}" alt="{{ $image }}" />
-              </li>
-            @endforeach
-          </ul>
+        <!-- Swipper -->
+        <div class="mb-3">
+          <div style="--swiper-navigation-color: #BCBBE3;" class="swiper galleryTopSwipper">
+            <div class="swiper-wrapper">
+              @foreach ($images as $image)
+                <li class="swiper-slide">
+                  <img src="{{ Storage::url($image) }}" alt="{{ $image }}">
+                </li>
+              @endforeach
+            </div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+          </div>
+          <div thumbsSlider class="galleryThumbsSwipper">
+            <div class="swiper-wrapper">
+              @foreach ($images as $image)
+                <li class="swiper-slide">
+                  <img src="{{ Storage::url($image) }}" alt="{{ $image }}">
+                </li>
+              @endforeach
+            </div>
+          </div>
         </div>
         {{-- FIN VISTA DESKTOP IMAGES --}}
 
-        <div class="-mt-10 text-gray-550 mb-6 description">
+        <div class="text-gray-550 mb-6 description">
           <h2 class="font-bold text-lg mb-3">Descripción</h2>
           {!! $product->description !!}
         </div>
@@ -70,18 +83,29 @@
             </div>
           @endif
 
-          {{-- @if (count($colors) > 0)
-                    <div class="flex mb-2 mt-4">
-                        @foreach ($product->colors as $colorh)
-                            <a style="background-color: {{ $colorh->hex }}"
-                                class="w-8 h-8 mr-3 rounded-full cursor-pointer
-                                    hover:border-white hover:outline-gray
-                                    {{ $colorh->slug == $color->slug ? 'outline-gray' : '' }}
-                                    "
-                                href="{{ route('products.show', ['product' => $product, 'color' => $colorh->slug]) }}"></a>
-                        @endforeach
-                    </div>
-                @endif --}}
+          @if (count($colors) > 0)
+
+            <div class="flex mb-2 mt-4">
+              @foreach ($colors as $colorh)
+                <a style="background-color: {{ $colorh->hex }}"
+                  class="w-8 h-8 mr-3 rounded-full cursor-pointer hover:outline
+                                    hover:border-white hover:outline-gray-350
+                  {{ $colorh->slug == $qs_color ? 'outline outline-gray-350' : '' }}"
+                  wire:click="handleSelectColor({{ $colorh->id }})"></a>
+              @endforeach
+            </div>
+          @endif
+
+          @if (count($sizes) > 0)
+            <div class="flex mb-2 mt-4">
+              @foreach ($sizes as $key => $sizeh)
+                <a class="cursor-pointer p-2 mr-2 bg-white {{ @$select_size_id == $sizeh->id ? 'border-2 border-violet-350' : '' }}"
+                  wire:click="handleSelectSize({{ $sizeh->id }})">
+                  {{ $sizeh->name }}
+                </a>
+              @endforeach
+            </div>
+          @endif
 
           {{-- MOSTRAR LA INFO DE ENTREGAS --}}
           <div class="bg-white rounded-lg shadow-lg my-6">
@@ -97,22 +121,6 @@
             </div>
           </div>
 
-
-          <div class="mb-2 mt-4">
-            <div class="flex">
-              @foreach ($sizes as $key => $sizeh)
-                <a class="{{ @$selected_size_id == $sizeh->id ? 'p-2 mr-2 bg-white border-2 border-violet-350 cursor-pointer' : 'p-2 mr-2 bg-white cursor-pointer' }}"
-                  wire:click="$set('talla', '{{ $sizeh->slug }}')">
-                  {{ $sizeh->name }}
-                </a>
-
-                {{-- <a class="cursor-pointer hover:text-violet-350 capitalize {{ $subcategoria == $subcategory->slug ? 'text-violet-350 font-semibold' : '' }}"
-                  wire:click="$set('subcategoria', '{{ $subcategory->slug }}')">
-                  {{ $subcategory->name }}
-                </a> --}}
-              @endforeach
-            </div>
-          </div>
 
           @livewire('add-cart-item-size', ['product' => $product])
 
@@ -168,64 +176,75 @@
         src="{{ @Storage::url(json_decode($p_prod_size->gallery)[0]) }}">
     @break
   @endswitch --}}
-
-
   @push('scripts')
     <script>
-      console.log('empenzando');
-      Livewire.on('glider', function(id) {
-        console.log('otra vez');
-        Alpine.start();
-        new Glider(document.querySelector('.glider-' + id), {
-          // ~ es para llamar a las tags hermanas
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          // draggable: true,
-          dots: '.glider-' + id + '~.dots',
-          arrows: {
-            prev: '.glider-' + id + '~.glider-prev',
-            next: '.glider-' + id + '~.glider-next'
+      $(document).ready(function() {
+
+        const galleryThumbs = new Swiper(".galleryThumbsSwipper", {
+          spaceBetween: 10,
+          slidesPerView: 4,
+          freeMode: true,
+          watchSlidesProgress: true,
+        });
+
+        const galleryTop = new Swiper(".galleryTopSwipper", {
+          direction: 'horizontal',
+          loop: true,
+          // spaceBetween: 10,
+          navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
           },
-          responsive: [{
-              breakpoint: 640,
-              settings: {
-                slidesToShow: 2.5,
-                slidesToScroll: 2,
-              }
-            },
-            {
-              breakpoint: 768,
-              settings: {
-                slidesToShow: 3.5,
-                slidesToScroll: 3,
-              }
-            },
-            {
-              breakpoint: 1024,
-              settings: {
-                slidesToShow: 4.5,
-                slidesToScroll: 4,
-              }
-            },
-            {
-              breakpoint: 1280,
-              settings: {
-                slidesToShow: 5.5,
-                slidesToScroll: 5,
-              }
-            },
-          ]
+          thumbs: {
+            swiper: galleryThumbs,
+          },
         });
       });
 
-      $(document).ready(function() {
-        console.log('toy cansado jefe');
-        $('.flexslider').flexslider({
-          animation: "slide",
-          controlNav: "thumbnails",
-          animationLoop: false,
-          // itemMargin: 5
-        });
+      Livewire.on('glider', function(id) {
+        // console.log('otra vez');
+        Alpine.start();
+        // new Glider(document.querySelector('.glider-' + id), {
+        //   // ~ es para llamar a las tags hermanas
+        //   slidesToShow: 1,
+        //   slidesToScroll: 1,
+        //   // draggable: true,
+        //   dots: '.glider-' + id + '~.dots',
+        //   arrows: {
+        //     prev: '.glider-' + id + '~.glider-prev',
+        //     next: '.glider-' + id + '~.glider-next'
+        //   },
+        //   responsive: [{
+        //       breakpoint: 640,
+        //       settings: {
+        //         slidesToShow: 2.5,
+        //         slidesToScroll: 2,
+        //       }
+        //     },
+        //     {
+        //       breakpoint: 768,
+        //       settings: {
+        //         slidesToShow: 3.5,
+        //         slidesToScroll: 3,
+        //       }
+        //     },
+        //     {
+        //       breakpoint: 1024,
+        //       settings: {
+        //         slidesToShow: 4.5,
+        //         slidesToScroll: 4,
+        //       }
+        //     },
+        //     {
+        //       breakpoint: 1280,
+        //       settings: {
+        //         slidesToShow: 5.5,
+        //         slidesToScroll: 5,
+        //       }
+        //     },
+        //   ]
+        // });
+
       });
     </script>
   @endpush

@@ -28,7 +28,7 @@
     @endswitch
 
     <div class="p-2">
-      <h2 class="truncate text-lg font-semibold mb-2 text-gray-550 text-center">
+      <h2 class="truncate text-lg font-semibold mb-2 text-gray-550 text-center h-14" style="text-wrap: wrap">
         {{ $product->name }}
       </h2>
     </div>
