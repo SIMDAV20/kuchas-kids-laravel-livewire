@@ -25,6 +25,62 @@ class Product extends Model
 
   protected $guarded = ['id', 'created_at', 'updated_at'];
 
+  public function getPublicVariants()
+  {
+    $variants = $this;
+    switch ($this->type_variant) {
+      case Product::VARCOLORS:
+        $variants = $this->color_product()->where('status', Product::PUBLICADO)->get();
+        break;
+      case Product::VARSIZES:
+        $variants = $this->product_size()->where('status', Product::PUBLICADO)->get();
+        break;
+      case Product::VARCOLORSSIZES:
+        $variants = $this->color_product_size()->where('status', Product::PUBLICADO)->get();
+        break;
+    }
+
+    // $variants = collect($variants);
+
+    // $productsWithoutNull = $variants->reject(function ($var) {
+    //   return is_null(@$var->price) || is_null(@$var->offer_price);
+    // });
+
+    return $variants;
+  }
+
+  public function getMinMaxPrice()
+  {
+    $variants = $this->getPublicVariants();
+
+    $variants = $variants->where('price', '>', 0)->orWhere('offer_price', '>', 0);
+
+    $min = $variants->min('offer_price', 'price');
+    $max = $variants->max('offer_price', 'price');
+
+    return [$min, $max];
+  }
+
+  public function getFirstPublicSlug()
+  {
+    $slug = $this->slug;
+    switch ($this->type_variant) {
+      case Product::VARCOLORS:
+        $slug .= '?c=' . $this->color_product()->where('status', Product::PUBLICADO)->first()->color->slug;
+        break;
+      case Product::VARSIZES:
+        $slug .= '?s=' . $this->product_size()->where('status', Product::PUBLICADO)->first()->size->slug;
+        break;
+      case Product::VARCOLORSSIZES:
+        $query = $this->color_product_size()->where('status', Product::PUBLICADO)->first();
+        $slug .= '?c=' . $query->color->slug .
+          '&s=' . $query->size->slug;
+        break;
+    }
+
+    return $slug;
+  }
+
   // acesor se puede crear, es parecido a un atributo de un obj
   public function getStockAttribute()
   {
@@ -195,4 +251,24 @@ class Product extends Model
   {
     return 'slug';
   }
+
+  // $low_price = 9999999;
+  // if (count($this->product->sizes) > 0) {
+  //     foreach ($this->product->product_size as $s_product) {
+  //         // if (
+  //         //     $s_product->offer_price > 0 &&
+  //         //     (Carbon::parse($this->product->offer_date)->format('Y-m-d') >= Carbon::now()->format('Y-m-d')) &&
+  //         //     $this->product->offer_date !== null
+  //         // ) {
+  //         //     $low_price = $s_product->offer_price;
+  //         // SI LA FECHA LIMITE ES INDEFINIDO
+  //         // && $this->product->offer_date == null
+  //         if ($this->product->offer_price > 0) {
+  //             $low_price = $s_product->offer_price;
+  //         }
+  //         // elseif ($s_product->offer_price && $low_price > $s_product->price) {
+  //         //     $low_price = $s_product->price;
+  //         // }
+  //     }
+  // }
 }

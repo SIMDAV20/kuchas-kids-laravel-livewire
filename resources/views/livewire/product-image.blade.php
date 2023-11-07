@@ -1,5 +1,5 @@
-<article>
-  <a href="{{ route('products.show', $product->slug) }}">
+<article class="pt-2">
+  <a href="{{ route('products.show', $slug) }}">
     @switch($product->type_variant)
       @case('base')
         <img class="h-48 w-full object-contain object-center rounded-t product-image"
@@ -32,6 +32,18 @@
         {{ $product->name }}
       </h2>
     </div>
+
+    {{-- <p class="font-bold text-gray-550">Desde</p>
+      <span class="font-bold text-violet-350">S/{{ $product->getMinPrice() }}</span> --}}
+
+    {{-- @if ($product->max_price)
+      <div class="flex justify-center items-center">
+        <del class="text-sm text-gray-500 font-bold mr-2">S/ {{ $product->price }}</del>
+        <p class="text-violet-350 font-bold">S/ {{ $product->offer_price }}</p>
+      </div>
+    @else
+      <p class="font-bold text-violet-350">S/ {{ $product->price }}</p>
+    @endif --}}
   </a>
 
   {{-- <div x-data="{ p_color: 0 }">

@@ -48,7 +48,17 @@ return new class extends Migration
       }
     }
     DB::table('image_products')->insert($gallery);
+
+    foreach ($color_products as $key => $c_prod) {
+      $prod = $c_prod->product;
+      $c_prod->update([
+        'price' => $prod->price,
+        'offer_price' => $prod->offer_price ?: null,
+      ]);
+    }
   }
+
+
 
   /**
    * Reverse the migrations.
@@ -61,5 +71,13 @@ return new class extends Migration
     Product::query()->update(['gallery' => null]);
     ColorProduct::query()->update(['gallery' => null]);
     ProductSize::query()->update(['gallery' => null]);
+
+    // foreach ($color_products as $key => $c_prod) {
+    //   $prod = $c_prod->product;
+    //   $c_prod->update([
+    //     'price' => $prod->price,
+    //     'offer_price' => $prod->offer_price ?: null,
+    //   ]);
+    // }
   }
 };

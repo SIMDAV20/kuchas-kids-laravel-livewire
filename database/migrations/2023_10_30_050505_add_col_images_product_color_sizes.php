@@ -34,6 +34,17 @@ return new class extends Migration
    */
   public function down()
   {
-    //
+    Schema::table('products', function (Blueprint $table) {
+      $table->dropColumn('gallery');
+    });
+    Schema::table('color_product', function (Blueprint $table) {
+      $table->dropColumn('gallery');
+    });
+    Schema::table('product_size', function (Blueprint $table) {
+      $table->dropColumn('gallery');
+    });
+    Schema::table('color_product_size', function (Blueprint $table) {
+      $table->dropColumn('gallery');
+    });
   }
 };
