@@ -10,33 +10,30 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 use Mockery\Undefined;
 
 if (!function_exists('current_quantity')) {
-  function current_quantity($product_id, $color_id = null, $size_id = null)
+  function current_quantity($item_id, $type_variant)
   {
-    $product = Product::find($product_id);
+    $model_str = [
+      Product::VARBASE => 'Product',
+      Product::VARCOLORS => 'ColorProduct',
+      Product::VARSIZES => 'ProductSize',
+      Product::VARCOLORSSIZES => 'ColorProductSize',
+    ][$type_variant];
 
-    if ($size_id) {
-      $size = Size::find($size_id);
-      $quantity = ProductSize::where('size_id', $size->id)->where('product_id', $product_id)->first()->quantity;
-    } elseif ($color_id) {
-      $quantity = $product->colors->find($color_id)->pivot->quantity;
-    } else {
-      $quantity  = $product->quantity;
-    }
+    $model = '\\App\\Models\\' . $model_str;
+
+    $quantity = $model::find($item_id)->first()->quantity;
 
     return $quantity;
   }
 }
 
 if (!function_exists('qty_added')) {
-  function qty_added($product_id, $color_id = null, $size_id = null)
+  function qty_added($item_id, $type_variant)
   {
-
     $cart = Cart::content();
 
-    // retorna un obj con el first
-    $item = $cart->where('id', $product_id)
-      ->where('options.color_id', $color_id)
-      ->where('options.size_id', $size_id)->first();
+    $item = $cart->where('id', $item_id)
+      ->where('options.type_variant', $type_variant)->first();
 
     if ($item) {
       return  $item->qty;
@@ -48,9 +45,9 @@ if (!function_exists('qty_added')) {
 
 
 if (!function_exists('qty_available')) {
-  function qty_available($product_id, $color_id = null, $size_id = null)
+  function qty_available($item_id, $type_variant)
   {
-    return current_quantity($product_id, $color_id, $size_id) - qty_added($product_id, $color_id, $size_id);
+    return current_quantity($item_id, $type_variant) - qty_added($item_id, $type_variant);
   }
 }
 
@@ -66,12 +63,12 @@ if (!function_exists('discount')) {
       //     $item->options->color_id => ['quantity' => $qty_available] // agregando otra vez el stock reservado
       // ]);
 
-      $color_product = ColorProduct::where('product_id', $product->id)
+      $color_product = ColorProduct::where('item_id', $product->id)
         ->where('color_id', $item->options->color_id)->first();
       $color_product->quantity = $qty_available;
       $color_product->save();
     } else if ($item->options->size_id) {
-      $product_size = ProductSize::where('product_id', $product->id)
+      $product_size = ProductSize::where('item_id', $product->id)
         ->where('size_id', $item->options->size_id)->first();
       $product_size->quantity = $qty_available;
       $product_size->save();
@@ -94,12 +91,12 @@ if (!function_exists('increase')) {
     ) + $item->qty; // al hacer json_decode del content de la orden
 
     if (isset($item->options->color_id)) {
-      $color_product = ColorProduct::where('product_id', $product->id)
+      $color_product = ColorProduct::where('item_id', $product->id)
         ->where('color_id', $item->options->color_id)->first();
       $color_product->quantity = $quantity;
       $color_product->save();
     } else if (isset($item->options->size_id)) {
-      $product_size = ProductSize::where('product_id', $product->id)
+      $product_size = ProductSize::where('item_id', $product->id)
         ->where('size_id', $item->options->size_id)->first();
       $product_size->quantity = $quantity;
       $product_size->save();
@@ -177,6 +174,7 @@ if (!function_exists('findProduct')) {
 
 
 if (!function_exists('applyOffer')) {
+  // TODO: FUTURO ANIADIR DICHA OFFERTA POR FECHA
   function applyOffer($var_prod)
   {
     $base_price = null;

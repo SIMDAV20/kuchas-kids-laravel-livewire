@@ -55,10 +55,6 @@ class UpsertProductVariant extends Component
     'createForm.quantity'    => 'required|numeric|min:1',
     'createForm.price'       => 'required|numeric|min:2',
     'createForm.offer_price' => 'nullable|lt:createForm.price',
-
-    'editForm.quantity'    => 'required|numeric|min:1',
-    'editForm.price'       => 'required|numeric|min:2',
-    'editForm.offer_price' => 'nullable|lt:editForm.price',
   ];
 
   public function save()
@@ -96,28 +92,6 @@ class UpsertProductVariant extends Component
     $this->getVariants();
   }
 
-  public function edit($id)
-  {
-    $this->open = true;
-
-    $item = $this->variants->firstWhere('id', $id);
-
-    // fill values;
-    if ($this->type_variant == Product::VARCOLORS || $this->type_variant == Product::VARCOLORSSIZES) {
-      $this->editForm['color_id'] = $item->color_id;
-      $this->updatingEditFormColorId($item->color_id);
-    }
-    if ($this->type_variant == Product::VARSIZES || $this->type_variant == Product::VARCOLORSSIZES) {
-      $this->editForm['size_id'] = $item->size_id;
-      $this->updatingEditFormSizeId($item->size_id);
-    }
-
-    $this->editForm['quantity']    = $item->quantity;
-    $this->editForm['price']       = $item->price;
-    $this->editForm['offer_price'] = $item->offer_price;
-    $this->editForm['id'] = $id;
-  }
-
   public function updatingCreateFormColorId($id)
   {
     $this->computedSlug($id, 'color_id', 'createForm');
@@ -153,10 +127,37 @@ class UpsertProductVariant extends Component
     $this->$form['slug'] = Str::slug($slug . $this->slug_color . $this->slug_size) ?: '';
   }
 
+
+  public function edit($id)
+  {
+    $this->open = true;
+
+    $item = $this->variants->firstWhere('id', $id);
+
+    // fill values;
+    if ($this->type_variant == Product::VARCOLORS || $this->type_variant == Product::VARCOLORSSIZES) {
+      $this->editForm['color_id'] = $item->color_id;
+      $this->updatingEditFormColorId($item->color_id);
+    }
+    if ($this->type_variant == Product::VARSIZES || $this->type_variant == Product::VARCOLORSSIZES) {
+      $this->editForm['size_id'] = $item->size_id;
+      $this->updatingEditFormSizeId($item->size_id);
+    }
+
+    $this->editForm['quantity']    = $item->quantity;
+    $this->editForm['price']       = $item->price;
+    $this->editForm['offer_price'] = $item->offer_price;
+    $this->editForm['id'] = $id;
+  }
+
   public function update()
   {
     $this->resetValidation();
-    $rules = $this->rules;
+    $rules = [
+      'editForm.quantity'    => 'required|numeric|min:1',
+      'editForm.price'       => 'required|numeric|min:2',
+      'editForm.offer_price' => 'nullable|lt:editForm.price',
+    ];
 
     if ($this->type_variant == Product::VARCOLORS || $this->type_variant == Product::VARCOLORSSIZES) {
       $rules['editForm.color_id'] = 'required';
@@ -172,7 +173,6 @@ class UpsertProductVariant extends Component
     ][$this->type_variant];
 
     $rules['editForm.slug'] = 'required|unique:' . $table . ',slug,' . $this->editForm['id'];
-    $this->open = false;
 
     $this->validate($rules);
 
@@ -181,14 +181,11 @@ class UpsertProductVariant extends Component
     $this->editForm['quantity'] = intval($this->editForm['quantity']);
     $this->editForm['product_id'] = $this->product->id;
 
-    // $data = $this->editForm;
-    // unset($data['id']);
-
-    // $this->variants->firstWhere('id', $this->editForm['id'])->update($this->editForm);
-    // $this->emit('update');
-    $this->reset('editForm');
+    $this->variants->firstWhere('id', $this->editForm['id'])->update($this->editForm);
+    $this->open = false;
     $this->product = $this->product->fresh();
     $this->getVariants();
+    $this->reset('editForm');
   }
 
   // public function update()

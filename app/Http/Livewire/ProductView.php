@@ -71,9 +71,6 @@ class ProductView extends Component
           $this->handleSelectSize($fsize);
         }
         break;
-
-        // $this->sizes = Size::whereIn('id', $this->product->product_size()->where('status', 2)->pluck('size_id'))->get();
-        // $this->colors = Size::whereIn('id', $this->product->color_product()->where('status', 2)->pluck('color_id'))->get();
     }
   }
 
