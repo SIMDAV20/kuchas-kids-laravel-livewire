@@ -7,7 +7,7 @@ use App\Models\ProductSize as Pivot;
 use Illuminate\Support\Str;
 
 use Livewire\Component;
-
+// TODO: A BORRAR
 class SizeProduct extends Component
 {
     public $product, $sizes, $open = false, $product_size, $slug;

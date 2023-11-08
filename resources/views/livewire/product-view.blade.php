@@ -8,9 +8,9 @@
           <div style="--swiper-navigation-color: #BCBBE3;" class="swiper galleryTopSwipper">
             <div class="swiper-wrapper">
               @foreach ($images as $image)
-                <li class="swiper-slide">
-                  <img src="{{ Storage::url($image) }}" alt="{{ $image }}">
-                </li>
+              <li class="swiper-slide">
+                <img src="{{ Storage::url($image) }}" alt="{{ $image }}">
+              </li>
               @endforeach
             </div>
             <div class="swiper-button-prev"></div>
@@ -19,9 +19,9 @@
           <div thumbsSlider class="galleryThumbsSwipper">
             <div class="swiper-wrapper">
               @foreach ($images as $image)
-                <li class="swiper-slide">
-                  <img src="{{ Storage::url($image) }}" alt="{{ $image }}">
-                </li>
+              <li class="swiper-slide">
+                <img src="{{ Storage::url($image) }}" alt="{{ $image }}">
+              </li>
               @endforeach
             </div>
           </div>
@@ -34,14 +34,12 @@
         </div>
 
         @if (@$product->video)
-          <div>
-            <h2 class="font-bold text-lg mb-3 text-gray-550">Video</h2>
-            <div class="video-responsive">
-              <iframe width="560" height="315" src="{{ $product->video }}" frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen></iframe>
-            </div>
+        <div>
+          <h2 class="font-bold text-lg mb-3 text-gray-550">Video</h2>
+          <div class="video-responsive">
+            <iframe width="560" height="315" src="{{ $product->video }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
+        </div>
         @endif
       </div>
 
@@ -55,77 +53,89 @@
             <ul class="slides">
               @foreach ($images as $image)
                 <li data-thumb="{{ Storage::url($image->url) }}">
-                  <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
-                </li>
-              @endforeach
-            </ul>
-          </div> --}}
-          {{-- FIN VISTA MOBIL --}}
+          <img src="{{ Storage::url($image->url) }}" alt="{{ $image->url }}" />
+          </li>
+          @endforeach
+          </ul>
+        </div> --}}
+        {{-- FIN VISTA MOBIL --}}
 
-          <hr class="my-3">
+        <hr class="my-3">
 
-          {{-- Si tiene marca --}}
-          @if ($product->brand)
-            <div class="flex mb-2">
-              <p class="text-violet-350">
-                <strong>Marca:</strong>
-                <span>{{ $product->brand->name }}</span>
-              </p>
-            </div>
-          @endif
-          {{-- Si tiene edad --}}
-          @if ($product->age)
-            <div class="flex mb-2">
-              <p class="text-violet-350">
-                <strong>Edades:</strong>
-                <span>{{ $product->age }}</span>
-              </p>
-            </div>
-          @endif
+        {{-- Si tiene marca --}}
+        @if ($product->brand)
+        <div class="flex mb-2">
+          <p class="text-violet-350">
+            <strong>Marca:</strong>
+            <span>{{ $product->brand->name }}</span>
+          </p>
+        </div>
+        @endif
+        {{-- Si tiene edad --}}
+        @if ($product->age)
+        <div class="flex mb-2">
+          <p class="text-violet-350">
+            <strong>Edades:</strong>
+            <span>{{ $product->age }}</span>
+          </p>
+        </div>
+        @endif
 
-          @if (count($colors) > 0)
-
-            <div class="flex mb-2 mt-4">
-              @foreach ($colors as $colorh)
-                <a style="background-color: {{ $colorh->hex }}"
-                  class="w-8 h-8 mr-3 rounded-full cursor-pointer hover:outline
+        @if (count($colors) > 0)
+        <div class="flex mb-2 mt-4">
+          @foreach ($colors as $colorh)
+          <a style="background-color: {{ $colorh->hex }}" class="w-8 h-8 mr-3 rounded-full cursor-pointer hover:outline
                                     hover:border-white hover:outline-gray-350
-                  {{ $colorh->slug == $qs_color ? 'outline outline-gray-350' : '' }}"
-                  wire:click="handleSelectColor({{ $colorh->id }})"></a>
-              @endforeach
-            </div>
-          @endif
+                  {{ $colorh->slug == $qs_color ? 'outline outline-gray-350' : '' }}" wire:click="handleSelectColor({{ $colorh->id }})"></a>
+          @endforeach
+        </div>
+        @endif
 
-          @if (count($sizes) > 0)
-            <div class="flex mb-2 mt-4">
-              @foreach ($sizes as $key => $sizeh)
-                <a class="cursor-pointer p-2 mr-2 bg-white {{ @$select_size_id == $sizeh->id ? 'border-2 border-violet-350' : '' }}"
-                  wire:click="handleSelectSize({{ $sizeh->id }})">
-                  {{ $sizeh->name }}
-                </a>
-              @endforeach
-            </div>
-          @endif
+        @if (count($sizes) > 0)
+        <div class="flex mb-2 mt-4">
+          @foreach ($sizes as $key => $sizeh)
+          <a class="cursor-pointer p-2 mr-2 bg-white {{ @$select_size_id == $sizeh->id ? 'border-2 border-violet-350' : '' }}" wire:click="handleSelectSize({{ $sizeh->id }})">
+            {{ $sizeh->name }}
+          </a>
+          @endforeach
+        </div>
+        @endif
 
-          {{-- MOSTRAR LA INFO DE ENTREGAS --}}
-          <div class="bg-white rounded-lg shadow-lg my-6">
-            <div class="p-4 flex items-center">
-              <span class="flex items-center justify-center h-12 w-12 rounded-full bg-violet-350">
-                <i class="fas fa-truck text-xl text-white"></i>
-              </span>
-              <div class="ml-4">
-                <p class="text-lg text-semibold text-violet-350">Hacemos envíos a todo el Perú</p>
-                {{-- <p>Recíbelo el {{ Date::now()->addDay(1)->locale('es')->format('l j F') }}</p> --}}
-                <p class="text-gray-550">Recíbelo de 1 a 3 días útiles</p>
-              </div>
+        @if ($variant)
+        <div>
+          <div class="mb-2 mt-4">
+            <div class="mb-2 flex">
+              @if ($variant->offer_price > 0)
+              <del class="text-lg font-semibold text-gray-550 mr-3">S/ {{ $variant->price }}</del>
+              <p class="text-2xl font-semibold text-violet-350">S/ {{ $variant->offer_price }}</p>
+              @else
+              <p class="text-2xl font-semibold text-gray-550">S/ {{ $variant->price }}</p>
+              @endif
             </div>
           </div>
+        </div>
+        @endif
 
 
-          @livewire('add-cart-item-size', ['product' => $product])
+        {{-- MOSTRAR LA INFO DE ENTREGAS --}}
+        <div class="bg-white rounded-lg shadow-lg my-6">
+          <div class="p-4 flex items-center">
+            <span class="flex items-center justify-center h-12 w-12 rounded-full bg-violet-350">
+              <i class="fas fa-truck text-xl text-white"></i>
+            </span>
+            <div class="ml-4">
+              <p class="text-lg text-semibold text-violet-350">Hacemos envíos a todo el Perú</p>
+              {{-- <p>Recíbelo el {{ Date::now()->addDay(1)->locale('es')->format('l j F') }}</p> --}}
+              <p class="text-gray-550">Recíbelo de 1 a 3 días útiles</p>
+            </div>
+          </div>
+        </div>
 
-          {{-- INICIO DEL BOTON DE AGREGAR AL CARRITO SEGUN SUS VARIANTES --}}
-          {{-- @if (count($product->sizes) > 0)
+
+        @livewire('add-cart-item-size', ['product' => $product])
+
+        {{-- INICIO DEL BOTON DE AGREGAR AL CARRITO SEGUN SUS VARIANTES --}}
+        {{-- @if (count($product->sizes) > 0)
                     @livewire('add-cart-item-size', ['product' => $product])
                 @elseif (count($product->colors) > 0)
 
@@ -133,7 +143,7 @@
 
                 @endif --}}
 
-          {{-- @switch($base)
+        {{-- @switch($base)
             @case('ColorProduct')
               @livewire('add-cart-item-color', ['product' => $product, 'color_id' => $main_vars['main_color']])
             @break
@@ -144,108 +154,107 @@
 
             @case('ColorProductSize')
               {{ $main_vars['main_color'] }}
-              {{ $main_vars['main_size'] }}
-            @break
+        {{ $main_vars['main_size'] }}
+        @break
 
-            @default
-              @livewire('add-cart-item', ['product' => $product])
-          @endswitch --}}
-        </div>
+        @default
+        @livewire('add-cart-item', ['product' => $product])
+        @endswitch --}}
       </div>
     </div>
   </div>
-  {{-- @switch($product->type_variant)
+</div>
+{{-- @switch($product->type_variant)
     @case('base')
       <img class="h-48 w-full object-contain object-center rounded-t product-image"
         src="{{ @Storage::url(json_decode(@$product->gallery)[0]) }}">
-    @break
+@break
 
-    @case('colors')
-      @php
-        $p_color_prod = $product->color_product->first();
-      @endphp
-      <img class="h-48 w-full object-contain object-center rounded-t product-image"
-        src="{{ @Storage::url(json_decode($p_color_prod->gallery)[0]) }}">
-    @break
+@case('colors')
+@php
+$p_color_prod = $product->color_product->first();
+@endphp
+<img class="h-48 w-full object-contain object-center rounded-t product-image" src="{{ @Storage::url(json_decode($p_color_prod->gallery)[0]) }}">
+@break
 
-    @case('sizes')
-      @php
-        $p_prod_size = $product->product_size->first();
-      @endphp
-      <img class="h-48 w-full object-contain object-center rounded-t product-image"
-        src="{{ @Storage::url(json_decode($p_prod_size->gallery)[0]) }}">
-    @break
-  @endswitch --}}
-  @push('scripts')
-    <script>
-      $(document).ready(function() {
+@case('sizes')
+@php
+$p_prod_size = $product->product_size->first();
+@endphp
+<img class="h-48 w-full object-contain object-center rounded-t product-image" src="{{ @Storage::url(json_decode($p_prod_size->gallery)[0]) }}">
+@break
+@endswitch --}}
+@push('scripts')
+<script>
+  $(document).ready(function() {
 
-        const galleryThumbs = new Swiper(".galleryThumbsSwipper", {
-          spaceBetween: 10,
-          slidesPerView: 4,
-          freeMode: true,
-          watchSlidesProgress: true,
-        });
+    const galleryThumbs = new Swiper(".galleryThumbsSwipper", {
+      spaceBetween: 10
+      , slidesPerView: 4
+      , freeMode: true
+      , watchSlidesProgress: true
+    , });
 
-        const galleryTop = new Swiper(".galleryTopSwipper", {
-          direction: 'horizontal',
-          loop: true,
-          // spaceBetween: 10,
-          navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-          },
-          thumbs: {
-            swiper: galleryThumbs,
-          },
-        });
-      });
+    const galleryTop = new Swiper(".galleryTopSwipper", {
+      direction: 'horizontal'
+      , loop: true,
+      // spaceBetween: 10,
+      navigation: {
+        nextEl: ".swiper-button-next"
+        , prevEl: ".swiper-button-prev"
+      , }
+      , thumbs: {
+        swiper: galleryThumbs
+      , }
+    , });
+  });
 
-      Livewire.on('glider', function(id) {
-        // console.log('otra vez');
-        Alpine.start();
-        // new Glider(document.querySelector('.glider-' + id), {
-        //   // ~ es para llamar a las tags hermanas
-        //   slidesToShow: 1,
-        //   slidesToScroll: 1,
-        //   // draggable: true,
-        //   dots: '.glider-' + id + '~.dots',
-        //   arrows: {
-        //     prev: '.glider-' + id + '~.glider-prev',
-        //     next: '.glider-' + id + '~.glider-next'
-        //   },
-        //   responsive: [{
-        //       breakpoint: 640,
-        //       settings: {
-        //         slidesToShow: 2.5,
-        //         slidesToScroll: 2,
-        //       }
-        //     },
-        //     {
-        //       breakpoint: 768,
-        //       settings: {
-        //         slidesToShow: 3.5,
-        //         slidesToScroll: 3,
-        //       }
-        //     },
-        //     {
-        //       breakpoint: 1024,
-        //       settings: {
-        //         slidesToShow: 4.5,
-        //         slidesToScroll: 4,
-        //       }
-        //     },
-        //     {
-        //       breakpoint: 1280,
-        //       settings: {
-        //         slidesToShow: 5.5,
-        //         slidesToScroll: 5,
-        //       }
-        //     },
-        //   ]
-        // });
+  Livewire.on('glider', function(id) {
+    // console.log('otra vez');
+    Alpine.start();
+    // new Glider(document.querySelector('.glider-' + id), {
+    //   // ~ es para llamar a las tags hermanas
+    //   slidesToShow: 1,
+    //   slidesToScroll: 1,
+    //   // draggable: true,
+    //   dots: '.glider-' + id + '~.dots',
+    //   arrows: {
+    //     prev: '.glider-' + id + '~.glider-prev',
+    //     next: '.glider-' + id + '~.glider-next'
+    //   },
+    //   responsive: [{
+    //       breakpoint: 640,
+    //       settings: {
+    //         slidesToShow: 2.5,
+    //         slidesToScroll: 2,
+    //       }
+    //     },
+    //     {
+    //       breakpoint: 768,
+    //       settings: {
+    //         slidesToShow: 3.5,
+    //         slidesToScroll: 3,
+    //       }
+    //     },
+    //     {
+    //       breakpoint: 1024,
+    //       settings: {
+    //         slidesToShow: 4.5,
+    //         slidesToScroll: 4,
+    //       }
+    //     },
+    //     {
+    //       breakpoint: 1280,
+    //       settings: {
+    //         slidesToShow: 5.5,
+    //         slidesToScroll: 5,
+    //       }
+    //     },
+    //   ]
+    // });
 
-      });
-    </script>
-  @endpush
+  });
+
+</script>
+@endpush
 </div>

@@ -19,8 +19,6 @@ class ProductImage extends Component
     [$min, $max] = $this->product->getMinPrice();
     $this->product->min_price = $min;
 
-    // dd($this->product);
-
     return view('livewire.product-image');
   }
 }

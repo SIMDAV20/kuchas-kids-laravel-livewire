@@ -1,4 +1,5 @@
 <div>
+  {{-- TODO: A BORRAR --}}
   <div class="my-12 bg-white shadow-xl rounded-lg p-6">
     {{-- Color --}}
     <div class="mb-6">

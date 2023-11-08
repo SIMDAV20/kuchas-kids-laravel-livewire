@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Size;
 use Livewire\Component;
 
+// ELMINAR EN EL FUTURO
 class ProductSize extends Component
 {
     public $product, $p_talla, $price = 0, $offer_price = 0;

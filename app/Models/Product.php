@@ -69,12 +69,12 @@ class Product extends Model
         $slug .= '?c=' . $this->color_product()->where('status', Product::PUBLICADO)->first()->color->slug;
         break;
       case Product::VARSIZES:
-        $slug .= '?s=' . $this->product_size()->where('status', Product::PUBLICADO)->first()->size->slug;
+        $slug .= '?t=' . $this->product_size()->where('status', Product::PUBLICADO)->first()->size->slug;
         break;
       case Product::VARCOLORSSIZES:
         $query = $this->color_product_size()->where('status', Product::PUBLICADO)->first();
         $slug .= '?c=' . $query->color->slug .
-          '&s=' . $query->size->slug;
+          '&t=' . $query->size->slug;
         break;
     }
 

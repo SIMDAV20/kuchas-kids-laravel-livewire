@@ -9,22 +9,21 @@ use Livewire\Component;
 
 class ProductView extends Component
 {
-  public $product, $images = [], $qs_color, $qs_size;
+  public $product, $variant, $images = [], $qs_color, $qs_size;
 
   public $select_color_id = null, $select_size_id = null, $sizes = [], $colors = [];
 
   protected $queryString = [
     'qs_color' => ['as' =>  'c'],
     'qs_size' =>  ['as' =>  't'],
-
-    // 'search' => ['except' => '', 'as' => 's'],
   ];
 
   public function handleSelectColor(Color $color)
   {
     $this->select_color_id = $color->id;
     $this->qs_color = $color->slug;
-    $prev = collect(json_decode($this->product->color_product()->where('color_id', $color->id)->first()->gallery));
+    $this->variant = $this->product->color_product()->where('color_id', $color->id)->first();
+    $prev = collect(json_decode(@$this->variant->gallery));
     if (count($prev) > 0) $this->images = $prev;
   }
 
@@ -32,7 +31,8 @@ class ProductView extends Component
   {
     $this->select_size_id = $size->id;
     $this->qs_size = $size->slug;
-    $prev = collect(json_decode(@$this->product->color_product()->where('color_id', $size->id)->first()->gallery));
+    $this->variant = $this->product->product_size()->where('size_id', $size->id)->first();
+    $prev = collect(json_decode(@$this->variant->gallery));
     if (count($prev) > 0) $this->images = $prev;
   }
 
@@ -55,7 +55,7 @@ class ProductView extends Component
 
     switch ($this->product->type_variant) {
       case 'base':
-        # code...
+        $this->variant = $this->product;
         break;
       case 'colors':
         $this->colors = Color::whereIn('id', $this->product->color_product()->where('status', 2)->pluck('color_id'))->get();

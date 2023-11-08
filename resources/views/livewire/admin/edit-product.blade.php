@@ -8,12 +8,9 @@
     </div>
     <div class="md:col-span-1">
       <div class="bg-white shadow-xl rounded-lg p-6 h-full flex justify-between items-center">
-        {{-- <div class=""> --}}
         <x-danger-button wire:click="$emit('deleteProduct')" class="w-full">
           Eliminar Producto
         </x-danger-button>
-        {{--
-                </div> --}}
       </div>
     </div>
   </div>
@@ -27,7 +24,7 @@
         <select class="w-full form-control" wire:model="category_id">
           <option value="" selected disabled>Seleccione una categoría</option>
           @foreach ($categories as $category)
-            <option value="{{ $category->id }}">{{ $category->name }}</option>
+          <option value="{{ $category->id }}">{{ $category->name }}</option>
           @endforeach
         </select>
         <x-input-error for="category_id" />
@@ -38,7 +35,7 @@
         <select class="w-full form-control" wire:model="product.subcategory_id">
           <option value="" selected disabled>Seleccione una subcategoría</option>
           @foreach ($subcategories as $subcategory)
-            <option value="{{ $subcategory->id }}">{{ $subcategory->name }}</option>
+          <option value="{{ $subcategory->id }}">{{ $subcategory->name }}</option>
           @endforeach
         </select>
         <x-input-error for="product.subcategory_id" />
@@ -51,8 +48,7 @@
     </div>
     <div class="mb-4">
       <x-label value="Slug" />
-      <x-input type="text" wire:model="slug" disabled class="w-full bg-gray-200"
-        placeholder="Ingrese el slug del producto" />
+      <x-input type="text" wire:model="slug" disabled class="w-full bg-gray-200" placeholder="Ingrese el slug del producto" />
       <x-input-error for="slug" />
     </div>
     {{-- Descripcion --}}
@@ -69,8 +65,7 @@
             })
             .catch(error => {
                 console.error(error);
-            });" x-data
-          x-ref="miEditor"></textarea>
+            });" x-data x-ref="miEditor"></textarea>
       </div>
       <x-input-error for="product.description" />
     </div>
@@ -78,16 +73,16 @@
     <div class="grid md:grid-cols-2 gap-6 mb-3">
       {{-- Marca --}}
       @if ($brands->count() > 0)
-        <div>
-          <x-label value="Marca" />
-          <select class="form-control w-full" wire:model="product.brand_id">
-            <option value="" selected>Seleccione una marca</option>
-            @foreach ($brands as $brand)
-              <option value="{{ $brand->id }}">{{ $brand->name }}</option>
-            @endforeach
-          </select>
-          <x-input-error for="product.brand_id" />
-        </div>
+      <div>
+        <x-label value="Marca" />
+        <select class="form-control w-full" wire:model="product.brand_id">
+          <option value="" selected>Seleccione una marca</option>
+          @foreach ($brands as $brand)
+          <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+          @endforeach
+        </select>
+        <x-input-error for="product.brand_id" />
+      </div>
       @endif
 
       {{-- Video --}}
@@ -100,13 +95,13 @@
 
     <div class="grid md:grid-cols-3 gap-6 mb-4">
       @if (count($product->color_product) == 0 &&
-              count($product->product_size) == 0 &&
-              count($product->color_product_size) == 0)
-        <div>
-          <x-label value="Cantidad" />
-          <x-input type="number" wire:model="product.quantity" class="w-full" />
-          <x-input-error for="product.quantity" />
-        </div>
+      count($product->product_size) == 0 &&
+      count($product->color_product_size) == 0)
+      <div>
+        <x-label value="Cantidad" />
+        <x-input type="number" wire:model="product.quantity" class="w-full" />
+        <x-input-error for="product.quantity" />
+      </div>
       @endif
 
       {{-- @if (count($product->color_product) > 0 || (count($product->product_size) == 0 && count($product->color_product_size) == 0)) --}}
@@ -142,199 +137,179 @@
     <div class="grid md:grid-cols-3 gap-6 mb-4">
       <div class="col-span-2 flex justify-between">
         @foreach ($options as $option)
-          <x-label>
-            <x-input wire:model.defer="type_variant" name="type_variant" type="radio" value="{{ $option['value'] }}"
-              wire:click="$emit('confirmChangeVariant', '{{ $option['value'] }}')" />
-            {{ $option['label'] }}
-          </x-label>
+        <x-label>
+          <x-input wire:model.defer="type_variant" name="type_variant" type="radio" value="{{ $option['value'] }}" wire:click="$emit('confirmChangeVariant', '{{ $option['value'] }}')" />
+          {{ $option['label'] }}
+        </x-label>
         @endforeach
       </div>
     </div>
 
     @if ($type_variant == 'base')
-      @livewire('admin.global-gallery', ['item_id' => $product->id, 'type_variant' => $type_variant], key($product->id))
+    @livewire('admin.global-gallery', ['item_id' => $product->id, 'type_variant' => $type_variant], key($product->id))
     @else
-      @livewire('admin.upsert-product-variant', ['product' => $product, 'type_variant' => $type_variant], key('upsert-product-variant' . $product->id))
+    @livewire('admin.upsert-product-variant', ['product' => $product, 'type_variant' => $type_variant], key('upsert-product-variant' . $product->id))
     @endif
-    {{-- @switch($type_variant)
-      @case('base')
-        <div>
-        </div>
-      @break
-
-      @case('colors')
-        @livewire('admin.color-product', ['product' => $product], key('color-product' . $product->id))
-      @break
-
-      @case('sizes')
-        @livewire('admin.size-product', ['product' => $product], key('size-product' . $product->id))
-      @break
-
-      @case('colors_sizes')
-        @livewire('admin.color-size-product', ['product' => $product], key('color-size-product' . $product->id))
-      @break
-
-      @default
-    @endswitch --}}
   </div>
 
   @push('scripts')
-    <script>
-      Livewire.on('deleteProduct', () => {
-        Swal.fire({
-          title: 'Esta seguro de eliminar el registro?',
-          text: "Acción irreversible",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, eliminar!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            Livewire.emitTo('admin.edit-product', 'delete');
+  <script>
+    Livewire.on('deleteProduct', () => {
+      Swal.fire({
+        title: 'Esta seguro de eliminar el registro?'
+        , text: "Acción irreversible"
+        , icon: 'warning'
+        , showCancelButton: true
+        , confirmButtonColor: '#3085d6'
+        , cancelButtonColor: '#d33'
+        , confirmButtonText: 'Si, eliminar!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Livewire.emitTo('admin.edit-product', 'delete');
 
-            Swal.fire(
-              'Eliminado!', 'El resgistro ha sido eliminado.', 'success'
-            )
-          }
-        })
-      })
-
-      Dropzone.options.myAwesomeDropzone = {
-        headers: {
-          'X-CSRF-TOKEN': "{{ csrf_token() }}"
-        },
-        dictDefaultMessage: "Arrastre una imagen al recuadro",
-        acceptedFiles: 'image/*',
-        paramName: "file", // The name that will be used to transfer the file
-        maxFilesize: 2, // MB
-        complete: function(file) {
-          this.removeFile(file);
-        },
-        queuecomplete: function() {
-          Livewire.emit('refreshImages')
-        }
-      };
-
-      Livewire.on('deleteVariant', variantId => {
-        Swal.fire({
-          title: 'Esta seguro de eliminar el registro?',
-          text: "Acción irreversible",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, eliminar!'
-        }).then((result) => {
-          if (!result.isConfirmed) return;
-          Livewire.emitTo('admin.upsert-product-variant', 'delete', variantId);
           Swal.fire(
             'Eliminado!', 'El resgistro ha sido eliminado.', 'success'
           )
-
-        })
+        }
       })
+    })
 
-      // Livewire.on('deleteSize', sizeId => {
-      //   Swal.fire({
-      //     title: 'Esta seguro de eliminar el registro?',
-      //     text: "Acción irreversible",
-      //     icon: 'warning',
-      //     showCancelButton: true,
-      //     confirmButtonColor: '#3085d6',
-      //     cancelButtonColor: '#d33',
-      //     confirmButtonText: 'Si, eliminar!'
-      //   }).then((result) => {
-      //     if (result.isConfirmed) {
+    Dropzone.options.myAwesomeDropzone = {
+      headers: {
+        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+      }
+      , dictDefaultMessage: "Arrastre una imagen al recuadro"
+      , acceptedFiles: 'image/*'
+      , paramName: "file", // The name that will be used to transfer the file
+      maxFilesize: 2, // MB
+      complete: function(file) {
+        this.removeFile(file);
+      }
+      , queuecomplete: function() {
+        Livewire.emit('refreshImages')
+      }
+    };
 
-      //       Livewire.emitTo('admin.size-product', 'delete', sizeId);
+    Livewire.on('deleteVariant', variantId => {
+      Swal.fire({
+        title: 'Esta seguro de eliminar el registro?'
+        , text: "Acción irreversible"
+        , icon: 'warning'
+        , showCancelButton: true
+        , confirmButtonColor: '#3085d6'
+        , cancelButtonColor: '#d33'
+        , confirmButtonText: 'Si, eliminar!'
+      }).then((result) => {
+        if (!result.isConfirmed) return;
+        Livewire.emitTo('admin.upsert-product-variant', 'delete', variantId);
+        Swal.fire(
+          'Eliminado!', 'El resgistro ha sido eliminado.', 'success'
+        )
 
-      //       Swal.fire(
-      //         'Eliminado!', 'El resgistro ha sido eliminado.', 'success'
-      //       )
-      //     }
-      //   })
-      // })
-
-      // Livewire.on('deleteColorProduct', pivot => {
-      //   Swal.fire({
-      //     title: 'Esta seguro de eliminar el registro?',
-      //     text: "Acción irreversible",
-      //     icon: 'warning',
-      //     showCancelButton: true,
-      //     confirmButtonColor: '#3085d6',
-      //     cancelButtonColor: '#d33',
-      //     confirmButtonText: 'Si, eliminar!'
-      //   }).then((result) => {
-      //     if (result.isConfirmed) {
-      //       // emit es paratodos, y si uso emitTo es para un componente en especifico
-      //       Livewire.emitTo('admin.color-product', 'delete', pivot);
-
-      //       Swal.fire(
-      //         'Eliminado!', 'El resgistro ha sido eliminado.', 'success'
-      //       )
-      //     }
-      //   })
-      // })
-
-      // Livewire.on('deleteProductSize', pivot => {
-      //   Swal.fire({
-      //     title: 'Esta seguro de eliminar el registro?',
-      //     text: "Acción irreversible",
-      //     icon: 'warning',
-      //     showCancelButton: true,
-      //     confirmButtonColor: '#3085d6',
-      //     cancelButtonColor: '#d33',
-      //     confirmButtonText: 'Si, eliminar!'
-      //   }).then((result) => {
-      //     if (result.isConfirmed) {
-      //       // emit es paratodos, y si uso emitTo es para un componente en especifico
-      //       Livewire.emitTo('admin.size-product', 'delete', pivot);
-
-      //       Swal.fire(
-      //         'Eliminado!', 'El resgistro ha sido eliminado.', 'success'
-      //       )
-      //     }
-      //   })
-      // })
-
-      // Livewire.on('deleteColorSize', pivot => {
-      //   console.log(pivot);
-      //   Swal.fire({
-      //     title: 'Esta seguro de eliminar el registro?',
-      //     text: "Acción irreversible",
-      //     icon: 'warning',
-      //     showCancelButton: true,
-      //     confirmButtonColor: '#3085d6',
-      //     cancelButtonColor: '#d33',
-      //     confirmButtonText: 'Si, eliminar!'
-      //   }).then((result) => {
-      //     if (result.isConfirmed) {
-      //       // emit es paratodos, y si uso emitTo es para un componente en especifico
-      //       Livewire.emitTo('admin.color-size', 'delete', pivot);
-
-      //       Swal.fire(
-      //         'Eliminado!', 'El resgistro ha sido eliminado.', 'success'
-      //       )
-      //     }
-      //   })
-      // })
-
-      // CONFIRMAR AL MOMENTO DE CAMBIAR DE VARIANTE
-      Livewire.on('confirmChangeVariant', (newValue) => {
-        Swal.fire({
-          title: 'Esta seguro de cambiar la variación del producto?',
-          text: "Acción irreversible",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si!',
-          allowOutsideClick: false
-        }).then((result) => {
-          Livewire.emitTo('admin.edit-product', 'changeVariant', newValue, result.isConfirmed);
-        })
       })
-    </script>
+    })
+
+    // Livewire.on('deleteSize', sizeId => {
+    //   Swal.fire({
+    //     title: 'Esta seguro de eliminar el registro?',
+    //     text: "Acción irreversible",
+    //     icon: 'warning',
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3085d6',
+    //     cancelButtonColor: '#d33',
+    //     confirmButtonText: 'Si, eliminar!'
+    //   }).then((result) => {
+    //     if (result.isConfirmed) {
+
+    //       Livewire.emitTo('admin.size-product', 'delete', sizeId);
+
+    //       Swal.fire(
+    //         'Eliminado!', 'El resgistro ha sido eliminado.', 'success'
+    //       )
+    //     }
+    //   })
+    // })
+
+    // Livewire.on('deleteColorProduct', pivot => {
+    //   Swal.fire({
+    //     title: 'Esta seguro de eliminar el registro?',
+    //     text: "Acción irreversible",
+    //     icon: 'warning',
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3085d6',
+    //     cancelButtonColor: '#d33',
+    //     confirmButtonText: 'Si, eliminar!'
+    //   }).then((result) => {
+    //     if (result.isConfirmed) {
+    //       // emit es paratodos, y si uso emitTo es para un componente en especifico
+    //       Livewire.emitTo('admin.color-product', 'delete', pivot);
+
+    //       Swal.fire(
+    //         'Eliminado!', 'El resgistro ha sido eliminado.', 'success'
+    //       )
+    //     }
+    //   })
+    // })
+
+    // Livewire.on('deleteProductSize', pivot => {
+    //   Swal.fire({
+    //     title: 'Esta seguro de eliminar el registro?',
+    //     text: "Acción irreversible",
+    //     icon: 'warning',
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3085d6',
+    //     cancelButtonColor: '#d33',
+    //     confirmButtonText: 'Si, eliminar!'
+    //   }).then((result) => {
+    //     if (result.isConfirmed) {
+    //       // emit es paratodos, y si uso emitTo es para un componente en especifico
+    //       Livewire.emitTo('admin.size-product', 'delete', pivot);
+
+    //       Swal.fire(
+    //         'Eliminado!', 'El resgistro ha sido eliminado.', 'success'
+    //       )
+    //     }
+    //   })
+    // })
+
+    // Livewire.on('deleteColorSize', pivot => {
+    //   console.log(pivot);
+    //   Swal.fire({
+    //     title: 'Esta seguro de eliminar el registro?',
+    //     text: "Acción irreversible",
+    //     icon: 'warning',
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3085d6',
+    //     cancelButtonColor: '#d33',
+    //     confirmButtonText: 'Si, eliminar!'
+    //   }).then((result) => {
+    //     if (result.isConfirmed) {
+    //       // emit es paratodos, y si uso emitTo es para un componente en especifico
+    //       Livewire.emitTo('admin.color-size', 'delete', pivot);
+
+    //       Swal.fire(
+    //         'Eliminado!', 'El resgistro ha sido eliminado.', 'success'
+    //       )
+    //     }
+    //   })
+    // })
+
+    // CONFIRMAR AL MOMENTO DE CAMBIAR DE VARIANTE
+    Livewire.on('confirmChangeVariant', (newValue) => {
+      Swal.fire({
+        title: 'Esta seguro de cambiar la variación del producto?'
+        , text: "Acción irreversible"
+        , icon: 'warning'
+        , showCancelButton: true
+        , confirmButtonColor: '#3085d6'
+        , cancelButtonColor: '#d33'
+        , confirmButtonText: 'Si!'
+        , allowOutsideClick: false
+      }).then((result) => {
+        Livewire.emitTo('admin.edit-product', 'changeVariant', newValue, result.isConfirmed);
+      })
+    })
+
+  </script>
   @endpush
 </div>

@@ -1,4 +1,5 @@
 <div>
+  {{-- TODO: A BORRAR --}}
   <div class="bg-white shadow-xl rounded-lg p-6 mt-12">
     {{-- Talla --}}
     <div class="mb-6">
@@ -150,7 +151,6 @@
         </div>
 
         <x-input-error class="mt-2" for="editForm.size_id" />
-
 
       </div>
 
