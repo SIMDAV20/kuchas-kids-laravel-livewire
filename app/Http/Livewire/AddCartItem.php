@@ -13,6 +13,8 @@ class AddCartItem extends Component
 
   public $product, $variant, $quantity, $qty = 1, $options = [];
 
+  protected $listeners = ['mount'];
+
   public function decrement()
   {
     $this->qty = $this->qty - 1;

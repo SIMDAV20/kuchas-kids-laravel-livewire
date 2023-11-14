@@ -25,6 +25,9 @@ class ProductView extends Component
     $this->variant = $this->product->color_product()->where('color_id', $color->id)->first();
     $prev = collect(json_decode(@$this->variant->gallery));
     if (count($prev) > 0) $this->images = $prev;
+
+    $this->emitTo('add-cart-item', 'mount');
+    $this->emit('swiperRefresh');
   }
 
   public function handleSelectSize(Size $size)
@@ -34,6 +37,14 @@ class ProductView extends Component
     $this->variant = $this->product->product_size()->where('size_id', $size->id)->first();
     $prev = collect(json_decode(@$this->variant->gallery));
     if (count($prev) > 0) $this->images = $prev;
+
+    $this->emitTo('add-cart-item', 'mount');
+    $this->emit('swiperRefresh');
+  }
+
+  public function loadGallery()
+  {
+    $this->emit('swiperRefresh');
   }
 
   public function mount(Request $request)

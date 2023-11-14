@@ -4,7 +4,7 @@
       {{-- VISTA DESKTOP IMAGES --}}
       <div class="col-span-1 hidden md:block">
         <!-- Swipper -->
-        <div class="mb-3">
+        <div wire:init="loadGallery" class="mb-3">
           <div style="--swiper-navigation-color: #BCBBE3;" class="swiper galleryTopSwipper">
             <div class="swiper-wrapper">
               @foreach ($images as $image)
@@ -135,7 +135,7 @@
               </div>
             </div>
           </div>
-          @livewire('add-cart-item', ['product' => $product, 'variant' => $variant])
+          @livewire('add-cart-item', ['product' => $product, 'variant' => $variant], key($variant->id))
         </div>
       </div>
     </div>
@@ -154,26 +154,27 @@
   @push('scripts')
     <script>
       $(document).ready(function() {
+        Livewire.on('swiperRefresh', function() {
+          const galleryThumbs = new Swiper(".galleryThumbsSwipper", {
+            spaceBetween: 10,
+            slidesPerView: 4,
+            freeMode: true,
+            watchSlidesProgress: true,
+          });
 
-        const galleryThumbs = new Swiper(".galleryThumbsSwipper", {
-          spaceBetween: 10,
-          slidesPerView: 4,
-          freeMode: true,
-          watchSlidesProgress: true,
-        });
-
-        const galleryTop = new Swiper(".galleryTopSwipper", {
-          direction: 'horizontal',
-          loop: true,
-          // spaceBetween: 10,
-          navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-          },
-          thumbs: {
-            swiper: galleryThumbs,
-          },
-        });
+          const galleryTop = new Swiper(".galleryTopSwipper", {
+            direction: 'horizontal',
+            loop: true,
+            // spaceBetween: 10,
+            navigation: {
+              nextEl: ".swiper-button-next",
+              prevEl: ".swiper-button-prev",
+            },
+            thumbs: {
+              swiper: galleryThumbs,
+            },
+          });
+        })
       });
 
       Livewire.on('glider', function(id) {
