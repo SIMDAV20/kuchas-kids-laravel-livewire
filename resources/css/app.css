@@ -222,15 +222,15 @@ img.banner-portada {
 .product-image .prod-title {
   margin: 0;
   display: block;
-  padding: 0 0 5px;
+  /* padding: 0 0 5px; */
   font-size: 20px;
-  line-height: 1.2em;
+  /* line-height: 1.4em; */
   /* color: #06c; */
-  --max-lines: 3;
-  max-height: calc(1.2em * var(--max-lines));
+  --max-lines: 2;
+  max-height: calc(1.4em * var(--max-lines));
   overflow: hidden;
   /* text-overflow: ellipsis; */
-  padding-right: 1rem;
+  /* padding-right: 1rem; */
 }
 
 @media screen and (max-width: 479px) {

@@ -198,3 +198,59 @@ if (!function_exists('applyOffer')) {
     return [$base_price, $price];
   }
 }
+
+if (!function_exists('applyMaxMinPrice')) {
+  // TODO: FUTURO ANIADIR DICHA OFFERTA POR FECHA
+  function applyMaxMinPrice($product)
+  {
+    $base_price = null;
+    $price = 0;
+
+    switch ($product->type_variant) {
+      case Product::VARBASE:
+        $base_price = $product->offer_price > 0 ? $product->price : null;
+        $price = $product->offer_price > 0 ? $product->offer_price : $product->price;
+        break;
+      case Product::VARCOLORS:
+        [$min, $max] = getMaxMinPrice($product->color_product);
+        $base_price = $min ?? null;
+        $price = $max;
+        break;
+      case Product::VARSIZES:
+        [$min, $max] = getMaxMinPrice($product->product_size);
+        $base_price = $min ?? null;
+        $price = $max;
+        break;
+        // case Product::VARCOLORSSIZES:
+        //     $product->single_img =
+        //     break;
+    }
+
+    return [$base_price, $price];
+  }
+}
+
+if (!function_exists('getMaxMinPrice')) {
+  // TODO: FUTURO ANIADIR DICHA OFFERTA POR FECHA
+  function getMaxMinPrice($items)
+  {
+
+    $selectCols = collect([]);
+    foreach ($items as $item) {
+      $selectCols->push($item->offer_price);
+      $selectCols->push($item->price);
+    }
+
+    $selectCols = $selectCols->flatten();
+
+    $selectCols = $selectCols->reject(function ($value) {
+      // Reject if the value is null or zero
+      return $value === null || $value === 0;
+    });
+
+    $min = $selectCols->min();
+    $max = $selectCols->max();
+
+    return [$min, $max];
+  }
+}

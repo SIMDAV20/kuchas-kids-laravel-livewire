@@ -25,7 +25,7 @@ class Product extends Model
 
   protected $guarded = ['id', 'created_at', 'updated_at'];
 
-  public function getPublicVariants()
+  public function getPublicVariants(string $select = 'get', string $attr = '')
   {
     $variants = $this;
     switch ($this->type_variant) {
@@ -38,6 +38,35 @@ class Product extends Model
       case Product::VARCOLORSSIZES:
         $variants = $this->color_product_size()->where('status', Product::PUBLICADO)->get();
         break;
+    }
+
+
+    $relation = [
+      Product::VARBASE => '',
+      Product::VARCOLORS => 'color_product',
+      Product::VARSIZES => 'product_size',
+      Product::VARCOLORSSIZES => 'color_product_size',
+    ][$this->type_variant];
+
+    // Check if the relation is defined
+    if ($relation) {
+      // Use the optional helper to handle null relationships
+      $query = optional($this->$relation())->where('status', Product::PUBLICADO);
+
+      // Use the first method to retrieve only one result
+
+      $query = ($select == 'first') ? $query->first() : $query->get();
+
+      if ($attr !== '') {
+        if ($query->count() == 1) {
+          $query->imgs = json_decode($query->gallery);
+        } else {
+          $query->each(fn ($item) => $item->imgs = json_decode($query->gallery));
+        }
+      }
+      return $query;
+    } else {
+      return [];
     }
 
     // $variants = collect($variants);

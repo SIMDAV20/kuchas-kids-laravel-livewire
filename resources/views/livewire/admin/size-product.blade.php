@@ -9,12 +9,12 @@
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
         @foreach ($sizes as $size)
-        <label class="flex items-center">
-          <input type="radio" wire:model="createForm.size_id" value="{{ $size->id }}" />
-          <span class="ml-2 texrt-gray-700 capitalize">
-            {{ $size->name }}
-          </span>
-        </label>
+          <label class="flex items-center">
+            <input type="radio" wire:model="createForm.size_id" value="{{ $size->id }}" />
+            <span class="ml-2 texrt-gray-700 capitalize">
+              {{ $size->name }}
+            </span>
+          </label>
         @endforeach
       </div>
 
@@ -64,65 +64,66 @@
   </div>
 
   @if ($product_sizes->count())
-  <div class="my-12 bg-white shadow-xl rounded-lg p-6 overflow-auto">
-    <table class="table-auto w-full">
-      <thead>
-        <tr class="text-xl">
-          <th class="px-4 py-2 w-1/3">
-            Talla
-          </th>
-          <th class="px-4 py-2 w-1/3">
-            Cantidad
-          </th>
-          <th class="px-4 py-2 w-1/3">
-            Precio / Oferta
-          </th>
-          <th class="px-4 py-2 w-1/3"></th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach ($product_sizes as $product_size)
-        <tr wire:key="product_size-{{ $product_size->pivot->id }}" class="text-center">
-          <td class="px-4 py-2">
-            <div class="capitalize text-sm font-bold text-gray-500">
-              {{ $sizes->find($product_size->pivot->size_id)->name }}</div>
-          </td>
-          <td class="px-4 py-2">
-            {{ $product_size->pivot->quantity }} unid.
-          </td>
+    <div class="my-12 bg-white shadow-xl rounded-lg p-6 overflow-auto">
+      <table class="table-auto w-full">
+        <thead>
+          <tr class="text-xl">
+            <th class="px-4 py-2 w-1/3">
+              Talla
+            </th>
+            <th class="px-4 py-2 w-1/3">
+              Cantidad
+            </th>
+            <th class="px-4 py-2 w-1/3">
+              Precio / Oferta
+            </th>
+            <th class="px-4 py-2 w-1/3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach ($product_sizes as $product_size)
+            <tr wire:key="product_size-{{ $product_size->pivot->id }}" class="text-center">
+              <td class="px-4 py-2">
+                <div class="capitalize text-sm font-bold text-gray-500">
+                  {{ $sizes->find($product_size->pivot->size_id)->name }}</div>
+              </td>
+              <td class="px-4 py-2">
+                {{ $product_size->pivot->quantity }} unid.
+              </td>
 
-          <td class="px-4 py-2">
-            @php
-            $offer_price_p = @$product_size->pivot->offer_price;
-            @endphp
+              <td class="px-4 py-2">
+                @php
+                  $offer_price_p = @$product_size->pivot->offer_price;
+                @endphp
 
-            <div class="text-sm font-bold">
-              <p class="text-gray-500">S/{{ number_format($product_size->pivot->price, 2) }}</p>
-              @if ($offer_price_p > 0)
-              <p class="text-orange-500">
-                S/{{ number_format($product_size->pivot->offer_price, 2) }}</p>
-              @endif
-            </div>
-          </td>
+                <div class="text-sm font-bold">
+                  <p class="text-gray-500">S/{{ number_format($product_size->pivot->price, 2) }}</p>
+                  @if ($offer_price_p > 0)
+                    <p class="text-orange-500">
+                      S/{{ number_format($product_size->pivot->offer_price, 2) }}</p>
+                  @endif
+                </div>
+              </td>
 
-          <td class="px-4 py-2 flex">
-            <x-secondary-button class="ml-auto mr-2" wire:loading.attr="disabled" wire:target="edit()" wire:click="edit({{ $product_size->pivot->id }})">
-              Actualizar
-            </x-secondary-button>
+              <td class="px-4 py-2 flex">
+                <x-secondary-button class="ml-auto mr-2" wire:loading.attr="disabled" wire:target="edit()"
+                  wire:click="edit({{ $product_size->pivot->id }})">
+                  Actualizar
+                </x-secondary-button>
 
-            <div>
-              @livewire('admin.gallery-images-products', ['item_id' => $product_size->pivot->id, 'model' => 'ProductSize'], key($product_size->pivot->id))
-            </div>
+                <div>
+                  @livewire('admin.gallery-images-products', ['item_id' => $product_size->pivot->id, 'model' => 'ProductSize'], key($product_size->pivot->id))
+                </div>
 
-            <x-danger-button wire:click="$emit('deleteProductSize', {{ $product_size->pivot->id }})">
-              Eliminar
-            </x-danger-button>
-          </td>
-        </tr>
-        @endforeach
-      </tbody>
-    </table>
-  </div>
+                <x-danger-button wire:click="$emit('deleteProductSize', {{ $product_size->pivot->id }})">
+                  Eliminar
+                </x-danger-button>
+              </td>
+            </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
   @endif
 
   {{-- @livewire('admin.color-size', ['size' => $size], key('color-size-'. $size->id)) --}}
@@ -141,12 +142,12 @@
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
           @foreach ($sizes as $size)
-          <label class="flex items-center">
-            <input type="radio" wire:model="editForm.size_id" value="{{ $size->id }}" />
-            <span class="ml-2 texrt-gray-700 capitalize">
-              {{ $size->name }}
-            </span>
-          </label>
+            <label class="flex items-center">
+              <input type="radio" wire:model="editForm.size_id" value="{{ $size->id }}" />
+              <span class="ml-2 texrt-gray-700 capitalize">
+                {{ $size->name }}
+              </span>
+            </label>
           @endforeach
         </div>
 

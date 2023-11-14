@@ -10,68 +10,69 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Search extends Component
 {
-    public $search;
+  public $search;
 
-    public $open = false;
+  public $open = false;
 
-    public function updatingSearch($value)
-    {
-        if ($value) {
-            $this->open = true;
-        } else {
-            $this->open = false;
-        }
+  public function updatingSearch($value)
+  {
+    if ($value) {
+      $this->open = true;
+    } else {
+      $this->open = false;
+    }
+  }
+
+  public function render()
+  {
+    $products = collect([]);
+    if ($this->search) {
+      $take = 8;
+      $subcategories = collect(Subcategory::name($this->search)->get());
+      if (count($subcategories) > 0) {
+        $products = $products->merge(
+          Product::whereIn('subcategory_id', $subcategories->pluck('id'))
+            ->search($this->search)
+            ->orderBy('name', 'asc')
+            ->take($take)
+            ->get()
+        );
+        $products = $products->unique()->take($take);
+      } else {
+        $products = Product::search($this->search)
+          ->orderBy('name', 'asc')
+          ->take($take)
+          ->get();
+      }
     }
 
-    public function render()
-    {
-        $products = collect([]);
-        if ($this->search) {
-            $take = 8;
-            $subcategories = Subcategory::name($this->search)->get();
-            // dd($subcategories);
-            if (count($subcategories) > 0) {
-                foreach ($subcategories as $key => $subcategory) {
-                    $products = $products->merge(
-                        Product::where('subcategory_id', $subcategory->id)
-                            ->where('status', Product::PUBLICADO)
-                            ->search($this->search)
-                            ->take($take)
-                            ->get()
-                    );
-                    // $products = $products->merge($subcategory->products()
-                    //     ->search($this->search)->take($take));
-                }
-                $products = $products->unique()->take($take);
-            } else {
-                $products = Product::search($this->search)
-                    ->where('status', Product::PUBLICADO)
-                    ->orderBy('name', 'asc')
-                    ->take(8)
-                    ->get();
-            }
+    foreach ($products as $product) {
+      switch ($product->type_variant) {
+        case Product::VARBASE:
+          $product->single_img = json_decode(@$product->gallery)[0] ?? null;
+          break;
+        case Product::VARCOLORS:
+          $p_color_prod = $product->color_product->first();
+          $product->single_img = json_decode($p_color_prod->gallery)[0] ?? null;
+          break;
+        case Product::VARSIZES:
+          $p_prod_size = $product->product_size->first();
+          $product->single_img = json_decode($p_prod_size->gallery)[0] ?? null;
+          break;
+          // case Product::VARCOLORSSIZES:
+          //     $product->single_img =
+          //     break;
+        default:
+          $product->single_img = null;
+          break;
+      }
 
-            // foreach ($products as $key => $product) {
-            //     $product->low_price = 9999999;
-            //     if (count($product->sizes) > 0) {
-            //         foreach ($product->product_size as $s_product) {
-            //             if (
-            //                 $s_product->offer_price > 0 &&
-            //                 (Carbon::parse($product->offer_date)->format('Y-m-d') >= Carbon::now()->format('Y-m-d')) &&
-            //                 $product->offer_date !== null
-            //             ) {
-            //                 $product->low_price = $s_product->offer_price;
-            //                 // SI LA FECHA LIMITE ES INDEFINIDO
-            //             } elseif ($product->offer_price > 0 && $product->offer_date == null) {
-            //                 $product->low_price = $s_product->offer_price;
-            //             } elseif ($product->low_price > $s_product->price) {
-            //                 $product->low_price = $s_product->price;
-            //             }
-            //         }
-            //     }
-            // }
-        }
+      [$base_price, $price] = applyMaxMinPrice($product);
 
-        return view('livewire.search', compact('products'));
+      $product->base_price =  $base_price;
+      $product->price =  $price;
     }
+
+    return view('livewire.search', compact('products'));
+  }
 }

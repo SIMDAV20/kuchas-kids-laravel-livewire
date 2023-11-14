@@ -16,8 +16,10 @@ class ProductImage extends Component
   {
     $this->slug = $this->product->getFirstPublicSlug();
 
-    [$min, $max] = $this->product->getMinPrice();
-    $this->product->min_price = $min;
+    [$base_price, $price] = applyMaxMinPrice($this->product);
+
+    $this->product->base_price =  $base_price;
+    $this->product->price =  $price;
 
     return view('livewire.product-image');
   }

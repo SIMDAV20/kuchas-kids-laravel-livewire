@@ -1,25 +1,28 @@
 <article class="pt-2 product-image">
   <a href="{{ route('products.show', $slug) }}">
     @switch($product->type_variant)
-    @case('base')
-    <img class="h-48 w-full object-contain object-center rounded-t product-image" src="{{ @Storage::url(json_decode(@$product->gallery)[0]) }}">
-    @break
+      @case('base')
+        <img class="h-48 w-full object-contain object-center rounded-t product-image"
+          src="{{ @Storage::url(json_decode(@$product->gallery)[0]) }}" alt="{{ $product->slug }}">
+      @break
 
-    @case('colors')
-    @php
-    $p_color_prod = $product->color_product->first();
-    @endphp
-    <img class="h-48 w-full object-contain object-center rounded-t product-image" src="{{ @Storage::url(json_decode($p_color_prod->gallery)[0]) }}">
-    @break
+      @case('colors')
+        @php
+          $p_color_prod = $product->color_product->first();
+        @endphp
+        <img class="h-48 w-full object-contain object-center rounded-t product-image"
+          src="{{ @Storage::url(json_decode($p_color_prod->gallery)[0]) }}" alt="{{ $product->slug }}">
+      @break
 
-    @case('sizes')
-    @php
-    $p_prod_size = $product->product_size->first();
-    @endphp
-    <img class="h-48 w-full object-contain object-center rounded-t product-image" src="{{ @Storage::url(json_decode($p_prod_size->gallery)[0]) }}">
-    @break
+      @case('sizes')
+        @php
+          $p_prod_size = $product->product_size->first();
+        @endphp
+        <img class="h-48 w-full object-contain object-center rounded-t product-image"
+          src="{{ @Storage::url(json_decode($p_prod_size->gallery)[0]) }}" alt="{{ $product->slug }}">
+      @break
 
-    {{-- @case('color_sizes')
+      {{-- @case('color_sizes')
       color_sizes
     @break --}}
     @endswitch
@@ -28,19 +31,15 @@
       <h2 class="prod-title text-gray-550 text-center">
         {{ $product->name }}
       </h2>
+      <p class="text-gray-500 font-bold text-center mt-2">
+        @if ($product->base_price)
+          S/ {{ $product->base_price }} - {{ $product->price }}
+        @else
+          S/ {{ $product->price }}
+        @endif
+      </p>
     </div>
 
-    {{-- <p class="font-bold text-gray-550">Desde</p>
-      <span class="font-bold text-violet-350">S/{{ $product->getMinPrice() }}</span> --}}
-
-    {{-- @if ($product->max_price)
-      <div class="flex justify-center items-center">
-        <del class="text-sm text-gray-500 font-bold mr-2">S/ {{ $product->price }}</del>
-    <p class="text-violet-350 font-bold">S/ {{ $product->offer_price }}</p>
-    </div>
-    @else
-    <p class="font-bold text-violet-350">S/ {{ $product->price }}</p>
-    @endif --}}
   </a>
 
   {{-- <div x-data="{ p_color: 0 }">

@@ -1,7 +1,5 @@
 {{-- x-data le digo que puedo usar alphine en todo el div que lleva dentro --}}
 <div x-data>
-  {{-- TODO: borrar luego --}}
-  {{ $quantity }}
   <div class="text-gray-550 my-4">
     <span class="font-semibold text-lg">Stock {{ $quantity > 0 ? '' : 'no' }} disponible</span>
     @if ($quantity)
