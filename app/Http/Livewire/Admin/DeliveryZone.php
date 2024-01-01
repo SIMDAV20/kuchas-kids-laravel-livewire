@@ -135,6 +135,6 @@ class DeliveryZone extends Component
 
     public function render()
     {
-        return view('livewire.admin.delivery-zone')->layout('layouts.admin');;
+        return view('livewire.admin.delivery-zone')->layout('layouts.admin');
     }
 }

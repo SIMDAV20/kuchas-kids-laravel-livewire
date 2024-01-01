@@ -14,6 +14,7 @@ use App\Http\Livewire\Admin\ShowCity;
 use App\Http\Livewire\Admin\ShowDepartment;
 use App\Http\Livewire\Admin\UserComponent;
 use App\Http\Livewire\Admin\DeliveryZone;
+use App\Http\Livewire\Admin\ManageColorsSizes;
 use App\Http\Livewire\Admin\SettingsComponent;
 use App\Http\Livewire\Admin\UploadBanner;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,8 @@ Route::get('orders/{order}', [OrderController::class, 'show'])->name('admin.orde
 // Route::get('provinces/{city}', ShowProvince::class)->name('admin.provinces.show');
 
 Route::get('delivery-zone', DeliveryZone::class)->name('admin.zones.index'); // para dar el costo por distrito
+
+Route::get('colors-sizes', ManageColorsSizes::class)->name('admin.colors-sizes.index');
 
 Route::get('users', UserComponent::class)->name('admin.users.index');
 
