@@ -9,7 +9,7 @@
       'lg' => 'sm:max-w-lg',
       'xl' => 'sm:max-w-xl',
       '2xl' => 'sm:max-w-2xl',
-      'max-w' => 'xl:max-w-[50%]',
+      'max-w' => 'xl:max-w-[80%]',
   ][$maxWidth ?? '2xl'];
 @endphp
 
