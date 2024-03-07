@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -55,15 +56,34 @@ class CategoryFilter extends Component
         $this->emit('gotoTop');
     }
 
+    public function mount()
+    {
+        $seoItems[] = $this->category->subcategories()->select('subcategories.name')->get();
+        $seoItems[] = $this->category->brands()->select('brands.name')->get();
+        $seoItems[] = $this->category->products()->where('status', Product::PUBLICADO)->select('products.name')->get();
+
+        $description = '';
+        foreach ($seoItems as $key => $seoItem) {
+            $description .= $seoItem->implode('name', ',') . ($key === array_key_last($seoItems) ? '' : ',');
+        }
+
+        $data = [];
+        foreach ($this->queryString as $key => $value) {
+            $data[$value] = $this->$value;
+        }
+
+        if (!is_null($this->page)) {
+            $data['page'] = $this->page;
+        }
+
+        $query = Arr::query($data);
+        $url = url()->current() . ($query ? ('?' . $query) : '');
+
+        setSEOTools($this->category->name, $description, $url);
+    }
+
     public function render()
     {
-        // $products = $this->category->products()
-        //             ->where('status', 2)
-        //             ->paginate(15);
-
-        // whereHas es si existe la relacion en los modelos
-        // $productsQuery es la consulta
-
         $productsQuery = Product::query()->whereHas('subcategory.category', function (Builder $query) {
             $query->where('id', $this->category->id);
         });
@@ -82,7 +102,7 @@ class CategoryFilter extends Component
             $this->showButton = true;
         }
 
-        $products = $productsQuery->where('status', 2)->paginate(20);
+        $products = $productsQuery->where('status', Product::PUBLICADO)->paginate(20);
         return view('livewire.category-filter', compact('products'));
     }
 }

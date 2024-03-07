@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Models\Order;
 use App\Http\Livewire\CreateOrder;
 use App\Http\Livewire\PaymentOrder;
 use App\Http\Livewire\ShoppingCart;
@@ -11,7 +10,6 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SecondaryPagesController;
 use App\Http\Controllers\WebhooksController;
 use App\Http\Livewire\ContactForm;

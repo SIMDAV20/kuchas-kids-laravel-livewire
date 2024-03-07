@@ -4,9 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Product;
 use App\Models\Subcategory;
-use Carbon\Carbon;
 use Livewire\Component;
-use Illuminate\Database\Eloquent\Builder;
 
 class Search extends Component
 {
@@ -25,6 +23,7 @@ class Search extends Component
 
     public function render()
     {
+        // setSEOTools();
         $products = collect([]);
         if ($this->search) {
             $take = 8;

@@ -14,7 +14,7 @@ class SearchController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $products = Product::search($request->name) // solo los publicados
+        $products = Product::search($request->name)
             ->orderBy('name', 'asc')
             ->paginate(8);
 
@@ -37,7 +37,7 @@ class SearchController extends Controller
         //         }
         //     }
         // }
-        return view('search', compact('products', 'name'));
+        return view('search', compact('products'));
     }
 
     public function paginate($items, $perPage = 8, $page = null, $options = [])

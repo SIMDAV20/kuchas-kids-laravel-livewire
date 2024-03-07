@@ -198,6 +198,7 @@ return [
         App\Providers\JetstreamServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         Laraveles\Spanish\SpanishServiceProvider::class,
+        Artesaos\SEOTools\Providers\SEOToolsServiceProvider::class
     ],
 
     /*
@@ -212,6 +213,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'SEO' => Artesaos\SEOTools\Facades\SEOTools::class,
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 

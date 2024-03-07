@@ -14,6 +14,7 @@ class ProductController extends Controller
 {
     public function showProduct(Request $request)
     {
+
         $models = ['Product', 'ColorProduct', 'ProductSize', 'ColorProductSize'];
         $var_product = null;
 
@@ -89,81 +90,28 @@ class ProductController extends Controller
         $colors = $product->colors;
         $sizes = $product->sizes;
 
-        // return compact('base', 'colors', 'images', 'sizes', 'var_product', 'product');
+
+        // START SEO
+
+        $seoItems[] = $product->subcategory->name;
+        $seoItems[] = $product->subcategory->category->name;
+        $seoItems[] = $product->brand->name;
+
+        $html = $product->description;
+        $seoItems[] = strip_tags($html);
+
+        $description = '';
+        foreach ($seoItems as $key => $seoItem) {
+            $description .= $seoItem . ($key === array_key_last($seoItems) ? '' : ',');
+        }
+
+        setSEOTools($product->name, $description);
+
+        // END SEO
 
         return view(
             'products.show',
             compact('base', 'colors', 'sizes', 'var_product', 'product', 'images', 'main_vars', 'price', 'offer_price')
         );
-
-        // $config = [
-        //     'color_product',
-        //     'product_size',
-        //     'colors_sizes',
-        // ];
-
-        // $colors = [];
-        // $sizes = [];
-
-        // foreach ($config as $key => $value) {
-        //     $property = $product->{$value};
-        //     if (is_array($property) || $property instanceof Countable) {
-        //         $count = count($property);
-        //         if ($count > 0) {
-        //             $vars = $product->{$value}()->where('quantity', '>', 0)->get();
-        //             $colors = Color::whereIn('id', @$vars->pluck('color_id'))->get();
-        //             $sizes = Size::whereIn('id', @$vars->pluck('size_id'))->get();
-        //             break;
-        //         }
-        //     }
-        // }
-
-        // // return [$product, $colors, $sizes];
-
-        // if (count($colors) && isset($color_url)) {
-        // }
-
-        // if ($color_url == null) {
-        //     # code...
-        // }
-        // $color = '';
-
-        // $date1 = Carbon::parse($product->offer_date)->format('Y-m-d');
-        // $date2 = Carbon::yesterday()->format('Y-m-d');
-        // $date3 = Carbon::now()->format('Y-m-d');
-
-
-        // $showOfferDate = false;
-        // $sameDay       = false;
-        // if ($date1 > $date2) {
-        //     $showOfferDate = true;
-        // }
-
-        // if ($date1 == $date2) {
-        //     $sameDay = true;
-        // }
-
-
-        // if (isset($color_url)) {
-        //     $color = Color::where('slug', $color_url)->first();
-        //     return view(
-        //         'products.show',
-        //         compact('product', 'showOfferDate', 'sameDay', 'color')
-        //     );
-        // } else if (!isset($color_url)) {
-        //     $color = $product->colors()->first();
-        //     return view(
-        //         'products.show',
-        //         compact('product', 'showOfferDate', 'sameDay', 'color')
-        //     );
-        // } else {
-        //     return view(
-        //         'products.show',
-        //         compact('product', 'showOfferDate', 'sameDay')
-        //     );
-        // }
-
-
-
     }
 }

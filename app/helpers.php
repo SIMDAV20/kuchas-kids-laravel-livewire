@@ -5,9 +5,10 @@ use App\Models\Product;
 use App\Models\ColorProduct;
 use App\Models\ColorProductSize;
 use App\Models\ProductSize;
-use Carbon\Carbon;
+use Artesaos\SEOTools\Facades\SEOTools;
 use Gloudemans\Shoppingcart\Facades\Cart;
-use Mockery\Undefined;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Route;
 
 if (!function_exists('current_quantity')) {
     function current_quantity($product_id, $color_id = null, $size_id = null)
@@ -107,44 +108,6 @@ if (!function_exists('increase')) {
             $product->quantity = $quantity;
             $product->save();
         }
-
-        // {
-        //     "0061beede5107af13b9f56dbc2556a49": {
-        //         "rowId":"0061beede5107af13b9f56dbc2556a49",
-        //         "id":34,
-        //         "name":"Mandil Azul",
-        //         "qty":1,
-        //         "price":40,
-        //         "weight":550,
-        //         "options": {
-        //             "size":"Talla S",
-        //             "size_id":1,
-        //             "image":"http:\/\/127.0.0.1:8000\/storage\/products\/mandil-azul-1.jpg"
-        //         },
-        //         "discount":0,
-        //         "tax":8.4,"subtotal":40
-        //     }
-        // }
-
-        // if ($item->options->size_id) {
-        //     $size = Size::find($item->options->size_id);
-
-        //     $size->colors()->detach($item->options->color_id); // eliminar la relacion
-
-        //     $size->colors()->attach([
-        //         $item->options->color_id => ['quantity' => $quantity] // agregando otra vez el stock reservado
-        //     ]);
-        // } elseif ($item->options->color_id) {
-
-        //     $product->colors()->detach($item->options->color_id); // eliminar la relacion
-
-        //     $product->colors()->attach([
-        //         $item->options->color_id => ['quantity' => $quantity] // agregando otra vez el stock reservado
-        //     ]);
-        // } else {
-        //     $product->quantity = $quantity;
-        //     $product->save();
-        // }
     }
 }
 
@@ -194,5 +157,42 @@ if (!function_exists('applyOffer')) {
         }
 
         return [$base_price, $price];
+    }
+}
+
+if (!function_exists('setSEOTools')) {
+    function setSEOTools(string $entity_name = null, string $description = null, string $url = null)
+    {
+        $currentRoute = Route::currentRouteName();
+
+        if (is_null($url)) {
+            $url = url()->current();
+        }
+
+        $title = config('app.name', 'Laravel');
+
+
+        switch ($currentRoute) {
+            case 'welcome':
+                $addTitle = 'Home';
+                break;
+            case 'search':
+                $addTitle = 'Buscador';
+                break;
+            case 'categories.show':
+                $addTitle = $entity_name;
+                break;
+            case 'products.show':
+                $addTitle = $entity_name;
+                break;
+
+            default:
+                $addTitle = '';
+                break;
+        }
+
+        SEOTools::setCanonical($url);
+        SEOTools::setTitle($title . ($addTitle !== '' ?  ' | ' . $addTitle : ''));
+        SEOTools::setDescription($description);
     }
 }
