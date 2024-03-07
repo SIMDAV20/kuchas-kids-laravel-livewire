@@ -13,11 +13,16 @@ class CategoryFilter extends Component
     use WithPagination;
 
     public $category, $subcategoria, $marca, $showButton = false;
+    public $page = 1;
 
     public $view = "grid";
     // list
 
-    protected $queryString = ['subcategoria', 'marca'];
+    protected $queryString = [
+        'subcategoria',
+        'marca',
+        'page'
+    ];
 
     public function resetFilters()
     {

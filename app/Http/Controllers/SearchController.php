@@ -3,40 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\Subcategory;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
 
 class SearchController extends Controller
 {
     public function __invoke(Request $request)
     {
+
         $products = Product::search($request->name)
             ->orderBy('name', 'asc')
             ->paginate(8);
 
-        // foreach ($products as $key => $product) {
-        //     $product->low_price = 9999999;
-        //     if (count($product->sizes) > 0) {
-        //         foreach ($product->product_size as $s_product) {
-        //             if (
-        //                 $s_product->offer_price > 0 &&
-        //                 (Carbon::parse($product->offer_date)->format('Y-m-d') >= Carbon::now()->format('Y-m-d')) &&
-        //                 $product->offer_date !== null
-        //             ) {
-        //                 $product->low_price = $s_product->offer_price;
-        //                 // SI LA FECHA LIMITE ES INDEFINIDO
-        //             } elseif ($product->offer_price > 0 && $product->offer_date == null) {
-        //                 $product->low_price = $s_product->offer_price;
-        //             } elseif ($product->low_price > $s_product->price) {
-        //                 $product->low_price = $s_product->price;
-        //             }
-        //         }
-        //     }
-        // }
+        if (!$products->isEmpty()) {
+            $seoItems = collect([]);
+            foreach ($products as $key => $product) {
+                $seoItems->push($product->subcategory->category->name);
+                $seoItems->push($product->subcategory->name);
+                $seoItems->push($product->brand->name);
+                $seoItems->push($product->name);
+            }
+
+            $description =  $seoItems->unique()->values()->implode(',');
+
+            $data = [
+                'name' => $request->name,
+                'page' => $products->currentPage()
+            ];
+
+            $query = Arr::query($data);
+            $url = url()->current() . ($query ? ('?' . $query) : '');
+
+            setSEOTools(null, $description, $url);
+        }
         return view('search', compact('products'));
     }
 
