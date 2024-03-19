@@ -40,7 +40,7 @@ class EditProduct extends Component
         'product.description'    => 'required',
         'product.quantity'       => '',
         'product.brand_id'       => '',
-        'product.price'          => 'required|numeric|min:2',
+        'product.price'          => '',
         'product.offer_price'    => 'nullable|lt:product.price',
         'product.video'          => 'nullable',
     ];
@@ -286,8 +286,8 @@ class EditProduct extends Component
 
         if (count($this->product->color_product) == 0 && count($this->product->product_size) == 0 && count($this->product->color_product_size) == 0) {
             $rules['product.quantity'] = 'required|numeric|min:1';
+            $rules['product.price'] = 'required|numeric|min:2';
         }
-
         $this->validate($rules);
 
         $this->product->slug = $this->slug;
