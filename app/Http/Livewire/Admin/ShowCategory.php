@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\Subcategory;
 use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
@@ -14,6 +15,8 @@ class ShowCategory extends Component
     use WithFileUploads;
 
     public $subcategories, $category, $rand, $subcategory;
+
+    public $subcategory_products = [], $subcategory_id = "";
 
     protected $listeners = ['delete'];
 
@@ -88,8 +91,26 @@ class ShowCategory extends Component
             $subcategory->save();
         }
 
-        $this->emit('updated_positions');
+        $this->emit('updated_subcategories_positions');
         $this->mount($this->category);
+    }
+
+    public function updatingSubcategoryId($value)
+    {
+        $this->subcategory_products = Product::where('subcategory_id', $value)->orderBy('position')->get();
+    }
+
+    public function updateProductsPosition($list)
+    {
+        // dd($list);
+        foreach ($list as $item) {
+            $product = Product::find($item["value"]);
+            $product->position = $item["order"];
+            $product->save();
+        }
+
+        $this->emit('updated_products_positions');
+        $this->updatingSubcategoryId($this->subcategory_id);
     }
 
     public function update()

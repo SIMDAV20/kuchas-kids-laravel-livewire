@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  {{-- @push('scripts')
+  @push('scripts')
     <script>
       Livewire.on('glider', function(id) {
         Alpine.start();
@@ -80,5 +80,5 @@
         });
       });
     </script>
-  @endpush --}}
+  @endpush
 </x-app-layout>

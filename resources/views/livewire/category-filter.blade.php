@@ -15,7 +15,7 @@
     <aside>
       <h2 class="font-semibold text-center mb-2 text-gray-550">Subcategorías</h2>
       <ul class="divide-y divide-gray-200 text-gray-550">
-        @foreach ($category->subcategories()->orderBy('position', 'ASC')->get() as $subcategory)
+        @foreach ($subcategories as $subcategory)
           <li class="py-2 text-sm">
             {{-- $set('subcategoria', '{{ $subcategory->name }}') se qda almacenado el nombre --}}
             <a class="cursor-pointer hover:text-violet-350 capitalize {{ $subcategoria == $subcategory->slug ? 'text-violet-350 font-semibold' : '' }}"
@@ -50,7 +50,7 @@
       @if ($view == 'grid')
         {{-- gap-4 es para que tenga una separacion --}}
         <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          @forelse ($products as $product)
+          @forelse ($paginatedProducts as $product)
             <li class="bg-white rounded-lg shadow">
               @livewire('product-image', ['product' => $product], key($product->id))
             </li>
@@ -77,7 +77,7 @@
       @endif
 
       <div class="mt-4">
-        {{ $products->links('pagination-links') }}
+        {{ $paginator }}
       </div>
     </div>
   </div>

@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -13,6 +14,7 @@ class CategoryFilter extends Component
     use WithPagination;
 
     public $category, $subcategoria, $marca, $showButton = false;
+    public $perPage = 20;
     public $page = 1;
 
     public $view = "grid";
@@ -91,14 +93,17 @@ class CategoryFilter extends Component
     {
         $productsQuery = Product::query()->whereHas('subcategory.category', function (Builder $query) {
             $query->where('id', $this->category->id);
-        });
+        })->with('subcategory');
+
+        $subcategories = $this->category->subcategories()->orderBy('position')->get();
 
         if ($this->subcategoria) {
             $productsQuery = $productsQuery->whereHas('subcategory', function (Builder $query) {
                 $query->where('slug', $this->subcategoria);
-            });
+            })->orderBy('position');
             $this->showButton = true;
         }
+
 
         if ($this->marca) {
             $productsQuery = $productsQuery->whereHas('brand', function (Builder $query) {
@@ -107,7 +112,27 @@ class CategoryFilter extends Component
             $this->showButton = true;
         }
 
-        $products = $productsQuery->where('status', Product::PUBLICADO)->paginate(20);
-        return view('livewire.category-filter', compact('products'));
+        $productsQuery = $productsQuery->where('status', Product::PUBLICADO);
+        $productsQuery = collect($productsQuery->get())->sortBy([['subcategory.position'], ['position']]);
+
+        $products = $productsQuery;
+        // Calcula el índice inicial y final de los elementos en la página actual
+        $startIndex = ($this->page - 1) * $this->perPage;
+        $endIndex = $startIndex + $this->perPage;
+
+        // Obtiene los elementos para la página actual
+        $paginatedProducts = $products->slice($startIndex, $this->perPage);
+
+        // Crea una instancia de LengthAwarePaginator
+        $paginator = new LengthAwarePaginator(
+            $paginatedProducts,
+            $products->count(),
+            $this->perPage,
+            $this->page
+        );
+
+        // $products = $productsQuery->paginate(20);
+
+        return view('livewire.category-filter', compact('paginatedProducts', 'paginator', 'subcategories'));
     }
 }

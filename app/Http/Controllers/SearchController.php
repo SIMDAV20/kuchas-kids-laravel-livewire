@@ -14,8 +14,12 @@ class SearchController extends Controller
     public function __invoke(Request $request)
     {
 
-        $products = Product::search($request->name)
-            ->orderBy('name', 'asc')
+        $products = Product::join('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
+            ->select('products.*', 'subcategories.name as subcategory_name')
+            ->search($request->name)
+            ->orderBy('products.name', 'asc')
+            ->orderBy('subcategories.position')
+            ->orderBy('position')
             ->paginate(8);
 
         if (!$products->isEmpty()) {

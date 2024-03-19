@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Category;
+use App\Models\Product;
 use Livewire\Component;
 
 class CategoryProducts extends Component
@@ -21,9 +22,12 @@ class CategoryProducts extends Component
         if ($this->category == null) {
             $this->category = Category::all()->random();
         }
-        // jalar todos los productos por categoria y recien enviarlo al componente category-products
-        $this->products = $this->category->products()->where('status', 2)
-            ->orderBy('id', 'ASC')->get(); // ->take(15)
+        $this->products = $this->category->products()
+            ->where('status', Product::PUBLICADO)
+            ->with('subcategory')
+            ->orderBy('subcategories.position')
+            ->orderBy('position')
+            ->get();
 
         if (isset($this->product)) {
             $product_id = $this->product->id;
@@ -39,7 +43,6 @@ class CategoryProducts extends Component
 
     public function render()
     {
-        // $this->products = $this->category->products()->where('status', 2)->take(15)->get();
         return view('livewire.category-products');
     }
 }
