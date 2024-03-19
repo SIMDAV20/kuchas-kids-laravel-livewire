@@ -40,7 +40,19 @@ class ProductImage extends Component
 
         $this->product->onStockToSell();
 
-        return view('livewire.product-image');
+        // TODO: a refactorizar
+        $typeProduct = '';
+        if (count($this->product->color_product) > 0) {
+            $typeProduct = 1;
+        }
+        if (count($this->product->product_size) > 0) {
+            $typeProduct = 2;
+        }
+        if (count($this->product->color_product_size) > 0) {
+            $typeProduct = 3;
+        }
+
+        return view('livewire.product-image', compact('typeProduct'));
     }
 
     // private function getProductVariants($prod)
