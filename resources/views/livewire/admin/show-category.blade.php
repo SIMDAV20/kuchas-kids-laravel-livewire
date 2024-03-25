@@ -24,6 +24,30 @@
 
         <x-input-error for="createForm.slug" />
       </div>
+      <div class="col-span-6">
+        <x-label>
+          Palabras Claves (SEO)
+
+          <small class="text-gray-500 float-end mr-2">Enter para agregar</small>
+        </x-label>
+        <x-input wire:model="createForm.inputKeyword" wire:keydown.enter.prevent="addKeyword('create')" type="text"
+          class="w-full mt-1" />
+
+        @if ($createForm['keywords'])
+          <div class="w-wull border  border-gray-400 mt-2 p-2 rounded">
+            @foreach ($createForm['keywords'] as $item)
+              <div
+                class="ml-2 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 rounded-full bg-violet-500 text-white border">
+                {{ $item }}
+                <i class="fa fa-times text-white cursor-pointer ml-2"
+                  wire:click="deleteKeyword('create', '{{ $item }}')"></i>
+              </div>
+            @endforeach
+          </div>
+        @endif
+
+        <x-input-error for="createForm.keywords" />
+      </div>
     </x-slot>
 
     <x-slot name="actions">
@@ -55,7 +79,7 @@
           @foreach ($subcategories as $subcategory)
             <tr wire:sortable.item="{{ $subcategory->id }}" wire:key="subcategory-{{ $subcategory->id }}">
               <td class="py-2">
-                <i class="fas fa-allergies cursor-pointer"></i>
+                <i class="fas fa-allergies cursor-move"></i>
                 <span class="uppercase hover:text-blue-600">
                   {{ $subcategory->name }}
                 </span>
@@ -84,7 +108,7 @@
 
   <x-action-section>
     <x-slot name="title">
-      Lista de productos por subcategoría
+      Ordenar productos por subcategoría
     </x-slot>
     <x-slot name="description">
       Aqui podrá ordenar los productos por subcategoría
@@ -101,9 +125,9 @@
         </select>
       </div>
 
-      <hr class="my-3">
 
       @if ($subcategory_id !== '')
+        <hr class="mt-6">
         <table class="text-gray-600 w-full">
           <thead class="border-b border-gray-300s">
             <tr class="text-left">
@@ -117,10 +141,13 @@
             @foreach ($subcategory_products as $product)
               <tr wire:sortable.item="{{ $product->id }}" wire:key="product-{{ $product->id }}">
                 <td class="py-2">
-                  <i class="fas fa-allergies cursor-pointer"></i>
-                  <span class="uppercase hover:text-blue-600">
-                    {{ $product->name }}
-                  </span>
+
+                  <div class="flex items-center">
+                    <i class="fas fa-allergies cursor-pointer"></i>
+                    <span class="uppercase hover:text-blue-600 mx-2">
+                      {{ $product->name }}
+                    </span>
+                  </div>
                 </td>
                 <td class="py-2">
                   {{ $product->position }}
@@ -161,6 +188,31 @@
 
           <x-input-error for="editForm.slug" />
         </div>
+
+        <div>
+          <x-label>
+            Palabras Claves (SEO)
+
+            <small class="text-gray-500 float-end mr-2">Enter para agregar</small>
+          </x-label>
+          <x-input wire:model="editForm.inputKeyword" wire:keydown.enter.prevent="addKeyword('edit')" type="text"
+            class="w-full mt-1" />
+
+          @if ($editForm['keywords'])
+            <div class="w-wull border  border-gray-400 mt-2 p-2 rounded">
+              @foreach ($editForm['keywords'] as $item)
+                <div
+                  class="ml-2 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 rounded-full bg-violet-500 text-white border">
+                  {{ $item }}
+                  <i class="fa fa-times text-white cursor-pointer ml-2"
+                    wire:click="deleteKeyword('edit', '{{ $item }}')"></i>
+                </div>
+              @endforeach
+            </div>
+          @endif
+
+          <x-input-error for="editForm.keywords" />
+        </div>
       </div>
     </x-slot>
 
@@ -168,9 +220,9 @@
       <x-secondary-button wire:click="$set('editForm.open', false)">
         Cancelar
       </x-secondary-button>
-      <x-danger-button wire:click="update" wire:loading.attr="disabled" wire:target="editImage, update">
+      <x-button class="ml-2" wire:click="update" wire:loading.attr="disabled" wire:target="editImage, update">
         Actualizar
-      </x-danger-button>
+      </x-button>
     </x-slot>
   </x-dialog-modal>
 

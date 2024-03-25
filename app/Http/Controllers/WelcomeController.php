@@ -9,37 +9,39 @@ use App\Models\Subcategory;
 
 class WelcomeController extends Controller
 {
-    public function __invoke()
-    {
-        $categories = Category::orderBy('position', 'ASC')->get();
+  public function __invoke()
+  {
 
-        $seoItems[] = $categories;
-
-        $seoItems[] = Subcategory::select('name')->get();
-
-        $seoItems[] = Product::where('status', Product::PUBLICADO)->select('name', 'created_at')->orderBy('created_at', 'DESC')->get();
-
-        $description = '';
-        foreach ($seoItems as $key => $seoItem) {
-            $description .= $seoItem->implode('name', ',') . ($key === array_key_last($seoItems) ? '' : ',');
-        }
-
-
-        setSEOTools(null,  $description);
-
-        if (auth()->user()) {
-            $orders = Order::where('status', 1)
-                ->whereNull('payment_method')
-                ->where('user_id', auth()->user()->id)
-                ->get();
-            $pendiente = $orders->count();
-            if ($pendiente) {
-                $mensaje = "Usted tiene $pendiente órdenes pendientes . <a class='font-bold' href='" . route('orders.index') . "?status=1'>Ir a pagar</a>";
-                // generar el mensaje flash
-                session()->flash('flash.banner', $mensaje);
-            }
-        }
-
-        return view('welcome', compact('categories'));
+    $seoItems = collect([]);
+    $subcategories = Subcategory::orderBy('position', 'ASC')->get();
+    foreach ($subcategories as $key => $subcategory) {
+      if (!empty($subcategory->keywords))  $seoItems->push(json_decode($subcategory->keywords));
     }
+    // $seoItems[] = $categories;
+    // $seoItems[] = Subcategory::select('name')->get();
+    // $seoItems[] = Product::where('status', Product::PUBLICADO)->select('name', 'created_at')->orderBy('created_at', 'DESC')->get();
+
+    $description = '';
+    $seoItems = $seoItems->flatten()->unique()->values();
+    $description .= $seoItems->implode(',');
+    setSEOTools(null,  $description);
+
+
+
+    if (auth()->user()) {
+      $orders = Order::where('status', 1)
+        ->whereNull('payment_method')
+        ->where('user_id', auth()->user()->id)
+        ->get();
+      $pendiente = $orders->count();
+      if ($pendiente) {
+        $mensaje = "Usted tiene $pendiente órdenes pendientes . <a class='font-bold' href='" . route('orders.index') . "?status=1'>Ir a pagar</a>";
+        // generar el mensaje flash
+        session()->flash('flash.banner', $mensaje);
+      }
+    }
+
+    $categories = Category::orderBy('position', 'ASC')->get();
+    return view('welcome', compact('categories'));
+  }
 }
