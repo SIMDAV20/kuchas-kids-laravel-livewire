@@ -7,36 +7,44 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'image', 'position']; // , 'icon'
+  const NO_PUBLIC = 0;
+  const PUBLIC = 1;
 
-    // Relacion uno a muchos
-    public function subcategories()
-    {
-        return $this->hasMany(Subcategory::class);
-    }
+  protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    // Relacion muchos a muchos
-    public function brands()
-    {
-        return $this->belongsToMany(Brand::class);
-    }
+  // Relacion uno a muchos
+  public function subcategories()
+  {
+    return $this->hasMany(Subcategory::class);
+  }
 
-    public function products()
-    {
-        // a traves de otra tabla
-        return $this->hasManyThrough(Product::class, Subcategory::class);
-    }
+  // Relacion muchos a muchos
+  public function brands()
+  {
+    return $this->belongsToMany(Brand::class);
+  }
 
-    // URL AMIGABLES
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
+  public function products()
+  {
+    // a traves de otra tabla
+    return $this->hasManyThrough(Product::class, Subcategory::class);
+  }
 
-    public static function getLastPosition()
-    {
-        return Category::all()->count() + 1;
-    }
+  public function getProductsCountAttribute()
+  {
+    return $this->products()->where('products.status', Product::PUBLICADO)->count();
+  }
+
+  // URL AMIGABLES
+  public function getRouteKeyName()
+  {
+    return 'slug';
+  }
+
+  public static function getLastPosition()
+  {
+    return Category::all()->count() + 1;
+  }
 }

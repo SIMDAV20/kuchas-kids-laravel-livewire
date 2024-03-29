@@ -26,8 +26,6 @@ class WelcomeController extends Controller
     $description .= $seoItems->implode(',');
     setSEOTools(null,  $description);
 
-
-
     if (auth()->user()) {
       $orders = Order::where('status', 1)
         ->whereNull('payment_method')
@@ -41,7 +39,7 @@ class WelcomeController extends Controller
       }
     }
 
-    $categories = Category::orderBy('position', 'ASC')->get();
+    $categories = Category::orderBy('position', 'ASC')->where('status', Category::PUBLIC)->get();
     return view('welcome', compact('categories'));
   }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Product;
+use App\Models\Subcategory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
@@ -65,7 +66,7 @@ class CategoryFilter extends Component
 
   public function mount()
   {
-    $subcategories = $this->category->subcategories()->select('subcategories.*')->get();
+    $subcategories = $this->category->subcategories()->where('subcategories.status', Subcategory::PUBLIC)->select('subcategories.*')->get();
 
     $seoItems = collect([]);
     foreach ($subcategories as $key => $subcategory) {
@@ -103,11 +104,13 @@ class CategoryFilter extends Component
 
   public function render()
   {
-    $productsQuery = Product::query()->whereHas('subcategory.category', function (Builder $query) {
+    $productsQuery = Product::query()->whereHas('subcategory', function (Builder $query) {
+      $query->where('status', Subcategory::PUBLIC);
+    })->whereHas('subcategory.category', function (Builder $query) {
       $query->where('id', $this->category->id);
     })->with('subcategory');
 
-    $subcategories = $this->category->subcategories()->orderBy('position')->get();
+    $subcategories = $this->category->subcategories()->where('status', Subcategory::PUBLIC)->orderBy('position')->get();
 
     if ($this->subcategoria) {
       $productsQuery = $productsQuery->whereHas('subcategory', function (Builder $query) {

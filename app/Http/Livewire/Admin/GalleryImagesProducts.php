@@ -10,70 +10,59 @@ use Livewire\WithFileUploads;
 
 class GalleryImagesProducts extends Component
 {
-    use WithFileUploads;
+  use WithFileUploads;
 
-    public $photo, $images = [], $item_id, $item, $model, $open_gallery = false;
+  public $photo, $images = [], $item_id, $item, $model, $open_gallery = false;
 
-    protected $listeners = ['delete'];
+  protected $listeners = ['delete'];
 
-    protected $rules = [
-        'photo' => 'required|image|mimes:png,jpg,jpeg|max:5120'
-    ];
+  protected $rules = [
+    'photo' => 'required|image|mimes:png,jpg,jpeg|max:5120'
+  ];
 
-    protected $validationAttributes = [
-        'photo' => 'imagen'
-    ];
+  protected $validationAttributes = [
+    'photo' => 'imagen'
+  ];
 
-    public function edit()
-    {
-        $this->item = findProduct($this->model, $this->item_id);
-        $this->images = $this->item->images;
-        $this->open_gallery = true;
+  public function edit()
+  {
+    $this->item = findProduct($this->model, $this->item_id);
+    $this->images = $this->item->images;
+    $this->open_gallery = true;
+  }
+
+  public function uploadImage()
+  {
+    $this->validate();
+
+    $url = Storage::put('products', $this->photo);
+
+    $this->item->images()->create([
+      'url' => $url
+    ]);
+
+    $this->photo = '';
+
+    $this->refreshImages();
+  }
+
+  public function delete(Image $image)
+  {
+    if (Storage::exists($image->url)) {
+      Storage::delete($image->url); // ruta de la photo
     }
+    $image->delete();
+    $this->refreshImages();
+  }
 
-    public function uploadImage()
-    {
-        $this->validate();
+  public function refreshImages()
+  {
+    $this->item = $this->item->fresh();
+    $this->images = $this->item->images;
+  }
 
-        $url = Storage::put('products', $this->photo);
-
-        $this->item->images()->create([
-            'url' => $url
-        ]);
-
-        $this->photo = '';
-
-        $this->refreshImages();
-    }
-
-    public function delete(Image $image)
-    {
-        if (Storage::exists($image->url)) {
-            Storage::delete($image->url); // ruta de la photo
-        }
-        $image->delete();
-        $this->refreshImages();
-    }
-
-    public function refreshImages()
-    {
-        $this->item = $this->item->fresh();
-        $this->images = $this->item->images;
-    }
-
-    public function mount()
-    {
-        // switch ($this->model) {
-        //     case 'ColorProduct':
-        //         $item = ColorProduct::find($this->item_id);
-        //         break;
-        // }
-
-        // $this->images = $item->images;
-    }
-
-    public function render()
-    {
-        return view('livewire.admin.gallery-images-products');
-    }
+  public function render()
+  {
+    return view('livewire.admin.gallery-images-products');
+  }
 }

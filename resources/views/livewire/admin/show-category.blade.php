@@ -68,24 +68,32 @@
       Aqui encontrará todas las subcategorías agregadas
     </x-slot>
     <x-slot name="content">
-      <table class="text-gray-600 w-full">
+      <table class="text-gray-600 min-w-full divide-y">
         <thead class="border-b border-gray-300s">
           <tr class="text-left">
-            <th class="py-2">Nombre</th>
-            <th class="text-center py-2 w-12">Acción</th>
+            <th class="px-6 py-4">Nombre</th>
+            <th class="px-6 py-4 text-center">Cant. Prods.</th>
+            <th class="px-6 py-4">Estado</th>
+            <th class="px-6 py-4 text-center">Acción</th>
           </tr>
         </thead>
         <tbody wire:sortable="updateSubCategoriesPosition()" class="divide-y divide-gray-300">
           @foreach ($subcategories as $subcategory)
             <tr wire:sortable.item="{{ $subcategory->id }}" wire:key="subcategory-{{ $subcategory->id }}">
-              <td class="py-2">
+              <td class="px-6 py-4">
                 <i class="fas fa-allergies cursor-move"></i>
                 <span class="uppercase hover:text-blue-600">
                   {{ $subcategory->name }}
                 </span>
               </td>
-              <td class="py-2">
-                <div class="flex divide-x divide-gray-300 font-semibold">
+              <td class="px-6 py-4 whitespace-nowrap text-center">
+                {{ $subcategory->products_count }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                @livewire('admin.change-status-entity', ['entity' => $subcategory], key($subcategory->id))
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex justify-center divide-x divide-gray-300 font-semibold">
                   <a wire:click="edit('{{ $subcategory->id }}')" class="pr-2 hover:text-blue-600 cursor-pointer">
                     Editar
                   </a>

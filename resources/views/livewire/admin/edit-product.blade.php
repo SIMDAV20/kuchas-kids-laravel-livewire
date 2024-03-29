@@ -171,21 +171,21 @@
     @switch($options)
       @case('base')
         <div>
-          @livewire('admin.gallery-images-products', ['item_id' => $product->id, 'model' => 'Product'], key($product->id))
+          @livewire('admin.gallery-images-products', ['item_id' => $product->id, 'model' => 'Product'], key('product-' . $product->id))
         </div>
       @break
 
       @case('colors')
-        @livewire('admin.color-product', ['product' => $product], key('color-product' . $product->id))
+        @livewire('admin.color-product', ['product' => $product], key('color-product-' . $product->id))
       @break
 
-      @case('sizes')
-        @livewire('admin.size-product', ['product' => $product], key('size-product' . $product->id))
-      @break
+      {{-- @case('sizes')
+        @livewire('admin.size-product', ['product' => $product], key('size-product-' . $product->id))
+      @break --}}
 
-      @case('colors_sizes')
-        @livewire('admin.color-size-product', ['product' => $product], key('color-size-product' . $product->id))
-      @break
+      {{-- @case('colors_sizes')
+        @livewire('admin.color-size-product', ['product' => $product], key('color-size-product-' . $product->id))
+      @break --}}
 
       @default
     @endswitch
