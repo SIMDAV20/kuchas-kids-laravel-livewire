@@ -15,6 +15,11 @@ class ShowProducts extends Component
 
   protected $listeners = ['delete'];
 
+  protected $queryString = [
+    'search',
+    'page'
+  ];
+
   public function delete(Product $product)
   {
 
@@ -37,11 +42,21 @@ class ShowProducts extends Component
     $this->resetPage();
   }
 
+  public function mount()
+  {
+    $this->search = request()->query('search', $this->search);
+  }
+
   public function render()
   {
     $products = Product::where('name', 'like', '%' . $this->search . '%')
       ->orderBy('id', 'desc')
-      ->paginate(10);
+      ->paginate(10)
+      ->withQueryString($this->queryString)
+      ->setPath(route('admin.index'));
+
+    // Append the current query string parameters to the pagination links
+    $products->appends(['search' => $this->search]);
 
     return view('livewire.admin.show-products', compact('products'))->layout('layouts.admin');
   }

@@ -18,8 +18,8 @@
       <div class="px-6 py-4">
 
         <div class="flex-1 relative">
-          <x-input type="text" wire:model="search" placeholder="Ingrese el nombre del producto que quiere buscar"
-            class="w-full" />
+          <x-input type="text" wire:model.debounce.500ms="search"
+            placeholder="Ingrese el nombre del producto que quiere buscar" class="w-full" />
           <div class="absolute top-0 right-0 w-12 h-full bg-gray-350 flex items-center justify-center rounded-r-md">
             <x-search size="35" color="white" />
           </div>
@@ -27,7 +27,7 @@
 
       </div>
 
-      @if ($products->count())
+      @if ($products)
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
@@ -231,7 +231,7 @@
 
       @if ($products->hasPages())
         <div class="px-6 py-4">
-          {{ $products->links('vendor.pagination.tailwind') }}
+          {!! $products->links('pagination::tailwind') !!}
         </div>
       @endif
     </x-table-responsive>
