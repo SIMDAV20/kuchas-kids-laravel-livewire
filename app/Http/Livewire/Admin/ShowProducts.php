@@ -49,7 +49,7 @@ class ShowProducts extends Component
 
   public function render()
   {
-    $products = Product::where('name', 'like', '%' . $this->search . '%')
+    $products = Product::searchAll($this->search)
       ->orderBy('id', 'desc')
       ->paginate(10)
       ->withQueryString($this->queryString)

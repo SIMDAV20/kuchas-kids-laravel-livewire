@@ -16,6 +16,11 @@ class Product extends Model
   const BORRADOR = 1;
   const PUBLICADO = 2;
 
+  const VARBASE = 'base';
+  const VARCOLORS = 'colors';
+  const VARSIZES = 'sizes';
+  const VARCOLORSSIZES = 'colors_sizes';
+
   protected $guarded = ['id', 'created_at', 'updated_at'];
 
   // acesor se puede crear, es parecido a un atributo de un obj

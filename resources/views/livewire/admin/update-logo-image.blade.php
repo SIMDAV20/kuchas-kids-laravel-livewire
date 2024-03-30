@@ -11,17 +11,20 @@
       <div class="mb-2 flex justify-center items-center">
 
         <div class="text-center">
-          <x-file-attachment wire:model="photo" :file="$photo" mode="profile" profile-class="w-48 h-48 rounded-lg"
+          <x-file-attachment wire:model="image" :file="$image" mode="profile" profile-class="w-48 h-48 rounded-lg"
             accept="image/jpg,image/jpeg,image/png" />
 
           <p class="text-gray-400 my-2 text-sm">Tamaño: 250px * 175px</p>
 
           @error($photo)
-            <p class="text-sm text-red-600">{{ $message }}</p>
+            <p class="text-sm text-red-600 mb-2">{{ $message }}</p>
           @enderror
           <x-button wire:click="updateLogo" wire.loading.attr="disabled" wire.target="updateLogo"
             class="ml-2">Actualizar
             Logo</x-button>
+          <x-action-message class="mr-3 mt-2 text-blue-600" on="upload_logo">
+            Imagen Agregada
+          </x-action-message>
         </div>
 
       </div>

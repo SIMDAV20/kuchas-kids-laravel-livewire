@@ -10,49 +10,55 @@ use Livewire\WithFileUploads;
 class UploadBanner extends Component
 {
 
-    use WithFileUploads;
+  use WithFileUploads;
 
-    public $photo, $banners = [];
+  public $photo, $image, $banners = [];
 
-    protected $listeners = ['delete'];
+  protected $listeners = ['delete'];
 
-    protected $rules = [
-        'photo' => 'required|image|mimes:png,jpg,jpeg|max:5120'
-    ];
+  protected $rules = [
+    'photo' => 'required|image|mimes:png,jpg,jpeg|max:5120'
+  ];
 
-    protected $validationAttributes = [
-        'photo' => 'imagen'
-    ];
+  protected $validationAttributes = [
+    'photo' => 'imagen'
+  ];
 
-    public function uploadBanner()
-    {
-        $this->validate();
+  public function uploadBanner()
+  {
+    $this->photo = $this->image;
+    $this->validateOnly('photo');
 
-        $url = Storage::put('banners', $this->photo);
+    $url = Storage::put('banners', $this->photo);
 
-        $banner = new Banner;
-        $banner->photo = $url;
-        $banner->save();
+    $banner = new Banner;
+    $banner->photo = $url;
+    $banner->save();
 
-        $this->photo = '';
+    $this->photo = '';
 
-        $this->mount();
+    $this->emit('upload_banner');
+    $this->reset(['image', 'photo']);
+    $this->resetValidation();
+    $this->mount();
+  }
+
+  public function delete(Banner $banner)
+  {
+    if (Storage::exists($this->photo)) {
+      Storage::delete($this->photo);
     }
+    $banner->delete();
+    $this->mount();
+  }
 
-    public function delete(Banner $banner)
-    {
-        Storage::delete($banner->photo); // ruta de la photo
-        $banner->delete();
-        $this->mount();
-    }
+  public function mount()
+  {
+    $this->banners = Banner::all();
+  }
 
-    public function mount()
-    {
-        $this->banners = Banner::all();
-    }
-
-    public function render()
-    {
-        return view('livewire.admin.upload-banner')->layout('layouts.admin');
-    }
+  public function render()
+  {
+    return view('livewire.admin.upload-banner')->layout('layouts.admin');
+  }
 }

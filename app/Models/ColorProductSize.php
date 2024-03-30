@@ -7,37 +7,39 @@ use Illuminate\Database\Eloquent\Model;
 
 class ColorProductSize extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    const BORRADOR = 1;
-    const PUBLICADO = 2;
+  const BORRADOR = 1;
+  const PUBLICADO = 2;
 
-    protected $table = "color_product_size";
+  protected $table = "color_product_size";
 
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
+  protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    public function color()
-    {
-        return $this->belongsTo(Color::class);
-    }
+  public function product()
+  {
+    return $this->belongsTo(Product::class);
+  }
 
-    public function size()
-    {
-        return $this->belongsTo(Size::class);
-    }
+  public function color()
+  {
+    return $this->belongsTo(Color::class);
+  }
 
-    // Relacion uno a muchos polimórfica
-    public function images()
-    {
-        return $this->morphMany(Image::class, "imageable");
-    }
+  public function size()
+  {
+    return $this->belongsTo(Size::class);
+  }
 
-    // URL AMIGABLES
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
+  // Relacion uno a muchos polimórfica
+  public function images()
+  {
+    return $this->morphMany(Image::class, "imageable");
+  }
+
+  // URL AMIGABLES
+  public function getRouteKeyName()
+  {
+    return 'slug';
+  }
 }

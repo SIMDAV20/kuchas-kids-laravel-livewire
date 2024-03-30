@@ -17,6 +17,7 @@ use App\Http\Livewire\Admin\DeliveryZone;
 use App\Http\Livewire\Admin\SettingsComponent;
 use App\Http\Livewire\Admin\UploadBanner;
 use Illuminate\Support\Facades\Route;
+use Livewire\Livewire;
 
 Route::get('/', ShowProducts::class)->name('admin.index');
 
@@ -45,3 +46,7 @@ Route::get('users', UserComponent::class)->name('admin.users.index');
 Route::get('settings', SettingsComponent::class)->name('admin.settings.index');
 
 Route::get('/banners', UploadBanner::class)->name('admin.banners.index');
+
+// Route::post("/livewire/message/{any}?", function ($any = null) {
+//   return app('livewire')->run($any);
+// })->where('any', '.*');

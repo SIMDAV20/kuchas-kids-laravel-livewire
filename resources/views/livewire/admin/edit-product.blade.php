@@ -138,57 +138,27 @@
     </div>
   </div>
 
-  <div x-data="{ options: @entangle('options') }" class="bg-white shadow-xl rounded-lg p-6 mb-4">
+  <div x-data="{ type_variant: @entangle('type_variant') }" class="bg-white shadow-xl rounded-lg p-6 mb-4">
 
     <x-label value="¿Quieres agregar variantes a tu producto?" class="text-bold mb-3 text-lg" />
-
     <div class="grid md:grid-cols-3 gap-6 mb-4">
       <div class="col-span-2 flex justify-between">
-        <x-label>
-          <x-input wire:model.defer="options" name="options" type="radio" value="base"
-            wire:click="$emit('confirmChangeVariant', 'base')" />
-          Simple
-        </x-label>
-        <x-label>
-          <x-input wire:model.defer="options" name="options" type="radio" value="colors"
-            wire:click="$emit('confirmChangeVariant', 'colors')" />
-          Colores
-        </x-label>
-        <x-label>
-          <x-input wire:model.defer="options" name="options" type="radio" value="sizes"
-            wire:click="$emit('confirmChangeVariant', 'sizes')" />
-          Tallas
-        </x-label>
-        <x-label>
-          <x-input wire:model.defer="options" name="options" type="radio" value="colors_sizes"
-            wire:click="$emit('confirmChangeVariant', 'colors_sizes')" />
-          Colores y Tallas
-        </x-label>
+        @foreach ($options as $option)
+          <x-label>
+            <x-input wire:model.defer="type_variant" name="type_variant" type="radio" value="{{ $option['value'] }}"
+              wire:click="$emit('confirmChangeVariant', '{{ $option['value'] }}')" />
+            {{ $option['label'] }}
+          </x-label>
+        @endforeach
       </div>
     </div>
 
-
-    @switch($options)
-      @case('base')
-        <div>
-          @livewire('admin.gallery-images-products', ['item_id' => $product->id, 'model' => 'Product'], key('product-' . $product->id))
-        </div>
-      @break
-
-      @case('colors')
-        @livewire('admin.color-product', ['product' => $product], key('color-product-' . $product->id))
-      @break
-
-      {{-- @case('sizes')
-        @livewire('admin.size-product', ['product' => $product], key('size-product-' . $product->id))
-      @break --}}
-
-      {{-- @case('colors_sizes')
-        @livewire('admin.color-size-product', ['product' => $product], key('color-size-product-' . $product->id))
-      @break --}}
-
-      @default
-    @endswitch
+    @if ($type_variant == 'base')
+      {{-- TODO: UTILIZAR DESPUES EL GLOBAL GALLERY DEL BRANCH TEST --}}
+      @livewire('admin.gallery-images-products', ['item_id' => $product->id, 'model' => 'Product'], key('product-' . $product->id))
+    @else
+      @livewire('admin.upsert-product-variant', ['product' => $product, 'type_variant' => $type_variant], key('upsert-product-variant' . $product->id))
+    @endif
   </div>
 
   @push('scripts')
@@ -231,98 +201,98 @@
         }
       };
 
-      Livewire.on('deleteSize', sizeId => {
-        Swal.fire({
-          title: 'Esta seguro de eliminar el registro?',
-          text: "Acción irreversible",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, eliminar!'
-        }).then((result) => {
-          if (result.isConfirmed) {
+      // Livewire.on('deleteSize', sizeId => {
+      //   Swal.fire({
+      //     title: 'Esta seguro de eliminar el registro?',
+      //     text: "Acción irreversible",
+      //     icon: 'warning',
+      //     showCancelButton: true,
+      //     confirmButtonColor: '#3085d6',
+      //     cancelButtonColor: '#d33',
+      //     confirmButtonText: 'Si, eliminar!'
+      //   }).then((result) => {
+      //     if (result.isConfirmed) {
 
-            Livewire.emitTo('admin.size-product', 'delete', sizeId);
+      //       Livewire.emitTo('admin.size-product', 'delete', sizeId);
 
-            Swal.fire(
-              'Eliminado!',
-              'El resgistro ha sido eliminado.',
-              'success'
-            )
-          }
-        })
-      })
+      //       Swal.fire(
+      //         'Eliminado!',
+      //         'El resgistro ha sido eliminado.',
+      //         'success'
+      //       )
+      //     }
+      //   })
+      // })
 
-      Livewire.on('deleteColorProduct', pivot => {
-        Swal.fire({
-          title: 'Esta seguro de eliminar el registro?',
-          text: "Acción irreversible",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, eliminar!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // emit es paratodos, y si uso emitTo es para un componente en especifico
-            Livewire.emitTo('admin.color-product', 'delete', pivot);
+      // Livewire.on('deleteColorProduct', pivot => {
+      //   Swal.fire({
+      //     title: 'Esta seguro de eliminar el registro?',
+      //     text: "Acción irreversible",
+      //     icon: 'warning',
+      //     showCancelButton: true,
+      //     confirmButtonColor: '#3085d6',
+      //     cancelButtonColor: '#d33',
+      //     confirmButtonText: 'Si, eliminar!'
+      //   }).then((result) => {
+      //     if (result.isConfirmed) {
+      //       // emit es paratodos, y si uso emitTo es para un componente en especifico
+      //       Livewire.emitTo('admin.color-product', 'delete', pivot);
 
-            Swal.fire(
-              'Eliminado!',
-              'El resgistro ha sido eliminado.',
-              'success'
-            )
-          }
-        })
-      })
+      //       Swal.fire(
+      //         'Eliminado!',
+      //         'El resgistro ha sido eliminado.',
+      //         'success'
+      //       )
+      //     }
+      //   })
+      // })
 
-      Livewire.on('deleteProductSize', pivot => {
-        Swal.fire({
-          title: 'Esta seguro de eliminar el registro?',
-          text: "Acción irreversible",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, eliminar!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // emit es paratodos, y si uso emitTo es para un componente en especifico
-            Livewire.emitTo('admin.size-product', 'delete', pivot);
+      // Livewire.on('deleteProductSize', pivot => {
+      //   Swal.fire({
+      //     title: 'Esta seguro de eliminar el registro?',
+      //     text: "Acción irreversible",
+      //     icon: 'warning',
+      //     showCancelButton: true,
+      //     confirmButtonColor: '#3085d6',
+      //     cancelButtonColor: '#d33',
+      //     confirmButtonText: 'Si, eliminar!'
+      //   }).then((result) => {
+      //     if (result.isConfirmed) {
+      //       // emit es paratodos, y si uso emitTo es para un componente en especifico
+      //       Livewire.emitTo('admin.size-product', 'delete', pivot);
 
-            Swal.fire(
-              'Eliminado!',
-              'El resgistro ha sido eliminado.',
-              'success'
-            )
-          }
-        })
-      })
+      //       Swal.fire(
+      //         'Eliminado!',
+      //         'El resgistro ha sido eliminado.',
+      //         'success'
+      //       )
+      //     }
+      //   })
+      // })
 
-      Livewire.on('deleteColorSize', pivot => {
-        console.log(pivot);
-        Swal.fire({
-          title: 'Esta seguro de eliminar el registro?',
-          text: "Acción irreversible",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, eliminar!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // emit es paratodos, y si uso emitTo es para un componente en especifico
-            Livewire.emitTo('admin.color-size', 'delete', pivot);
+      // Livewire.on('deleteColorSize', pivot => {
+      //   console.log(pivot);
+      //   Swal.fire({
+      //     title: 'Esta seguro de eliminar el registro?',
+      //     text: "Acción irreversible",
+      //     icon: 'warning',
+      //     showCancelButton: true,
+      //     confirmButtonColor: '#3085d6',
+      //     cancelButtonColor: '#d33',
+      //     confirmButtonText: 'Si, eliminar!'
+      //   }).then((result) => {
+      //     if (result.isConfirmed) {
+      //       // emit es paratodos, y si uso emitTo es para un componente en especifico
+      //       Livewire.emitTo('admin.color-size', 'delete', pivot);
 
-            Swal.fire(
-              'Eliminado!',
-              'El resgistro ha sido eliminado.',
-              'success'
-            )
-          }
-        })
-      })
+      //       Swal.fire(
+      //         'Eliminado!',
+      //         'El resgistro ha sido eliminado.',
+      //         'success'
+      //       )
+      //     }
+      //   })
+      // })
 
       // CONFIRMAR AL MOMENTO DE CAMBIAR DE VARIANTE
       Livewire.on('confirmChangeVariant', (newValue) => {

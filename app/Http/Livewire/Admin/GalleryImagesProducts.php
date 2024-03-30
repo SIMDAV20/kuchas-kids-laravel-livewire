@@ -12,7 +12,7 @@ class GalleryImagesProducts extends Component
 {
   use WithFileUploads;
 
-  public $photo, $images = [], $item_id, $item, $model, $open_gallery = false;
+  public $photo, $images = [], $image, $item_id, $item, $model, $open_gallery = false;
 
   protected $listeners = ['delete'];
 
@@ -26,14 +26,13 @@ class GalleryImagesProducts extends Component
 
   public function edit()
   {
-    $this->item = findProduct($this->model, $this->item_id);
-    $this->images = $this->item->images;
     $this->open_gallery = true;
   }
 
   public function uploadImage()
   {
-    $this->validate();
+    $this->photo = $this->image;
+    $this->validateOnly('photo');
 
     $url = Storage::put('products', $this->photo);
 
@@ -43,7 +42,10 @@ class GalleryImagesProducts extends Component
 
     $this->photo = '';
 
-    $this->refreshImages();
+    $this->emit('upload_image');
+    $this->reloadImages();
+    $this->reset(['image', 'photo']);
+    $this->resetValidation();
   }
 
   public function delete(Image $image)
@@ -52,13 +54,18 @@ class GalleryImagesProducts extends Component
       Storage::delete($image->url); // ruta de la photo
     }
     $image->delete();
-    $this->refreshImages();
+    $this->reloadImages();
   }
 
-  public function refreshImages()
+  public function reloadImages()
   {
-    $this->item = $this->item->fresh();
+    $this->item = findProduct($this->model, $this->item_id);
     $this->images = $this->item->images;
+  }
+
+  public function mount()
+  {
+    $this->reloadImages();
   }
 
   public function render()

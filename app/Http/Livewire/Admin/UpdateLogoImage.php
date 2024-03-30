@@ -11,7 +11,7 @@ class UpdateLogoImage extends Component
 {
   use WithFileUploads;
 
-  public $photo = null, $current_logo, $record;
+  public $photo = null, $current_logo, $image, $record;
   // the url is saved in logo's column in settings's table
 
   protected $rules = [
@@ -25,7 +25,8 @@ class UpdateLogoImage extends Component
 
   public function updateLogo()
   {
-    $this->validate();
+    $this->photo = $this->image;
+    $this->validateOnly('photo');
 
     if (Storage::exists($this->current_logo)) {
       Storage::delete($this->current_logo);
@@ -39,6 +40,9 @@ class UpdateLogoImage extends Component
 
     $this->photo = '';
 
+    $this->emit('upload_logo');
+    $this->reset(['image', 'photo']);
+    $this->resetValidation();
     $this->mount();
   }
 
