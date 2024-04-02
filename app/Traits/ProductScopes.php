@@ -26,6 +26,7 @@ trait ProductScopes
   {
     $columns = [
       'products.slug',
+      'products.name',
       'products.sku',
       'products.price',
       'products.offer_price',
