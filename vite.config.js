@@ -14,4 +14,10 @@ export default defineConfig({
             ],
         }),
     ],
+    css: {
+        // Options for CSS processing
+        postcss: {
+            plugins: [ require('postcss-nested') ],
+        },
+    },
 });
