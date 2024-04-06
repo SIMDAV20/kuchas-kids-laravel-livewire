@@ -19,7 +19,7 @@
           @error($photo)
             <p class="text-sm text-red-600 mb-2">{{ $message }}</p>
           @enderror
-          <x-button wire:click="updateLogo" wire.loading.attr="disabled" wire.target="updateLogo"
+          <x-button type="button" wire:click="updateLogo" wire.loading.attr="disabled" wire.target="updateLogo"
             class="ml-2">Actualizar
             Logo</x-button>
           <x-action-message class="mr-3 mt-2 text-blue-600" on="upload_logo">

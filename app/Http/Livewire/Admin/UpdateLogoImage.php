@@ -28,8 +28,8 @@ class UpdateLogoImage extends Component
     $this->photo = $this->image;
     $this->validateOnly('photo');
 
-    if (Storage::exists($this->current_logo)) {
-      Storage::delete($this->current_logo);
+    if (!is_null($this->current_logo)) {
+      if (Storage::exists($this->current_logo)) Storage::delete($this->current_logo);
     }
 
     $url = Storage::put('settings', $this->photo);

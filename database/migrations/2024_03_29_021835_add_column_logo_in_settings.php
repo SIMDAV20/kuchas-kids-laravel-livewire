@@ -14,16 +14,15 @@ return new class extends Migration
    */
   public function up()
   {
-
+    DB::select('ALTER TABLE settings MODIFY COLUMN updated_at TIMESTAMP NULL DEFAULT null');
     DB::select('ALTER TABLE settings MODIFY COLUMN created_at TIMESTAMP NULL DEFAULT NULL');
-    DB::select('ALTER TABLE settings MODIFY COLUMN updated_at TIMESTAMP NULL DEFAULT NULL');
 
     Schema::table('settings', function (Blueprint $table) {
       $table->string('logo')->nullable()->after('show_headband');
     });
   }
 
-  /**
+  /**s
    * Reverse the migrations.
    *
    * @return void

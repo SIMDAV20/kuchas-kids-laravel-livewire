@@ -45,8 +45,8 @@ class UploadBanner extends Component
 
   public function delete(Banner $banner)
   {
-    if (Storage::exists($this->photo)) {
-      Storage::delete($this->photo);
+    if (Storage::exists($banner->photo) && !is_null($banner->photo)) {
+      Storage::delete($banner->photo);
     }
     $banner->delete();
     $this->mount();
