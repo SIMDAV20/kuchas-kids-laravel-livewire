@@ -94,33 +94,7 @@ class EditProduct extends Component
 
     if ($value)
       $this->quantity = '';
-    // switch ($value) {
-    //     case 'colors':
-    //         $this->getColors();
-    //         break;
-    //     case 'sizes':
-    //         $this->getSizes();
-    //         $this->price = '';
-    //         break;
-    //     case 'colors_sizes':
-    //         $this->getColors();
-    //         $this->getSizes();
-    //         $this->price = '';
-    //         break;
-    //     default:
-    //         break;
-    // }
   }
-
-  // public function getColors()
-  // {
-  //     $this->colors = Color::orderBy('name', 'ASC')->get();
-  // }
-
-  // public function getSizes()
-  // {
-  //     $this->sizes = Size::orderBy('name', 'ASC')->get();
-  // }
 
   public function addOptionColor()
   {
@@ -148,89 +122,6 @@ class EditProduct extends Component
 
     $this->reset(['color_selected', 'quantity_color']);
   }
-
-  // public function deleteOptionColor($pos)
-  // {
-  //     $this->options_colors->splice($pos, 1);
-  // }
-
-  // public function addOptionSize()
-  // {
-  //     $this->validate([
-  //         'size_selected' => 'required',
-  //         'quantity_size' => 'required|min:0|numeric',
-  //         'price_size' => 'required|min:2|numeric',
-  //         'offer_price_size' => 'lt:price_size',
-  //     ]);
-  //     $exist = false;
-  //     // LOOP PARA VERIFICAR SI EXISTE UNA TALLA
-  //     $this->options_sizes = $this->options_sizes->map(function ($op_size, $key) use (&$exist) {
-  //         if ($this->size_selected == $op_size['size_id']) {
-  //             $exist = true;
-  //             $op_size['quantity'] += $this->quantity_size;
-  //             $op_size['price'] = $this->price_size;
-  //             $op_size['offer_price'] = $this->offer_price_size;
-  //         }
-  //         return $op_size;
-  //     });
-
-  //     if (!$exist) {
-  //         $el = [
-  //             'size_id' => $this->size_selected,
-  //             'quantity' => floatval($this->quantity_size),
-  //             'price' => $this->price_size,
-  //             'offer_price' => $this->offer_price_size,
-  //         ];
-  //         $this->options_sizes->push($el);
-  //     }
-
-  //     $this->reset(['size_selected', 'quantity_size', 'price_size', 'offer_price_size']);
-  // }
-
-  // public function deleteOptionSize($pos)
-  // {
-  //     $this->options_sizes->splice($pos, 1);
-  // }
-
-  // public function addOptionColorSize()
-  // {
-  //     $this->validate([
-  //         'color_selected' => 'required',
-  //         'size_selected' => 'required',
-  //         'quantity_color_size' => 'required|min:0|numeric',
-  //         'price_color_size' => 'required|min:2|numeric',
-  //         'offer_price_color_size' => 'lt:price_color_size',
-  //     ]);
-  //     $exist = false;
-  //     // LOOP PARA VERIFICAR SI EXISTE UNA TALLA
-  //     $this->options_colors_sizes = $this->options_colors_sizes->map(function ($op_color_size, $key) use (&$exist) {
-  //         if ($this->color_selected == $op_color_size['color_id'] && $this->size_selected == $op_color_size['size_id']) {
-  //             $exist = true;
-  //             $op_color_size['quantity'] += $this->quantity_color_size;
-  //             $op_color_size['price'] = $this->price_color_size;
-  //             $op_color_size['offer_price'] = $this->offer_price_color_size;
-  //         }
-  //         return $op_color_size;
-  //     });
-
-  //     if (!$exist) {
-  //         $el = [
-  //             'color_id' => $this->color_selected,
-  //             'size_id' => $this->size_selected,
-  //             'quantity' => floatval($this->quantity_color_size),
-  //             'price' => $this->price_color_size,
-  //             'offer_price' => $this->offer_price_color_size,
-  //         ];
-  //         $this->options_colors_sizes->push($el);
-  //     }
-
-  //     $this->reset(['color_selected', 'size_selected', 'quantity_color_size']);
-  // }
-
-  // public function deleteOptionColorSize($pos)
-  // {
-  //     $this->options_colors_sizes->splice($pos, 1);
-  // }
 
   // prop computada
   public function getSubcategoryProperty()

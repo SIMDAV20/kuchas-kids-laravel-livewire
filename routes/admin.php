@@ -14,6 +14,7 @@ use App\Http\Livewire\Admin\ShowCity;
 use App\Http\Livewire\Admin\ShowDepartment;
 use App\Http\Livewire\Admin\UserComponent;
 use App\Http\Livewire\Admin\DeliveryZone;
+use App\Http\Livewire\Admin\EditProductVariant;
 use App\Http\Livewire\Admin\SettingsComponent;
 use App\Http\Livewire\Admin\UploadBanner;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,7 @@ Route::get('/', ShowProducts::class)->name('admin.index');
 
 Route::get('products/create', CreateProduct::class)->name('admin.products.create');
 Route::get('products/{product}/edit', EditProduct::class)->name('admin.products.edit');
+Route::get('product-variant/{variant}/edit', EditProductVariant::class)->name('admin.products.variant.edit');
 Route::post('products/{product}/files', [ProductController::class, 'files'])->name('admin.products.files');
 
 Route::get('categories', [CategoryController::class, 'index'])->name('admin.categories.index');
