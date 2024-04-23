@@ -62,10 +62,10 @@ class ShowCategory extends Component
     }
 
     if ($type == 'create') {
-      $this->createForm['keywords'][] = $this->createForm['inputKeyword'];
+      $this->createForm['keywords'][] = $keyword;
       $this->createForm['inputKeyword'] = null;
     } else {
-      $this->editForm['keywords'][] = $this->editForm['inputKeyword'];
+      $this->editForm['keywords'][] = $keyword;
       $this->editForm['inputKeyword'] = null;
     }
   }
@@ -73,14 +73,20 @@ class ShowCategory extends Component
   public function deleteKeyword(string $type, $value)
   {
     if ($type == 'create') {
-      $this->createForm['keywords'] = array_filter($this->createForm['keywords'], function ($keyword) use ($value) {
-        return $keyword != $value;
-      });
+      $this->createForm['keywords'] = $this->filterKeywords($this->createForm['keywords'], $value);
     } else {
-      $this->editForm['keywords'] = array_filter($this->editForm['keywords'], function ($keyword) use ($value) {
-        return $keyword != $value;
-      });
+      $this->editForm['keywords'] = $this->filterKeywords($this->editForm['keywords'], $value);
     }
+  }
+
+  private function filterKeywords(array $keywords, string $value)
+  {
+    $filterValues = array_filter($keywords, function ($keyword) use ($value) {
+      $keyword = trim($keyword);
+      return $keyword !== $value;
+    });
+
+    return array_values($filterValues);
   }
 
   public function updatingCreateFormName($value)
