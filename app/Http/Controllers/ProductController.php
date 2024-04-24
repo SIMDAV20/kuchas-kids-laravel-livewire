@@ -27,7 +27,11 @@ class ProductController extends Controller
       }
     }
 
-    if (is_null($var_product)) return view('errors.404');
+    if (is_null($var_product)) {
+      return view('errors.404');
+    }
+
+
 
     $images = collect([]);
     $main_vars = collect([]);
@@ -49,6 +53,9 @@ class ProductController extends Controller
       }
     } else {
       $product = $var_product;
+      if ($product->status == Product::BORRADOR) {
+        return view('errors.404');
+      }
       $product->onStockToSell();
 
       // verificar por 2da vez que no tiene variantes
