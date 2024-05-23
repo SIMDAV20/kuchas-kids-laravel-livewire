@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class ProductSize extends Model
 {
@@ -15,8 +16,6 @@ class ProductSize extends Model
     protected $table = "product_size";
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
-
-    protected $with = ['images'];
 
     // protected $fillabe = ['id','size_id', 'quantity', 'price', 'offer_price'];
 
@@ -31,10 +30,20 @@ class ProductSize extends Model
         return $this->belongsTo(Product::class);
     }
 
-    // Relacion uno a muchos polimórfica
     public function images()
     {
-        return $this->morphMany(Image::class, "imageable");
+        return $this->hasMany(ImageProduct::class, 'product_id')->with('image');
+    }
+
+    public function image_product(): HasManyThrough
+    {
+        return $this->hasManyThrough(Image::class, ImageProduct::class, 'product_id', 'id', 'id', 'image_id');
+    }
+
+    public function getFirstImageURL()
+    {
+        $image_prod = $this->images()->first();
+        return $image_prod ? $image_prod->image->url : null;
     }
 
     // URL AMIGABLES

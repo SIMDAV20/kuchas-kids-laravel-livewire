@@ -11,33 +11,30 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
 if (!function_exists('current_quantity')) {
-    function current_quantity($product_id, $color_id = null, $size_id = null)
+    function current_quantity($item_id, $type_variant)
     {
-        $product = Product::find($product_id);
+        $model_str = [
+            Product::VARBASE => 'Product',
+            Product::VARCOLORS => 'ColorProduct',
+            Product::VARSIZES => 'ProductSize',
+            Product::VARCOLORSSIZES => 'ColorProductSize',
+        ][$type_variant];
 
-        if ($size_id) {
-            $size = Size::find($size_id);
-            $quantity = ProductSize::where('size_id', $size->id)->where('product_id', $product_id)->first()->quantity;
-        } elseif ($color_id) {
-            $quantity = $product->colors->find($color_id)->pivot->quantity;
-        } else {
-            $quantity  = $product->quantity;
-        }
+        $model = '\\App\\Models\\' . $model_str;
+
+        $quantity = $model::find($item_id)->first()->quantity;
 
         return $quantity;
     }
 }
 
 if (!function_exists('qty_added')) {
-    function qty_added($product_id, $color_id = null, $size_id = null)
+    function qty_added($item_id, $type_variant)
     {
-
         $cart = Cart::content();
 
-        // retorna un obj con el first
-        $item = $cart->where('id', $product_id)
-            ->where('options.color_id', $color_id)
-            ->where('options.size_id', $size_id)->first();
+        $item = $cart->where('id', $item_id)
+            ->where('options.type_variant', $type_variant)->first();
 
         if ($item) {
             return  $item->qty;
@@ -49,9 +46,9 @@ if (!function_exists('qty_added')) {
 
 
 if (!function_exists('qty_available')) {
-    function qty_available($product_id, $color_id = null, $size_id = null)
+    function qty_available($item_id, $type_variant)
     {
-        return current_quantity($product_id, $color_id, $size_id) - qty_added($product_id, $color_id, $size_id);
+        return current_quantity($item_id, $type_variant) - qty_added($item_id, $type_variant);
     }
 }
 
@@ -67,12 +64,12 @@ if (!function_exists('discount')) {
             //     $item->options->color_id => ['quantity' => $qty_available] // agregando otra vez el stock reservado
             // ]);
 
-            $color_product = ColorProduct::where('product_id', $product->id)
+            $color_product = ColorProduct::where('item_id', $product->id)
                 ->where('color_id', $item->options->color_id)->first();
             $color_product->quantity = $qty_available;
             $color_product->save();
         } else if ($item->options->size_id) {
-            $product_size = ProductSize::where('product_id', $product->id)
+            $product_size = ProductSize::where('item_id', $product->id)
                 ->where('size_id', $item->options->size_id)->first();
             $product_size->quantity = $qty_available;
             $product_size->save();
@@ -95,12 +92,12 @@ if (!function_exists('increase')) {
         ) + $item->qty; // al hacer json_decode del content de la orden
 
         if (isset($item->options->color_id)) {
-            $color_product = ColorProduct::where('product_id', $product->id)
+            $color_product = ColorProduct::where('item_id', $product->id)
                 ->where('color_id', $item->options->color_id)->first();
             $color_product->quantity = $quantity;
             $color_product->save();
         } else if (isset($item->options->size_id)) {
-            $product_size = ProductSize::where('product_id', $product->id)
+            $product_size = ProductSize::where('item_id', $product->id)
                 ->where('size_id', $item->options->size_id)->first();
             $product_size->quantity = $quantity;
             $product_size->save();
@@ -108,6 +105,44 @@ if (!function_exists('increase')) {
             $product->quantity = $quantity;
             $product->save();
         }
+
+        // {
+        //     "0061beede5107af13b9f56dbc2556a49": {
+        //         "rowId":"0061beede5107af13b9f56dbc2556a49",
+        //         "id":34,
+        //         "name":"Mandil Azul",
+        //         "qty":1,
+        //         "price":40,
+        //         "weight":550,
+        //         "options": {
+        //             "size":"Talla S",
+        //             "size_id":1,
+        //             "image":"http:\/\/127.0.0.1:8000\/storage\/products\/mandil-azul-1.jpg"
+        //         },
+        //         "discount":0,
+        //         "tax":8.4,"subtotal":40
+        //     }
+        // }
+
+        // if ($item->options->size_id) {
+        //     $size = Size::find($item->options->size_id);
+
+        //     $size->colors()->detach($item->options->color_id); // eliminar la relacion
+
+        //     $size->colors()->attach([
+        //         $item->options->color_id => ['quantity' => $quantity] // agregando otra vez el stock reservado
+        //     ]);
+        // } elseif ($item->options->color_id) {
+
+        //     $product->colors()->detach($item->options->color_id); // eliminar la relacion
+
+        //     $product->colors()->attach([
+        //         $item->options->color_id => ['quantity' => $quantity] // agregando otra vez el stock reservado
+        //     ]);
+        // } else {
+        //     $product->quantity = $quantity;
+        //     $product->save();
+        // }
     }
 }
 
@@ -215,4 +250,107 @@ if (!function_exists('setSEOTools')) {
     //         }
     //     }
     // }
+}
+
+if (!function_exists('getMaxMinPrice')) {
+    // TODO: FUTURO ANIADIR DICHA OFFERTA POR FECHA
+    function getMaxMinPrice($items)
+    {
+
+        $selectCols = collect([]);
+        foreach ($items as $item) {
+            $selectCols->push($item->offer_price);
+            $selectCols->push($item->price);
+        }
+
+        $selectCols = $selectCols->flatten();
+
+        $selectCols = $selectCols->reject(function ($value) {
+            // Reject if the value is null or zero
+            return $value === null || $value === 0;
+        });
+
+        $min = $selectCols->min();
+        $max = $selectCols->max();
+
+        return [$min, $max];
+    }
+}
+
+if (!function_exists('applyMaxMinPrice')) {
+    // TODO: FUTURO ANIADIR DICHA OFFERTA POR FECHA
+    function applyMaxMinPrice($product)
+    {
+        $base_price = null;
+        $price = 0;
+
+        switch ($product->type_variant) {
+            case Product::VARBASE:
+                $base_price = $product->offer_price > 0 ? $product->price : null;
+                $price = $product->offer_price > 0 ? $product->offer_price : $product->price;
+                break;
+            case Product::VARCOLORS:
+                [$min, $max] = getMaxMinPrice($product->color_product);
+                $base_price = $min ?? null;
+                $price = $max;
+                break;
+            case Product::VARSIZES:
+                [$min, $max] = getMaxMinPrice($product->product_size);
+                $base_price = $min ?? null;
+                $price = $max;
+                break;
+                // case Product::VARCOLORSSIZES:
+                //     $product->single_img =
+                //     break;
+        }
+
+        return [$base_price, $price];
+    }
+}
+
+if (!function_exists('currentVarProduct')) {
+    function currentVarProduct($type_variant)
+    {
+        $model_str = [
+            Product::VARBASE => ['Product'],
+            Product::VARCOLORS => ['ColorProduct'],
+            Product::VARSIZES => ['ProductSize'],
+            Product::VARCOLORSSIZES => ['ColorProductSize'],
+        ][$type_variant];
+
+        $model = '\\App\\Models\\' . $model_str;
+
+        return $model::first() ?? null;
+    }
+}
+
+if (!function_exists('showPricesProduct')) {
+    function showPricesProduct(Product $product, $variant)
+    {
+        if ($variant->price == 0) {
+            $price = $product->price;
+            $offer_price = $product->offer_price;
+        } else {
+            $price = $variant->price;
+            $offer_price = $variant->offer_price;
+        }
+
+        return [$price, $offer_price ?? null];
+    }
+}
+
+
+if (!function_exists('takeFirstVariant')) {
+    function takeFirstVariant(Product $product, $variant_id = 0)
+    {
+        $model_str = [
+            Product::VARCOLORS => ['color_product', 'color_id'],
+            Product::VARSIZES => ['product_size', 'size_id'],
+            Product::VARCOLORSSIZES => ['color_product_size', 'color_id', 'size_id'],
+        ][$product->type_variant];
+
+        $relation = $product->{$model_str[0]}();
+
+        return $relation->where('status', Product::PUBLICADO)->where($model_str[1], $variant_id)->first() ?? null;
+    }
 }

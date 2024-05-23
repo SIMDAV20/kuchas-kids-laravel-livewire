@@ -27,7 +27,7 @@ Route::get('terminos-y-condiciones', [SecondaryPagesController::class, 'termsAnd
 // muestra el id de la categoria
 Route::get('categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
 
-Route::get('products/{slugProduct}', [ProductController::class, 'showProduct'])->name('products.show');
+Route::get('products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
 Route::get('contact', ContactForm::class)->name('contact.index');
 

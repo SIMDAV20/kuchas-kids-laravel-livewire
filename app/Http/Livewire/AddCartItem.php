@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Product;
 use Carbon\Carbon;
 use Livewire\Component;
 use Illuminate\Support\Facades\Storage;
@@ -10,13 +11,9 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 class AddCartItem extends Component
 {
 
-    public $product, $quantity, $qty = 1, $options = [];
+    public $product, $variant, $quantity, $qty = 1, $options = [];
 
-    public function mount()
-    {
-        $this->quantity = qty_available($this->product->id);
-        $this->options['image'] = Storage::url($this->product->images->first()->url);
-    }
+    protected $listeners = ['mount'];
 
     public function decrement()
     {
@@ -27,22 +24,51 @@ class AddCartItem extends Component
     {
         $this->qty = $this->qty + 1;
     }
+
+    public function getAttribute($attr)
+    {
+        return $this->product->type_variant == Product::VARBASE ?
+            $this->product->$attr :
+            $this->variant->$attr;
+    }
+
+    public function makePrices($item)
+    {
+        [$price, $offer_price] = showPricesProduct($this->product, $item);
+        if (!is_null($offer_price)) {
+            $this->options['base_price'] = $price;
+            $price = $offer_price;
+        }
+        return $price;
+    }
+
     public function addItem()
     {
-        [$base_price, $price] = applyOffer($this->product);
-        $this->options['base_price'] = $base_price;
+        // Mandatory witch variant is
+        if ($this->product->type_variant == Product::VARBASE) {
+            $name = $this->product->name;
+            $price = $this->makePrices($this->product);
+        } else {
+            $name = str_replace('-', ' ', $this->variant->slug);
+            $price = $this->makePrices($this->variant);
+        }
 
-        Cart::add([
-            'id'          => $this->product->id,
-            'name'        => $this->product->name,
+        $this->options['type_variant'] = $this->product->type_variant;
+        $this->options['image'] = Storage::url($this->variant->getFirstImageURL());
+
+        $data = [
+            'id'          => $this->getAttribute('id'),
+            'name'        => $name,
             'qty'         => $this->qty,
             'price'       => $price,
             'weight'      => 550,
             'options'     => $this->options
-        ]);
+        ];
+
+        Cart::add($data);
 
         // actualiazr el stock
-        $this->quantity = qty_available($this->product->id);
+        $this->quantity = qty_available($this->getAttribute('id'), $this->product->type_variant);
 
         // refrescar el qty a t1
         $this->reset('qty');
@@ -51,6 +77,12 @@ class AddCartItem extends Component
         $this->emitTo('dropdown-cart', 'render');
         $this->emitTo('cart-mobil', 'render');
     }
+
+    public function mount()
+    {
+        $this->quantity = qty_available($this->getAttribute('id'), $this->product->type_variant);
+    }
+
     public function render()
     {
         return view('livewire.add-cart-item');

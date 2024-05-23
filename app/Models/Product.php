@@ -7,6 +7,7 @@ use App\Traits\ProductScopes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Product extends Model
 {
@@ -94,10 +95,15 @@ class Product extends Model
     return $this->hasMany(ColorProductSize::class);
   }
 
-  // Relacion uno a muchos polimórfica
+  //TODO: a eliminar
   public function images()
   {
     return $this->morphMany(Image::class, "imageable");
+  }
+
+  public function image_product(): HasManyThrough
+  {
+    return $this->hasManyThrough(Image::class, ImageProduct::class, 'product_id', 'id', 'id', 'image_id');
   }
 
   public function deleteVariants($newValue)
@@ -178,6 +184,33 @@ class Product extends Model
       //TODO: falta complementar
       $this->color_product_size = $this->color_product_size()->where('quantity', '>', 0)->get();
     }
+  }
+
+  // concant the url from base product
+  public function getFirstPublicSlug()
+  {
+    $slug = $this->slug;
+    switch ($this->type_variant) {
+      case Product::VARCOLORS:
+        $slug .= '?c=' . $this->color_product()->where('status', Product::PUBLICADO)->first()->color->slug;
+        break;
+      case Product::VARSIZES:
+        $slug .= '?t=' . $this->product_size()->where('status', Product::PUBLICADO)->first()->size->slug;
+        break;
+      case Product::VARCOLORSSIZES:
+        $query = $this->color_product_size()->where('status', Product::PUBLICADO)->first();
+        $slug .= '?c=' . $query->color->slug .
+          '&t=' . $query->size->slug;
+        break;
+    }
+
+    return $slug;
+  }
+
+  public function getFirstImageURL()
+  {
+    $image_prod = $this->image_product()->first();
+    return $image_prod ? $image_prod->image->url : null;
   }
 
   // URL AMIGABLES

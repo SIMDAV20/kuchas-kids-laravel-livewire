@@ -158,6 +158,81 @@ img.banner-portada {
     object-position: center;
 }
 
+.swiper {
+    width: 100%;
+    height: 100%;
+}
+
+.swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+} */
+
+.galleryTopSwipper {
+    width: 100%;
+    height: 500px !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.swiper-slide {
+    background-size: cover;
+    background-position: center;
+}
+
+/* .mySwiper {
+    height: 20%;
+    box-sizing: border-box;
+    padding: 10px 0;
+} */
+
+.galleryThumbsSwipper {
+    margin-top: 10px;
+}
+
+.galleryThumbsSwipper .swiper-slide {
+    /* background-color: #E6E6F9; */
+    width: 120px !important;
+    height: 120px !important;
+    opacity: 0.4;
+    margin: 0;
+}
+
+.galleryThumbsSwipper .swiper-slide-thumb-active {
+    opacity: 1;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.product-image .prod-title {
+    margin: 0;
+    display: block;
+    /* padding: 0 0 5px; */
+    font-size: 20px;
+    /* line-height: 1.4em; */
+    /* color: #06c; */
+    --max-lines: 2;
+    max-height: calc(1.4em * var(--max-lines));
+    overflow: hidden;
+    /* text-overflow: ellipsis; */
+    /* padding-right: 1rem; */
+}
+
 @media screen and (max-width: 479px) {
     .product-image {
         height: 280px;

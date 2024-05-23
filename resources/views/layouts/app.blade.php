@@ -83,6 +83,9 @@
   {{-- Image Viewer --}}
   <link rel="stylesheet" href="{{ asset('vendor/images-viewer/css/master.css') }}">
 
+  {{-- Swipper --}}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
   @livewireStyles
 
   <!-- Scripts -->
@@ -109,6 +112,9 @@
   {{-- Bxslider --}}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
   <script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
+
+  {{-- Swipper --}}
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 </head>
 

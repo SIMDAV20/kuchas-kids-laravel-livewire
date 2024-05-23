@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class ColorProductSize extends Model
 {
@@ -31,10 +32,9 @@ class ColorProductSize extends Model
     return $this->belongsTo(Size::class);
   }
 
-  // Relacion uno a muchos polimórfica
-  public function images()
+  public function images(): HasManyThrough
   {
-    return $this->morphMany(Image::class, "imageable");
+    return $this->hasManyThrough(Image::class, ImageProduct::class, 'product_id', 'id', 'id', 'image_id');
   }
 
   // URL AMIGABLES

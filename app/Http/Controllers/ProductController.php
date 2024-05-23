@@ -12,6 +12,13 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+  public function show(string $slug)
+  {
+    $product = Product::where('slug', $slug)->first();
+
+    return view('products.show', compact('product'));
+  }
+
   public function showProduct(Request $request)
   {
 
