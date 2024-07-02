@@ -41,14 +41,12 @@
       s.parentNode.insertBefore(t, s)
     }(window, document, 'script',
       'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '783758606291544');
+    fbq('init', '2522462224630367');
     fbq('track', 'PageView');
   </script>
   <noscript><img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=783758606291544&ev=PageView&noscript=1" /></noscript>
+      src="https://www.facebook.com/tr?id=2522462224630367&ev=PageView&noscript=1" /></noscript>
   <!-- End Meta Pixel Code -->
-
-  <meta name="facebook-domain-verification" content="r8rpfrpke0so1efxb56kx970mqiptj" />
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DMPNZD39NW"></script>

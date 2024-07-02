@@ -72,22 +72,38 @@
 <body class="font-sans antialiased">
   <x-banner />
 
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-gray-100" x-data="{ open: true }">
+
+    <button @click="open = !open" class="top-4 left-4 z-50 p-2 bg-gray-800 text-white rounded-md lg:hidden">
+      <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+      </svg>
+      <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
     @livewire('navigation-menu')
 
-    <!-- Page Heading -->
-    @if (isset($header))
-      <header class="bg-white shadow">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          {{ $header }}
-        </div>
-      </header>
-    @endif
 
-    <!-- Page Content -->
-    <main>
-      {{ $slot }}
-    </main>
+    <!-- Page Heading -->
+    <div>
+      @if (isset($header))
+        <header class="bg-white shadow">
+          <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            {{ $header }}
+          </div>
+        </header>
+      @endif
+
+      <!-- Page Content -->
+      <main class="pl-64 transition-all duration-300 ease-in-out" :class="{ 'pl-16': !open }">
+        {{ $slot }}
+      </main>
+    </div>
+
   </div>
 
   @stack('modals')
