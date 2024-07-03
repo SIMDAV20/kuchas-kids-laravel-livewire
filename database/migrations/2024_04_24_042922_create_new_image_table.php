@@ -23,7 +23,7 @@ return new class extends Migration
         $backup = collect([]);
 
         foreach ($products as $product) {
-            if (count($product->images)) {
+            if ($product->images?->count()) {
                 foreach ($product->images as $image) {
                     $backup->push([
                         'product_id' => $product->id,
@@ -37,7 +37,7 @@ return new class extends Migration
         $products = collect(ColorProduct::all());
 
         foreach ($products as $product) {
-            if (count($product->images)) {
+            if ($product->images?->count()) {
                 foreach ($product->images as $image) {
                     $backup->push([
                         'product_id' => $product->id,
@@ -51,7 +51,7 @@ return new class extends Migration
         $products = collect(ProductSize::all());
 
         foreach ($products as $product) {
-            if (count($product->images)) {
+            if ($product->images?->count()) {
                 foreach ($product->images as $image) {
                     $backup->push([
                         'product_id' => $product->id,
@@ -63,7 +63,7 @@ return new class extends Migration
         }
 
         foreach ($backup as $image) {
-            DB::table('images')->insert([
+            DB::table('image_product')->insert([
                 'product_id' => $image['product_id'],
                 'image_id' => $image['image_id'],
                 'product_type' => $image['product_type'],
