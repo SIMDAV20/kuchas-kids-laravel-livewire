@@ -70,7 +70,7 @@
     </x-slot>
   </x-form-section>
 
-  <x-action-section>
+  <x-action-section class="mb-5">
     <x-slot name="title">
       Lista de Categorías
     </x-slot>
@@ -78,50 +78,89 @@
       Aqui encontrará todas las categorías agregadas
     </x-slot>
     <x-slot name="content">
-      <table class="text-gray-600 min-w-full divide-y">
-        <thead class="border-b border-gray-300s">
-          <tr class="text-left">
-            <th class="px-6 py-4">Nombre</th>
-            <th class="px-6 py-4 text-center">Cant. Prods.</th>
-            <th class="px-6 py-4">Estado</th>
-            <th class="px-6 py-4 text-center">Acción</th>
-          </tr>
-        </thead>
-        <tbody wire:sortable="updateCategoriesPosition()" class="divide-y divide-gray-300">
-          @foreach ($categories as $category)
-            <tr wire:sortable.item="{{ $category->id }}" wire:key="category-{{ $category->id }}">
-              <td class="px-6 py-4">
-                <i class="fas fa-allergies cursor-pointer"></i>
-                <a href="{{ route('admin.categories.show', $category) }}"
-                  class="uppercase underline hover:text-blue-600">
-                  {{ $category->name }}
-                </a>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-center">
-                {{ $category->products_count }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                @livewire('admin.change-status-entity', ['entity' => $category], key($category->id))
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex justify-center divide-x divide-gray-300 font-semibold">
-                  <a wire:click="edit('{{ $category->slug }}')" class="pr-2 hover:text-blue-600 cursor-pointer">
-                    Editar
-                  </a>
-                  {{-- tiene q estar entre comillas el $category->slug sino no se va enviar como cadena --}}
-                  <a wire:click="$emit('deleteCategory', '{{ $category->slug }}')"
-                    class="pl-2 hover:text-red-600 cursor-pointer">
-                    Eliminar
-                  </a>
-                </div>
-              </td>
+      <div class="overflow-x-auto">
+        <table class="text-gray-600 min-w-full divide-y">
+          <thead class="border-b border-gray-300s">
+            <tr class="text-left">
+              <th class="px-6 py-4">Nombre</th>
+              <th class="px-6 py-4 text-center">Cant. Prods.</th>
+              <th class="px-6 py-4">Estado</th>
+              <th class="px-6 py-4 text-center">Acción</th>
             </tr>
-          @endforeach
-        </tbody>
-      </table>
-      <x-action-message class="mr-3 mt-2 text-blue-600" on="updated_positions">
-        Posiciones Actualizadas
-      </x-action-message>
+          </thead>
+          <tbody class="divide-y divide-gray-300">
+            @foreach ($categories as $category)
+              <tr wire:key="category-{{ $category->id }}">
+                <td class="px-6 py-4">
+                  <a href="{{ route('admin.categories.show', $category) }}" class="uppercase hover:text-blue-600">
+                    {{ $category->name }}
+                  </a>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  {{ $category->products_count }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  @livewire('admin.change-status-entity', ['entity' => $category], key($category->id))
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex justify-center divide-x divide-gray-300 font-semibold">
+                    <a wire:click="edit('{{ $category->slug }}')" class="pr-2 hover:text-blue-600 cursor-pointer">
+                      Editar
+                    </a>
+                    {{-- tiene q estar entre comillas el $category->slug sino no se va enviar como cadena --}}
+                    <a wire:click="$emit('deleteCategory', '{{ $category->slug }}')"
+                      class="pl-2 hover:text-red-600 cursor-pointer">
+                      Eliminar
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+    </x-slot>
+  </x-action-section>
+
+  {{-- Sort categories by position --}}
+  <x-action-section>
+    <x-slot name="title">
+      Ordenar las Categorías
+    </x-slot>
+    <x-slot name="description">
+      Aqui podrás ordenar todas las categorías
+    </x-slot>
+    <x-slot name="content">
+      <div class="overflow-x-auto">
+        <table class="text-gray-600 min-w-full divide-y">
+          <thead class="border-b border-gray-300s">
+            <tr class="text-left">
+              <th class="px-6 py-4">Nombre</th>
+              <th class="px-6 py-4 text-center">Orden</th>
+            </tr>
+          </thead>
+          <tbody wire:sortable="updateCategoriesPosition()" class="divide-y divide-gray-300">
+            @foreach ($categories as $category)
+              <tr wire:sortable.item="{{ $category->id }}" wire:key="category-order-{{ $category->id }}">
+                <td class="px-6 py-4">
+                  <div class="flex items-center">
+                    <i class="fas fa-allergies cursor-pointer mr-2"></i>
+                    <p class="uppercase hover:text-blue-600">
+                      {{ $category->name }}
+                    </p>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  {{ $category->position }}
+                </td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+        <x-action-message class="mr-3 mt-2 text-blue-600" on="updated_positions">
+          Posiciones Actualizadas
+        </x-action-message>
+      </div>
     </x-slot>
   </x-action-section>
 

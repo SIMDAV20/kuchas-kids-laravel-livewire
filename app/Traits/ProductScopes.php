@@ -19,7 +19,7 @@ trait ProductScopes
       'products.description'
     ];
     return $query->when($search, fn ($query) => $query->orWhere(DB::raw("CONCAT_WS(''," . implode(',', $columns) . " )"), 'LIKE', "%$search%"))
-      ->where('status', Product::PUBLICADO);
+      ->where('products.status', Product::PUBLICADO);
   }
 
   public function scopeSearchAll(&$query, $search)

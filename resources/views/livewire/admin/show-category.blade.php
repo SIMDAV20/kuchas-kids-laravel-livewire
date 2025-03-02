@@ -60,7 +60,7 @@
     </x-slot>
   </x-form-section>
 
-  <x-action-section class="mb-6">
+  <x-action-section class="mb-5">
     <x-slot name="title">
       Lista de Subcategorías
     </x-slot>
@@ -68,52 +68,93 @@
       Aqui encontrará todas las subcategorías agregadas
     </x-slot>
     <x-slot name="content">
-      <table class="text-gray-600 min-w-full divide-y">
-        <thead class="border-b border-gray-300s">
-          <tr class="text-left">
-            <th class="px-6 py-4">Nombre</th>
-            <th class="px-6 py-4 text-center">Cant. Prods.</th>
-            <th class="px-6 py-4">Estado</th>
-            <th class="px-6 py-4 text-center">Acción</th>
-          </tr>
-        </thead>
-        <tbody wire:sortable="updateSubCategoriesPosition()" class="divide-y divide-gray-300">
-          @foreach ($subcategories as $subcategory)
-            <tr wire:sortable.item="{{ $subcategory->id }}" wire:key="subcategory-{{ $subcategory->id }}">
-              <td class="px-6 py-4">
-                <i class="fas fa-allergies cursor-move"></i>
-                <span class="uppercase hover:text-blue-600">
-                  {{ $subcategory->name }}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-center">
-                {{ $subcategory->products_count }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                @livewire('admin.change-status-entity', ['entity' => $subcategory], key($subcategory->id))
-              </td>
-              <td class="px-6 py-4">
-                <div class="flex justify-center divide-x divide-gray-300 font-semibold">
-                  <a wire:click="edit('{{ $subcategory->id }}')" class="pr-2 hover:text-blue-600 cursor-pointer">
-                    Editar
-                  </a>
-                  {{-- tiene q estar entre comillas el $subcategory->id sino no se va enviar como cadena --}}
-                  <a wire:click="$emit('deleteSubcategory', '{{ $subcategory->id }}')"
-                    class="pl-2 hover:text-red-600 cursor-pointer">
-                    Eliminar
-                  </a>
-                </div>
-              </td>
+      <div class="overflow-x-auto">
+        <table class="text-gray-600 min-w-full divide-y">
+          <thead class="border-b border-gray-300s">
+            <tr class="text-left">
+              <th class="px-6 py-4">Nombre</th>
+              <th class="px-6 py-4 text-center">Cant. Prods.</th>
+              <th class="px-6 py-4">Estado</th>
+              <th class="px-6 py-4 text-center">Acción</th>
             </tr>
-          @endforeach
-        </tbody>
-      </table>
-      <x-action-message class="mr-3 mt-2 text-blue-600" on="updated_subcategories_positions">
-        Posiciones Actualizadas
-      </x-action-message>
+          </thead>
+          <tbody class="divide-y divide-gray-300">
+            @foreach ($subcategories as $subcategory)
+              <tr wire:key="subcategory-{{ $subcategory->id }}">
+                <td class="px-6 py-4">
+                  <span class="uppercase">
+                    {{ $subcategory->name }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  {{ $subcategory->products_count }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  @livewire('admin.change-status-entity', ['entity' => $subcategory], key($subcategory->id))
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex justify-center divide-x divide-gray-300 font-semibold">
+                    <a wire:click="edit('{{ $subcategory->id }}')" class="pr-2 hover:text-blue-600 cursor-pointer">
+                      Editar
+                    </a>
+                    {{-- tiene q estar entre comillas el $subcategory->id sino no se va enviar como cadena --}}
+                    <a wire:click="$emit('deleteSubcategory', '{{ $subcategory->id }}')"
+                      class="pl-2 hover:text-red-600 cursor-pointer">
+                      Eliminar
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
     </x-slot>
   </x-action-section>
 
+  {{-- Sort subcategories by position --}}
+  <x-action-section class="mb-5">
+    <x-slot name="title">
+      Ordenar las Subcategorías
+    </x-slot>
+    <x-slot name="description">
+      Aqui podrás ordenar todas las subcategorías
+    </x-slot>
+    <x-slot name="content">
+      <div class="overflow-x-auto">
+        <table class="text-gray-600 min-w-full divide-y">
+          <thead class="border-b border-gray-300s">
+            <tr class="text-left">
+              <th class="px-6 py-4">Nombre</th>
+              <th class="px-6 py-4 text-center">Orden</th>
+            </tr>
+          </thead>
+          <tbody wire:sortable="updateSubCategoriesPosition()" class="divide-y divide-gray-300">
+            @foreach ($subcategories as $subcategory)
+              <tr wire:sortable.item="{{ $subcategory->id }}" wire:key="subcategory-order-{{ $subcategory->id }}">
+                <td class="px-6 py-4">
+                  <div class="flex items-center">
+                    <i class="fas fa-allergies cursor-move mr-2"></i>
+                    <span class="uppercase hover:text-blue-600">
+                      {{ $subcategory->name }}
+                    </span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  {{ $subcategory->position }}
+                </td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+        <x-action-message class="mr-3 mt-2 text-blue-600" on="updated_subcategories_positions">
+          Posiciones Actualizadas
+        </x-action-message>
+      </div>
+    </x-slot>
+  </x-action-section>
+
+  {{-- Sort product by subcategory --}}
   <x-action-section>
     <x-slot name="title">
       Ordenar productos por subcategoría
@@ -233,7 +274,6 @@
       </x-button>
     </x-slot>
   </x-dialog-modal>
-
 
   @push('scripts')
     <script>
