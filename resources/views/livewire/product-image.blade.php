@@ -5,7 +5,7 @@
       @case(1)
         @foreach ($product->color_product as $key => $p_color_prod)
           <a href="{{ route('products.show', ['slugProduct' => $p_color_prod->slug]) }}">
-            <img class="h-48 w-full object-contain object-center rounded-t product-image"
+            <img class="w-full object-contain object-center rounded-t product-image"
               :class="p_color == {{ $key }} ? '' : 'hidden'"
               src="{{ @Storage::url($p_color_prod->images->first()->url) }}" alt="{{ @$p_color_prod->images->first()->url }}">
           </a>
@@ -14,14 +14,14 @@
 
       @case(2)
         <a href="{{ route('products.show', ['slugProduct' => $product]) }}">
-          <img class="h-48 w-full object-contain object-center rounded-t product-image"
+          <img class="w-full object-contain object-center rounded-t product-image"
             src="{{ Storage::url(@$product->product_size->first()->images->first()->url) }}" alt="{{ $product->name }}">
         </a>
       @break
 
       @default
         <a href="{{ route('products.show', ['slugProduct' => $product]) }}">
-          <img class="h-48 w-full object-contain object-center rounded-t product-image"
+          <img class="w-full object-contain object-center rounded-t product-image"
             src="{{ Storage::url(@$product->images->first()->url) }}" alt="{{ $product->name }}">
         </a>
     @endswitch
@@ -38,8 +38,8 @@
         </a>
       </h1>
     @empty
-      <h1 class="text-lg font-semibold mb-2 text-gray-550">
-        <a href="{{ route('products.show', ['slugProduct' => $product]) }}">{{ Str::limit($product->name, 25) }}</a>
+      <h1 class="text-lg font-semibold mb-2 text-gray-550 prod-title">
+        <a href="{{ route('products.show', ['slugProduct' => $product]) }}">{{$product->name}}</a>
       </h1>
     @endforelse
 

@@ -158,6 +158,20 @@ img.banner-portada {
     object-position: center;
 }
 
+.prod-title {
+    margin: 0;
+    display: block;
+    /* padding: 0 0 5px; */
+    font-size: 20px;
+    /* line-height: 1.4em; */
+    /* color: #06c; */
+    --max-lines: 2;
+    max-height: calc(1.4em * var(--max-lines));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* padding-right: 1rem; */
+}
+
 @media screen and (max-width: 479px) {
     .product-image {
         height: 280px;
