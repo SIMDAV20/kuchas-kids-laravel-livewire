@@ -115,7 +115,7 @@ img.banner-portada {
 }
 
 .whatsapp-icon {
-    margin-top: 13px;
+    margin-top: 16px;
 }
 
 .category-banner {
@@ -232,6 +232,15 @@ img.banner-portada {
     /* text-overflow: ellipsis; */
     /* padding-right: 1rem; */
 }
+
+.glider-slide img {
+    /* object-fit: contain; */
+}
+
+.product image {
+    min-height: 280px;
+}
+
 
 @media screen and (max-width: 479px) {
     .product-image {
