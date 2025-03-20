@@ -7,9 +7,10 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 
 class UpdateCartItem extends Component
 {
-    public $rowId, $qty, $quantity;
+    public $rowId, $qty, $quantity, $newqty;
 
-    public function mount() {
+    public function mount()
+    {
         $item = Cart::get($this->rowId);
 
         $this->qty = $item->qty;

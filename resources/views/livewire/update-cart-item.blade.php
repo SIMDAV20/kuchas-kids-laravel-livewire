@@ -1,3 +1,12 @@
+@push('scripts')
+    <script>
+        Livewire.on('cartUpdated', () => {
+            window.dispatchEvent(new Event('cart-update'));
+        });
+    </script>
+@endpush
+
+
 <div class="flex items-center" x-data>
     <x-secondary-button disabled x-bind:disabled="$wire.qty <= 1" wire:loading.attr="disabled" wire:target="decrement"
         wire:click="decrement">

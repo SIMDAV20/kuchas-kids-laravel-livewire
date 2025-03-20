@@ -53,7 +53,11 @@ class CreateOrder extends Component
     {
         if ($value == 1 || $value == 3) {
             $this->resetValidation([
-                'department_id', 'province_id', 'district_id', 'address', 'references'
+                'department_id',
+                'province_id',
+                'district_id',
+                'address',
+                'references'
             ]);
 
             $this->reset(['shipping_cost', 'department_id', 'province_id', 'district_id', 'address', 'references']);

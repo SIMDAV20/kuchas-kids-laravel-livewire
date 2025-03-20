@@ -6,6 +6,7 @@ use App\Models\Image;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Mail\MessageRecieved;
+use App\Models\Product;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
@@ -19,20 +20,48 @@ class PaymentOrder extends Component
 
     use AuthorizesRequests, WithFileUploads;
 
-    public $order, $photo, $rand;
+    public $order, $photo, $rand, $prodsNoStock;
 
     public $payment_method;
+
+    public $showCategoryModal = false;
 
     protected $rules = [
         'photo' => 'required|mimes:png,jpeg,jpg|max:2048' // 2MB
     ];
 
-    protected $listeners = ['payOrder'];
+    protected $listeners = ['payOrder', 'ordenActualizada' => 'render'];
 
     public function mount(Order $order)
     {
         $this->order = $order;
         $this->rand = rand();
+
+        $this->validateStock();
+    }
+
+    public function validateStock()
+    {
+        $items = collect(json_decode($this->order->content));
+
+
+        // validas si cada producto tiene stock
+        $products = Product::whereIn('id', $items->pluck('id'))->get();
+        $this->prodsNoStock = collect([]);
+        foreach ($items as $key => $item) {
+            $findProduct = $products->first(function ($prod) use ($item) {
+                return $prod->id ==  $item->id;
+            });
+
+            if ($findProduct && $findProduct->quantity < $item->qty) {
+                $this->prodsNoStock->push($findProduct);
+            }
+        }
+
+        if (count($this->prodsNoStock) > 0) {
+            // emites
+            $this->showCategoryModal = true;
+        }
     }
 
     public function payOrder()

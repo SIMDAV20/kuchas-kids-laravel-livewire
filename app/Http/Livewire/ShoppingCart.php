@@ -9,15 +9,17 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 class ShoppingCart extends Component
 {
 
-    protected $listeners = ['render'];
+    protected $listeners = ['render' => '$refresh'];
 
-    public function destroy() {
+    public function destroy()
+    {
         Cart::destroy();
         $this->emitTo('dropdown-cart', 'render');
         $this->emitTo('cart-mobil', 'render');
     }
 
-    public function delete($rowID) {
+    public function delete($rowID)
+    {
         Cart::remove($rowID);
         $this->emitTo('dropdown-cart', 'render');
         $this->emitTo('cart-mobil', 'render');

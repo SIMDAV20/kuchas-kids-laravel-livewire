@@ -32,7 +32,10 @@
                 'email' => auth()->user()->email,
             ],
         ];
-        header('Authorization', 'NDg3MTY5NDg6dGVzdHBhc3N3b3JkX3pEUnlLMnpYTTlERkVGTkdVUFAwUDRvVXdVVEJKS21OdWM0ajlSYnc4SURmZg==');
+        header(
+            'Authorization',
+            'NDg3MTY5NDg6dGVzdHBhc3N3b3JkX3pEUnlLMnpYTTlERkVGTkdVUFAwUDRvVXdVVEJKS21OdWM0ajlSYnc4SURmZg==',
+        );
         header('Content-Type', 'application/json');
         $response = $client->post('V4/Charge/CreatePayment', $store);
 
@@ -252,3 +255,4 @@
         </div>
     </div>
 </div>
+<x-no-stock-in-order wire:model="showCategoryModal" :items="$items" :envio="$envio" :order="$order" />
