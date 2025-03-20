@@ -1,26 +1,26 @@
 <article class="pt-2 product-image">
-  {{-- {{ $product->name }} --}}
-  <a href="{{ route('products.show', $slug) }}">
+    {{-- {{ $product->name }} --}}
+    <a href="{{ route('products.show', $slug) }}">
 
-    <div x-data="{ p_color: 0 }">
-      @if (count($colors))
-        <img class="h-48 w-full object-contain object-center rounded-t product-image"
-          src="{{ @Storage::url($imagePath) }}" alt="{{ $product->slug }}">
+        <div x-data="{ p_color: 0 }">
+            @if (count($colors))
+                <img class="h-48 w-full object-contain object-center rounded-t product-image"
+                    src="{{ @Storage::url($imagePath) }}" alt="{{ $product->slug }}">
 
-        {{-- BOLITAS DE COLORES --}}
+                {{-- BOLITAS DE COLORES --}}
 
-        <div class="flex mb-4 justify-center items-center">
-          @foreach ($colors as $key => $color)
-            <div style="background-color: {{ $color->hex }}" class="w-8 h-8 mx-2 rounded-full cursor-pointer"
-              x-on:click="p_color = {{ $key }}">
-            </div>
-          @endforeach
-        </div>
+                <div class="flex mb-4 justify-center items-center">
+                    @foreach ($colors as $key => $color)
+                        <div style="background-color: {{ $color->hex }}"
+                            class="w-8 h-8 mx-2 rounded-full cursor-pointer" x-on:click="p_color = {{ $key }}">
+                        </div>
+                    @endforeach
+                </div>
 
-      @endif
+            @endif
 
-      {{-- {{ $colors->count() > 0 ? 'si' : 'no' }} --}}
-      {{-- @switch($product->type_variant)
+            {{-- {{ $colors->count() > 0 ? 'si' : 'no' }} --}}
+            {{-- @switch($product->type_variant)
       @case('base')
         <img class="h-48 w-full object-contain object-center rounded-t product-image"
           src="{{ @Storage::url(json_decode(@$product->gallery)[0]) }}" alt="{{ $product->slug }}">
@@ -55,26 +55,26 @@
         @endif
       </p>
     </div> --}}
-  </a>
+    </a>
 
-  {{-- <div x-data="{ p_color: 0 }">
+    {{-- <div x-data="{ p_color: 0 }">
     <figure> --}}
-  {{-- @foreach ($product->color_product as $key => $p_color_prod)
+    {{-- @foreach ($product->color_product as $key => $p_color_prod)
 
 
       @endforeach --}}
-  {{-- <a href="{{ route('products.show', ['slugProduct' => $p_color_prod->slug]) }}">
+    {{-- <a href="{{ route('products.show', ['slugProduct' => $p_color_prod->slug]) }}">
   <img class="h-48 w-full object-contain object-center rounded-t product-image" :class="p_color == {{ $key }} ? '' : 'hidden'" src="{{ @Storage::url(json_decode($p_color_prod->gallery)[0]) }}">
   </a> --}}
-  {{-- @empty
+    {{-- @empty
         <a href="{{ route('products.show', ['slugProduct' => $product]) }}">
   <img class="h-48 w-full object-contain object-center rounded-t product-image" src="{{ Storage::url(@$product->images->first()->url) }}" alt="{{ @$product->images->first()->url }}">
   </a>
   @endforelse --}}
-  {{-- </figure>
+    {{-- </figure>
     <div class="py-4 px-2 text-center"> --}}
-  {{-- NOMBRE DEL PRODUCTO --}}
-  {{-- @forelse ($product->color_product as $key => $p_color_prod)
+    {{-- NOMBRE DEL PRODUCTO --}}
+    {{-- @forelse ($product->color_product as $key => $p_color_prod)
         <h1 class="text-lg font-semibold mb-2 text-gray-550">
           <a :class="p_color == {{ $key }} ? '' : 'hidden'"
   href="{{ route('products.show', ['slugProduct' => $product]) }}">
@@ -86,8 +86,8 @@
     <a href="{{ route('products.show', ['slugProduct' => $product]) }}">{{ Str::limit($product->name, 25) }}</a>
   </h1>
   @endforelse --}}
-  {{-- BOLITAS DE COLORES --}}
-  {{-- @if (count($product->color_product))
+    {{-- BOLITAS DE COLORES --}}
+    {{-- @if (count($product->color_product))
         <div class="flex mb-4 justify-center items-center">
           @foreach ($product->color_product as $key => $p_color_prod)
             <div style="background-color: {{ $p_color_prod->color->hex }}"
@@ -96,8 +96,8 @@
   @endforeach
   </div>
   @endif --}}
-  {{-- PRECIO --}}
-  {{-- @if (count($product->product_size) > 0 || count($product->color_product_size) > 0)
+    {{-- PRECIO --}}
+    {{-- @if (count($product->product_size) > 0 || count($product->color_product_size) > 0)
         <p class="font-bold text-gray-550">Desde</p>
         <span class="font-bold text-violet-350">S/{{ $product->getMinPrice() }}</span>
   @else
@@ -110,7 +110,7 @@
   <p class="font-bold text-violet-350">S/ {{ $product->price }}</p>
   @endif
   @endif --}}
-  {{-- @if ($low_price < 9999999) @else @if ($product->offer_price > 0 && \Carbon\Carbon::parse($product->offer_date)->format('Y-m-d') >= \Carbon\Carbon::now()->format('Y-m-d') && $product->offer_date !== null)
+    {{-- @if ($low_price < 9999999) @else @if ($product->offer_price > 0 && \Carbon\Carbon::parse($product->offer_date)->format('Y-m-d') >= \Carbon\Carbon::now()->format('Y-m-d') && $product->offer_date !== null)
               <div class="flex justify-center items-center">
                   <del class="text-sm font-semibold text-gray-400 mr-3">S/ {{ $product->price }}</del>
   <p class="text-violet-350 font-semibold">S/ {{ $product->offer_price }}</p>
@@ -124,7 +124,7 @@
   <p class="font-semibold text-gray-550">S/ {{ $product->price }}</p>
   @endif
   @endif --}}
-  {{-- @if ($product->offer_price)
+    {{-- @if ($product->offer_price)
               <div class="flex justify-center items-center">
                   <del class="text-sm text-gray-500 font-bold mr-2">S/ {{ $product->price }}</del>
   <p class="text-violet-350 font-bold">S/ {{ $product->offer_price }}</p>
@@ -132,6 +132,6 @@
   @else
   <p class="font-bold">S/ {{ $product->price }}</p>
   @endif --}}
-  {{-- </div> --}}
-  {{-- </div> --}}
+    {{-- </div> --}}
+    {{-- </div> --}}
 </article>
