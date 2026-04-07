@@ -13,6 +13,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SecondaryPagesController;
 use App\Http\Controllers\WebhooksController;
 use App\Http\Livewire\ContactForm;
+use App\Http\Livewire\ComplaintsBook;
 
 Route::get('/', WelcomeController::class)->name('welcome');
 
@@ -27,6 +28,7 @@ Route::get('categories/{category}', [CategoryController::class, 'show'])->name('
 Route::get('products/{slugProduct}', [ProductController::class, 'showProduct'])->name('products.show');
 
 Route::get('contact', ContactForm::class)->name('contact.index');
+Route::get('libro-de-reclamaciones', ComplaintsBook::class)->name('complaints-book');
 
 // administrado por livewire
 Route::get('shopping-cart', ShoppingCart::class)->name('shopping-cart');
