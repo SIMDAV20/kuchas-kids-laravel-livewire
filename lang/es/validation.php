@@ -146,6 +146,11 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'contact' => 'contacto',
+        'email' => 'correo electrónico',
+        'phone' => 'teléfono',
+        'message' => 'mensaje',
+    ],
 
 ];
