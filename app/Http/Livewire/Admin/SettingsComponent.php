@@ -17,6 +17,9 @@ class SettingsComponent extends Component
     'whatsapp' => null,
     'email_receive' => null,
     'email_client' => null,
+    'business_name' => null,
+    'trade_name' => null,
+    'ruc' => null,
   ];
 
   protected $rules = [
@@ -24,6 +27,9 @@ class SettingsComponent extends Component
     'editForm.whatsapp' => 'nullable|string|max:20',
     'editForm.email_receive' => 'nullable|email|max:255',
     'editForm.email_client' => 'nullable|email|max:255',
+    'editForm.business_name' => 'nullable|string|max:255',
+    'editForm.trade_name' => 'nullable|string|max:255',
+    'editForm.ruc' => 'nullable|string|max:20',
   ];
 
   protected $validationAttributes = [
@@ -31,6 +37,9 @@ class SettingsComponent extends Component
     'editForm.whatsapp' => 'WhatsApp',
     'editForm.email_receive' => 'correo para recibir mensajes',
     'editForm.email_client' => 'correo para clientes',
+    'editForm.business_name' => 'Razón social',
+    'editForm.trade_name' => 'Nombre comercial',
+    'editForm.ruc' => 'RUC',
   ];
 
   public function updatingShowHeadband($value)
@@ -59,6 +68,12 @@ class SettingsComponent extends Component
       $this->editForm['whatsapp'] = $this->setting->whatsapp;
       $this->editForm['email_receive'] = $this->setting->email_receive;
       $this->editForm['email_client'] = $this->setting->email_client;
+      
+      $company_info = $this->setting->company_info;
+      $this->editForm['business_name'] = $company_info['business_name'] ?? null;
+      $this->editForm['trade_name'] = $company_info['trade_name'] ?? null;
+      $this->editForm['ruc'] = $company_info['ruc'] ?? null;
+
       $this->show_headband = $this->setting->show_headband;
     }
   }
@@ -66,7 +81,21 @@ class SettingsComponent extends Component
   public function update()
   {
     $this->validate();
-    $this->setting->update($this->editForm);
+
+    $this->setting->update([
+      'min_amount' => $this->editForm['min_amount'],
+      'headband_one' => $this->editForm['headband_one'],
+      'headband_two' => $this->editForm['headband_two'],
+      'whatsapp' => $this->editForm['whatsapp'],
+      'email_receive' => $this->editForm['email_receive'],
+      'email_client' => $this->editForm['email_client'],
+      'company_info' => [
+        'business_name' => $this->editForm['business_name'] ?? null,
+        'trade_name' => $this->editForm['trade_name'] ?? null,
+        'ruc' => $this->editForm['ruc'] ?? null,
+      ]
+    ]);
+
     $this->emit('saved');
     $this->mount();
   }

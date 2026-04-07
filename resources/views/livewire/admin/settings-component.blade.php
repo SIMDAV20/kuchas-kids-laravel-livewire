@@ -79,6 +79,27 @@
         <x-input wire:model.trim="editForm.email_client" type="email" class="w-full mt-1" />
         <x-input-error for="editForm.email_client" />
       </div>
+      <div class="col-span-6 sm:col-span-4">
+        <x-label>
+          Razón social
+        </x-label>
+        <x-input wire:model.trim="editForm.business_name" type="text" class="w-full mt-1" />
+        <x-input-error for="editForm.business_name" />
+      </div>
+      <div class="col-span-6 sm:col-span-4">
+        <x-label>
+          Nombre comercial
+        </x-label>
+        <x-input wire:model.trim="editForm.trade_name" type="text" class="w-full mt-1" />
+        <x-input-error for="editForm.trade_name" />
+      </div>
+      <div class="col-span-6 sm:col-span-4">
+        <x-label>
+          RUC
+        </x-label>
+        <x-input wire:model.trim="editForm.ruc" type="text" class="w-full mt-1" />
+        <x-input-error for="editForm.ruc" />
+      </div>
     </x-slot>
     <x-slot name="actions">
       <x-action-message class="mr-3" on="saved">

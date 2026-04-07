@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('whatsapp')->nullable();
             $table->string('email_receive')->nullable();
             $table->string('email_client')->nullable();
+            $table->json('company_info')->nullable();
         });
     }
 
@@ -28,7 +29,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->dropColumn(['whatsapp', 'email_receive', 'email_client']);
+            $table->dropColumn(['whatsapp', 'email_receive', 'email_client', 'company_info']);
         });
     }
 };
