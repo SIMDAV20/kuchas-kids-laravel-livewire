@@ -25,19 +25,17 @@ class ContactForm extends Component
 
         $settings = Setting::first();
         $adminEmail = $settings->email_receive;
-
-        if ($adminEmail) {
-            Mail::to($adminEmail)->send(new ContactNotification([
-                'contact' => $this->contact,
-                'email' => $this->email,
-                'phone' => $this->phone,
-                'message' => $this->message,
-            ]));
-        }
+        
+        Mail::to($adminEmail)->send(new ContactNotification([
+            'contact' => $this->contact,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'message' => $this->message,
+        ]));
 
         $this->reset(['contact', 'email', 'phone', 'message']);
 
-        $this->emit('saved');
+        $this->emit('alert', 'Mensaje enviado correctamente. Nos pondremos en contacto contigo lo antes posible.');
     }
 
     public function render()

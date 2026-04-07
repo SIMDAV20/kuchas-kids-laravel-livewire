@@ -57,4 +57,16 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            livewire.on('alert', function(message) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: message,
+                })
+            })
+        </script>
+    @endpush
 </div>
