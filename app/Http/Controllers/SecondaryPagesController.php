@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Models\Setting;
 
 class SecondaryPagesController extends Controller
 {
@@ -18,6 +19,16 @@ class SecondaryPagesController extends Controller
         abort_if(!file_exists($path), 404);
 
         $raw     = file_get_contents($path);
+
+        $settings = Setting::first();
+        if ($settings) {
+            $raw = str_replace(
+                ['{{whatsapp}}', '{{email_client}}', '{{email_receive}}'],
+                [$settings->whatsapp, $settings->email_client, $settings->email_receive],
+                $raw
+            );
+        }
+
         $content = Str::markdown($raw);
 
         // Extrae el primer # como título de página (sin el '#')

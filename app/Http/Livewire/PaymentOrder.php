@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Image;
 use App\Models\Order;
+use App\Models\Setting;
 use App\Models\Payment;
 use App\Mail\MessageRecieved;
 use Livewire\Component;
@@ -51,7 +52,7 @@ class PaymentOrder extends Component
             'order' => $this->order
         ];
 
-        Mail::to(env('MAIN_EMAIL'))
+        Mail::to(Setting::first()->email_receive)
             ->queue(new MessageRecieved(
                 $data,
                 'Nueva Venta Página web Kuchas Kids'

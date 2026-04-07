@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Setting;
 use App\Models\Payment;
 use App\Http\Controllers\MailController;
 use App\Mail\MessageRecieved;
@@ -124,7 +125,7 @@ class OrderController extends Controller
             'order' => $order
         ];
 
-        Mail::to('atencionalclientekuchaskids@gmail.com')
+        Mail::to(Setting::first()->email_receive)
             ->queue(new MessageRecieved(
                 $data,
                 'Nueva Venta Página web Kuchas Kids'
@@ -173,7 +174,7 @@ class OrderController extends Controller
             'order' => $order
         ];
 
-        Mail::to(env('MAIN_EMAIL'))
+        Mail::to(Setting::first()->email_receive)
             ->queue(new MessageRecieved(
                 $data,
                 'Nueva Venta Página web Kuchas Kids'

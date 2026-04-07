@@ -43,14 +43,14 @@
 
                 <span class="mb-4">
                     <h3 class="text-lg text-gray-600 font-semibold">Correo:</h3>
-                    <a href="mailto:latienditademadai@gmail.com" class="text-blue-600 hover:text-blue-400">
-                        latienditademadai@gmail.com
+                    <a href="mailto:{{ $settings_company->email_client }}" class="text-blue-600 hover:text-blue-400">
+                        {{ $settings_company->email_client }}
                     </a>
                 </span>
 
                 <span class="mb-4">
                     <h3 class="text-lg text-gray-600 font-semibold">WhatsApp de atención:</h3>
-                    <a href="https://wa.me/51960546859" class="text-blue-600 hover:text-blue-400">960-546-859</a>
+                    <a href="https://wa.me/51{{ $settings_company->whatsapp }}" class="text-blue-600 hover:text-blue-400">{{ $settings_company->whatsapp }}</a>
                 </span>
 
                 <p class="mb-5 text-gray-700">También puedes completar el formulario y te responderemos por WhatsApp lo antes posible.</p>                

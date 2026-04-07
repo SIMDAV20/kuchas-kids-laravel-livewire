@@ -127,7 +127,7 @@ Los plazos de entrega pueden verse afectados por causas ajenas a La Tiendita de 
 Los productos de La Tiendita de Madaí cuentan con una garantía de 15 días calendario desde la fecha de compra, aplicable únicamente a defectos de fabricación.
 
 Para solicitar la aplicación de la garantía, el cliente debe:
-1. Contactar a La Tiendita de Madaí a través del WhatsApp 960-546-859 o del canal que se indique en el sitio.
+1. Contactar a La Tiendita de Madaí a través del WhatsApp {{whatsapp}} o del canal que se indique en el sitio.
 2. Indicar su número de pedido y adjuntar imágenes o videos que permitan apreciar el defecto.
 
 La Tiendita de Madaí evaluará el caso conforme a su Política de Cambios y Devoluciones, la cual complementa estos Términos y Condiciones.

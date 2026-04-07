@@ -1,5 +1,5 @@
 <footer class="body-font bg-white footer-public">
-    <a href="https://wa.me/51960546859?text=¡Hola%20*Kuchaskids.pe*!" class="whatsapp" target="_blank">
+    <a href="https://wa.me/51{{ $settings_company->whatsapp }}?text=¡Hola%20*Kuchaskids.pe*!" class="whatsapp" target="_blank">
         <i class="fab fa-whatsapp whatsapp-icon"></i>
     </a>
     <div
@@ -32,9 +32,9 @@
         <div class="flex-grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center">
             <div class="lg:w-1/4 md:w-1/2 w-full px-4 mb-6">
                 <h2 class="title-font font-bold text-violet-350 tracking-widest text-sm mb-3">ATENCIÓN AL CLIENTE</h2>
-                <a href="{{ route('complaints-book') }}" class="flex flex-col items-center justify-center border border-gray-200 shadow-sm rounded-lg p-3 hover:bg-violet-50 transition-colors group bg-white">
-                    <img src="{{ asset('img/libro_de_reclamaciones.webp') }}" alt="Libro de Reclamaciones" class="w-16 h-16 object-contain mb-2">
-                    <span class="text-xs font-bold text-gray-700 text-center uppercase tracking-wide">Libro de<br>Reclamaciones</span>
+                <a href="{{ route('complaints-book') }}" class="flex flex-col items-center justify-center border-none shadow-none rounded-lg p-3 transition-colors group bg-white">
+                    <img src="{{ asset('img/libro_de_reclamaciones.webp') }}" alt="Libro de Reclamaciones" class="w-32 h-32 object-contain mb-2">
+                    {{-- <span class="text-xs font-bold text-gray-700 text-center uppercase tracking-wide">Libro de<br>Reclamaciones</span> --}}
                 </a>
             </div>
             @foreach ($footerLinks as $section => $links)

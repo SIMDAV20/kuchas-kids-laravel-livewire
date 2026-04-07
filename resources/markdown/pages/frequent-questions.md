@@ -24,7 +24,7 @@ Desde esa confirmación empiezan a contarse los plazos de entrega.
 ## ¿Cómo anulo mi compra?
 Si necesitas cancelar tu pedido (antes de que sea enviado), comunícate lo antes posible con:
 
-📱 WhatsApp de atención: 960-546-859
+📱 WhatsApp de atención: {{whatsapp}}
 
 Indicando:
 * Tu nombre completo
@@ -36,7 +36,7 @@ Aplicaremos la política de Cambios y Devoluciones según el estado del pedido.
 ## ¿Cómo efectúo una modificación en mi compra?
 Si deseas cambiar talla, modelo, dirección de envío u otro dato, escríbenos a:
 
-📱 WhatsApp: 960-546-859
+📱 WhatsApp: {{whatsapp}}
 
 Ten en cuenta que solo podremos hacer modificaciones si el pedido aún no ha sido enviado.
 
@@ -50,13 +50,13 @@ Con tu cuenta podrás revisar el historial de pedidos y el estado de tus compras
 
 ## Me registré y no recibí el mail de confirmación, ¿qué hago?
 1. Revisa la carpeta “SPAM” o “Correo no deseado” de tu bandeja de entrada.
-2. Si no encuentras el correo, escríbenos por WhatsApp al 960-546-859 indicando tu nombre y el correo con el que te registraste, para ayudarte a validar tu cuenta.
+2. Si no encuentras el correo, escríbenos por WhatsApp al {{whatsapp}} indicando tu nombre y el correo con el que te registraste, para ayudarte a validar tu cuenta.
 
 ## Me registré, pero no puedo ingresar
 Verifica que estás usando el correo y la contraseña correctos.
 Si el problema continúa, puedes:
 * Usar la opción “Olvidé mi contraseña” en la web.
-* O escribirnos por WhatsApp (960-546-859) para orientarte en el proceso.
+* O escribirnos por WhatsApp ({{whatsapp}}) para orientarte en el proceso.
 
 ## ¿Cuánto tiempo tengo para realizar el pago?
 Tu carrito de compra tendrá vigencia de 5 días calendario.
@@ -66,7 +66,7 @@ Si no se registra el pago dentro de ese plazo, la orden se anula automáticament
 Sí. Los productos de La Tiendita de Madaí cuentan con una garantía de 15 días calendario posteriores a la compra, aplicable únicamente a defectos de fabricación.
 
 Para hacer efectiva la garantía:
-1. Escríbenos al WhatsApp 960-546-859.
+1. Escríbenos al WhatsApp {{whatsapp}}.
 2. Indica tu número de pedido.
 3. Envía fotos o videos donde se aprecie el problema.
 
