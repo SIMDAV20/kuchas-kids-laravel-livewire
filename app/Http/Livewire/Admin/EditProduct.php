@@ -24,6 +24,11 @@ class EditProduct extends Component
     public $allAttributes;
     public $selectedAttributes = []; // Format: [attribute_id => [option_id, option_id]]
     
+    // --- PROPIEDADES PARA IMÁGENES DE VARIANTE ---
+    public $isImageModalOpen = false;
+    public $editingVariantImagesId = null;
+    public $selectedImageIds = [];
+
     protected $listeners = ['refreshImages', 'deleteProduct' => 'delete', 'updateVariant'];
 
     protected $rules = [
@@ -143,6 +148,39 @@ class EditProduct extends Component
         if ($variant) {
             $variant->update([$field => $value]);
         }
+    }
+
+    public function openImageModal($variantId)
+    {
+        $this->editingVariantImagesId = $variantId;
+        $variant = ProductVariant::find($variantId);
+        
+        $this->selectedImageIds = $variant->images ?? [];
+        $this->isImageModalOpen = true;
+    }
+
+    public function toggleImageSelection($imageId)
+    {
+        if (in_array($imageId, $this->selectedImageIds)) {
+            $this->selectedImageIds = array_diff($this->selectedImageIds, [$imageId]);
+        } else {
+            $this->selectedImageIds[] = $imageId;
+        }
+    }
+
+    public function saveVariantImages()
+    {
+        if ($this->editingVariantImagesId) {
+            $variant = ProductVariant::find($this->editingVariantImagesId);
+            if ($variant) {
+                // Ensure arrays are reindexed
+                $variant->images = array_values($this->selectedImageIds);
+                $variant->save();
+            }
+        }
+        $this->isImageModalOpen = false;
+        $this->editingVariantImagesId = null;
+        $this->product->load('variants');
     }
 
     public function deleteVariant($variantId)

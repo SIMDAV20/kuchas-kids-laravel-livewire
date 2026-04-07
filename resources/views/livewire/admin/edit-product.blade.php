@@ -175,6 +175,7 @@
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Imágenes</th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Variante</th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SKU / Slug</th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Precio</th>
@@ -185,6 +186,20 @@
           <tbody class="bg-white divide-y divide-gray-200">
             @foreach ($product->variants as $variant)
               <tr wire:key="variant-{{ $variant->id }}">
+                <td class="px-4 py-4">
+                  <div class="flex flex-wrap gap-1 mb-2 max-w-[120px]">
+                    @php
+                        $variantImages = is_array($variant->images) ? $variant->images : [];
+                        $assignedImages = $product->images->whereIn('id', $variantImages);
+                    @endphp
+                    @foreach($assignedImages as $img)
+                      <img src="{{ Storage::url($img->url) }}" class="w-8 h-8 object-cover rounded border">
+                    @endforeach
+                  </div>
+                  <button wire:click="openImageModal({{ $variant->id }})" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
+                    <i class="fas fa-images"></i> Asignar
+                  </button>
+                </td>
                 <td class="px-4 py-4">
                   <div class="text-sm font-bold text-gray-900">
                     {{ $variant->attributeOptions->pluck('value')->implode(' / ') }}
@@ -227,8 +242,47 @@
   {{-- GALERÍA DE IMÁGENES DEL PRODUCTO BASE --}}
   <div class="bg-white shadow-xl rounded-lg p-6 mb-4">
       <h2 class="text-xl font-semibold text-gray-800 mb-6">Galería del Producto</h2>
+      <p class="text-sm text-gray-500 mb-4">Sube las imágenes aquí primero, luego podrás asignarlas a cada variante individualmente.</p>
       @livewire('admin.gallery-images-products', ['item_id' => $product->id, 'model' => 'Product'], key('product-' . $product->id))
   </div>
+
+  {{-- Modal para seleccionar imágenes de variante --}}
+  <x-dialog-modal wire:model="isImageModalOpen">
+    <x-slot name="title">
+      Seleccionar Imágenes para la Variante
+    </x-slot>
+
+    <x-slot name="content">
+      @if($product->images->count() > 0)
+        <div class="grid grid-cols-4 gap-4">
+          @foreach($product->images as $image)
+            <div 
+              wire:click="toggleImageSelection({{ $image->id }})"
+              class="relative cursor-pointer border-2 rounded-lg overflow-hidden transition-all {{ in_array($image->id, $selectedImageIds) ? 'border-indigo-500 shadow-md ring-2 ring-indigo-500/50' : 'border-transparent' }}">
+              <img src="{{ Storage::url($image->url) }}" class="w-full h-24 object-cover">
+              @if(in_array($image->id, $selectedImageIds))
+                <div class="absolute top-0 right-0 bg-indigo-500 text-white p-1 rounded-bl-lg">
+                  <i class="fas fa-check text-xs"></i>
+                </div>
+              @endif
+            </div>
+          @endforeach
+        </div>
+      @else
+        <p class="text-gray-500 text-center py-4 bg-gray-50 rounded-lg">Primero debes subir imágenes en la "Galería del Producto" abajo para poder asignarlas.</p>
+      @endif
+    </x-slot>
+
+    <x-slot name="footer">
+      <x-secondary-button wire:click="$set('isImageModalOpen', false)" wire:loading.attr="disabled">
+        Cancelar
+      </x-secondary-button>
+
+      <x-button class="ml-2 bg-indigo-600 hover:bg-indigo-700" wire:click="saveVariantImages" wire:loading.attr="disabled">
+        Guardar Asignación
+      </x-button>
+    </x-slot>
+  </x-dialog-modal>
 
   @push('scripts')
     <script>

@@ -24,6 +24,7 @@ erDiagram
         decimal price
         decimal offer_price
         int stock
+        json images
         boolean status
     }
 
