@@ -126,47 +126,20 @@
                     @endif
                 </div>
 
-                {{-- Stock y Cantidad --}}
-                <div class="flex items-center gap-6 mb-8">
-                    <div>
-                        <p class="text-xs text-gray-400 mb-1">CANTIDAD:</p>
-                        <div class="flex items-center border-2 border-gray-200 rounded-lg overflow-hidden">
-                            <button 
-                                wire:click="$set('quantity', {{ max(1, $quantity - 1) }})"
-                                class="px-3 py-1 hover:bg-gray-100 text-gray-600 font-bold transition-colors">-</button>
-                            <span class="px-4 py-1 font-bold text-gray-800">{{ $quantity }}</span>
-                            <button 
-                                wire:click="$set('quantity', {{ min($stock, $quantity + 1) }})"
-                                class="px-3 py-1 hover:bg-gray-100 text-gray-600 font-bold transition-colors">+</button>
-                        </div>
-                    </div>
-                    <div>
-                        @if($stock > 0)
-                            <p class="text-xs text-green-500 font-bold tracking-wider">
-                                <i class="fas fa-check-circle mr-1"></i> STOCK DISPONIBLE ({{ $stock }})
-                            </p>
-                        @else
-                            <p class="text-xs text-red-500 font-bold tracking-wider">
-                                <i class="fas fa-times-circle mr-1"></i> SIN STOCK
-                            </p>
-                        @endif
-                    </div>
+                {{-- Stock y Cantidad + Botón de Compra --}}
+                <div class="mb-4">
+                    @livewire('add-cart-item', [
+                        'product' => $product, 
+                        'variantId' => $currentVariant ? $currentVariant->id : null
+                    ], key('add-cart-item-' . ($currentVariant ? $currentVariant->id : 'base')))
                 </div>
 
-                {{-- Botón de Acción --}}
-                <div class="space-y-3">
-                    <button 
-                        @if(!$currentVariant && $product->variants->count() > 0 || $stock <= 0) disabled @endif
-                        class="w-full bg-violet-350 hover:bg-violet-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-violet-200 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
-                        AÑADIR A LA BOLSA
-                    </button>
-                    
-                    <a href="https://wa.me/{{ $settings->whatsapp ?? '' }}?text=Hola, estoy interesado en el producto {{ $product->name }}" 
-                       target="_blank"
-                       class="flex items-center justify-center gap-2 w-full border-2 border-green-500 text-green-600 py-3 rounded-xl font-bold transition-colors hover:bg-green-50">
-                        <i class="fab fa-whatsapp text-xl"></i> CONSULTAR POR WHATSAPP
-                    </a>
-                </div>
+                {{-- WhatsApp --}}
+                <a href="https://wa.me/{{ $settings->whatsapp ?? '' }}?text=Hola, estoy interesado en el producto {{ $product->name }}" 
+                   target="_blank"
+                   class="flex items-center justify-center gap-2 w-full border-2 border-green-500 text-green-600 py-3 rounded-xl font-bold transition-colors hover:bg-green-50">
+                    <i class="fab fa-whatsapp text-xl"></i> CONSULTAR POR WHATSAPP
+                </a>
 
                 {{-- Info Extra Envíos --}}
                 <div class="mt-8 border-t pt-6 grid grid-cols-2 gap-4">

@@ -29,41 +29,29 @@
             <tr>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
-                  @php
-                    $color_first = $colors->where('name', $item->options->color)->first();
-                  @endphp
                   <div class="flex-shrink-0 h-10 w-10">
                     <img class="h-15 w-20 object-cover object-center mr-4" src="{{ $item->options->image }}"
                       alt="{{ $item->options->image }}">
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900">
-                      {{-- <a class="text-black hover:text-pink-400"
-                                                href="{{ route('products.show', ['slugProduct' => $item->name, 'color' => @$color_first->url ?: null ]) }}">
-                                                {{ $item->name }}
-                                            </a> --}}
-                      <span>
-                        {{ $item->name }}
-                      </span>
+                      <span>{{ $item->name }}</span>
                     </div>
-                    @if ($item->options->color)
-                      <span>
-                        Color: {{ __($item->options->color) }}
-                      </span>
-                    @endif
-
-                    @if ($item->options->size)
-                      {{-- <span class="mx-1">-</span> --}}
-                      <span>
-                        {{ $item->options->size }}
-                      </span>
-                    @endif
+                    
+                    {{-- Mostrar Atributos Dinámicos --}}
+                    <div class="text-xs text-gray-500">
+                      @foreach($item->options as $key => $value)
+                        @if(!in_array($key, ['image', 'base_price', 'variant_id']))
+                          <span class="mr-2"><strong>{{ ucfirst($key) }}:</strong> {{ $value }}</span>
+                        @endif
+                      @endforeach
+                    </div>
                   </div>
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm text-gray-500">
-                  <span>S/ {{ $item->price }}</span>
+                  <span>S/ {{ number_format($item->price, 2) }}</span>
                   <a class="ml-6 cursor-pointer hover:text-red-600" wire:click="delete('{{ $item->rowId }}')"
                     wire:target="delete('{{ $item->rowId }}')" wire:loading.class="text-red-600 opacity-25">
                     <i class="fas fa-trash"></i>
@@ -72,13 +60,7 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm text-gray-500">
-                  @if ($item->options->size)
-                    @livewire('update-cart-item-size', ['rowId' => $item->rowId], key($item->rowId))
-                  @elseif ($item->options->color)
-                    @livewire('update-cart-item-color', ['rowId' => $item->rowId], key($item->rowId))
-                  @else
-                    @livewire('update-cart-item', ['rowId' => $item->rowId], key($item->rowId))
-                  @endif
+                  @livewire('update-cart-item', ['rowId' => $item->rowId], key($item->rowId))
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

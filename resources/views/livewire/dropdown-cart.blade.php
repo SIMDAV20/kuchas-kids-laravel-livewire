@@ -27,14 +27,12 @@
                             <h1 class="font-bold">
                                 {{ $item->name }}
                             </h1>
-                            <div class="flex">
-                                <p>Cant: {{ $item->qty }}</p>
-                                @isset($item->options['color'])
-                                    <p class="mx-2"> - Color: {{ __($item->options['color']) }}</p>
-                                @endisset
-                                @isset($item->options['size'])
-                                    <p class="mx-2"> - {{ $item->options['size'] }}</p>
-                                @endisset
+                            <div class="text-xs text-gray-500 mt-1">
+                                @foreach($item->options as $key => $value)
+                                    @if(!in_array($key, ['image', 'base_price', 'variant_id']))
+                                        <span class="mr-2"><strong>{{ ucfirst($key) }}:</strong> {{ $value }}</span>
+                                    @endif
+                                @endforeach
                             </div>
 
                             <div>

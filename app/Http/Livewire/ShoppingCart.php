@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Color;
 use Livewire\Component;
 use Gloudemans\Shoppingcart\Facades\Cart;
 
@@ -25,7 +24,6 @@ class ShoppingCart extends Component
 
     public function render()
     {
-        $colors = Color::all();
-        return view('livewire.shopping-cart', compact('colors'));
+        return view('livewire.shopping-cart');
     }
 }
