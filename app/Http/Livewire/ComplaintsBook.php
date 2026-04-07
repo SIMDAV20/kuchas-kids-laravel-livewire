@@ -4,6 +4,10 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 
+use App\Models\Setting;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ComplaintNotification;
+
 class ComplaintsBook extends Component
 {
     public $fullName;
@@ -34,8 +38,23 @@ class ComplaintsBook extends Component
     {
         $this->validate();
 
-        // En un caso real se guardaría en BD o se enviaría por correo.
-        // Simulamos éxito para el libro de reclamaciones.
+        $settings = Setting::first();
+        $adminEmail = $settings->email_receive;
+
+        if ($adminEmail) {
+            Mail::to($adminEmail)->send(new ComplaintNotification([
+                'fullName' => $this->fullName,
+                'documentId' => $this->documentId,
+                'phone' => $this->phone,
+                'email' => $this->email,
+                'type' => $this->type,
+                'orderNumber' => $this->orderNumber,
+                'claimedAmount' => $this->claimedAmount,
+                'description' => $this->description,
+                'consumerRequest' => $this->consumerRequest,
+            ]));
+        }
+
         $this->successMessage = true;
 
         $this->reset([

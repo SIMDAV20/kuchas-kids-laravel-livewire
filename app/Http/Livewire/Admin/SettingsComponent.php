@@ -24,7 +24,7 @@ class SettingsComponent extends Component
 
   protected $rules = [
     'editForm.min_amount' => 'numeric|min:0',
-    'editForm.whatsapp' => 'nullable|string|max:20',
+    'editForm.whatsapp' => 'nullable|string|max:20|regex:/^\d+$/',
     'editForm.email_receive' => 'nullable|email|max:255',
     'editForm.email_client' => 'nullable|email|max:255',
     'editForm.business_name' => 'nullable|string|max:255',
@@ -40,6 +40,10 @@ class SettingsComponent extends Component
     'editForm.business_name' => 'Razón social',
     'editForm.trade_name' => 'Nombre comercial',
     'editForm.ruc' => 'RUC',
+  ];
+
+  protected $messages = [
+    'editForm.whatsapp.regex' => 'El número de WhatsApp solo debe contener dígitos.',
   ];
 
   public function updatingShowHeadband($value)

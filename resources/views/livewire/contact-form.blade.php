@@ -32,7 +32,7 @@
                 <x-input-error for="message" />
             </div>
 
-            <x-button wire.loading.attr="disabled" wire.target="send_message" class="mb-4">
+            <x-button wire:loading.attr="disabled" wire:target="submit" class="mb-4">
                 Enviar Mensaje
             </x-button>
         </form>
@@ -50,7 +50,7 @@
 
                 <span class="mb-4">
                     <h3 class="text-lg text-gray-600 font-semibold">WhatsApp de atención:</h3>
-                    <a href="https://wa.me/51{{ $settings_company->whatsapp }}" class="text-blue-600 hover:text-blue-400">{{ $settings_company->whatsapp }}</a>
+                    <a href="https://wa.me/{{ $settings_company->whatsapp }}" target="_blank" class="text-blue-600 hover:text-blue-400">{{ $settings_company->whatsapp }}</a>
                 </span>
 
                 <p class="mb-5 text-gray-700">También puedes completar el formulario y te responderemos por WhatsApp lo antes posible.</p>                

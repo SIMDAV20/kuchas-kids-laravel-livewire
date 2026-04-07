@@ -202,8 +202,8 @@
                     <p x-show="envio_type == 3" class="px-6 pb-6">
                         <span>Envíanos un mensaje a nuestro WhatsApp de atención al cliente
                             para agilizar la programación de su envio.</span>
-                        <a href="https://wa.me/51960546859" class="text-blue-600 hover:text-blue-900"
-                            target="_blank">960546859</a>
+                        WhatsApp <a href="https://wa.me/{{ $settings_company->whatsapp }}" class="text-blue-600 hover:text-blue-900"
+                            target="_blank">{{ $settings_company->whatsapp }}</a>
                     </p>
                 </div>
             </div>

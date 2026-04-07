@@ -108,8 +108,8 @@
                 @else
                     En coordinar la dirección a través del
                     <br>
-                    whatssap <a href="https://wa.me/51960546859" class="text-blue-600 hover:text-blue-900"
-                        target="_blank">960546859</a>
+                    WhatsApp <a href="https://wa.me/{{ $settings_company->whatsapp }}" class="text-blue-600 hover:text-blue-900"
+                        target="_blank">{{ $settings_company->whatsapp }}</a>
                 @endif
             </div>
             @if (strlen($order->extra_note) > 0)

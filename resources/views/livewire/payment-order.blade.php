@@ -217,7 +217,7 @@
                         <div x-show="payment_method == 2" x-transition>
                             <p class="mb-2 text-sm">
                                 Escanea del código QR desde la app Yape o yapea al
-                                <a href="telf:960546859" class="text-blue-600 hover:text-blue-400 mb-4">960546859</a>
+                                <a href="https://wa.me/{{ $settings_company->whatsapp }}" class="text-blue-600 hover:text-blue-400 mb-4" target="_blank">{{ $settings_company->whatsapp }}</a>
                             </p>
                             <p class="mb-2 text-sm">
                                 Ingresa el monto total que aparece en el carrito de compras, incluyendo el costo de

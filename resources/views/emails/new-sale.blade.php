@@ -62,6 +62,7 @@
 <body>
 
     @php
+        $settings_company = \App\Models\Setting::first();
         $order = $msg['order'];
         $items = json_decode($order->content);
         $envio = json_decode($order->envio);
@@ -91,8 +92,8 @@
                     @else
                         En coordinar la dirección a través del
                         <br>
-                        whatssap <a href="https://wa.me/51960546859" class="text-blue-600 hover:text-blue-900"
-                            target="_blank">960546859</a>
+                        WhatsApp <a href="https://wa.me/{{ $settings_company->whatsapp }}" class="text-blue-600 hover:text-blue-900"
+                            target="_blank">{{ $settings_company->whatsapp }}</a>
                     @endif
                 </div>
                 <div>
