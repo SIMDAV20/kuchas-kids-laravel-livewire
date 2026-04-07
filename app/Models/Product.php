@@ -180,6 +180,16 @@ class Product extends Model
     }
   }
 
+  public function flashOffer()
+  {
+    return $this->morphOne(FlashOffer::class, 'offerable');
+  }
+
+  public function variants()
+  {
+    return $this->hasMany(ProductVariant::class);
+  }
+
   // URL AMIGABLES
   public function getRouteKeyName()
   {
