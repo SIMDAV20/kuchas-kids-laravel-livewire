@@ -6,7 +6,7 @@
             <ul class="glider-{{ $category->id }} pb-5 pt-3">
                 @foreach ($products as $product)
                     <li class="bg-white rounded-lg shadow-lg {{ $loop->last ? '' : 'sm:mr-4' }}">
-                        @livewire('product-image', ['product' => $product], key($product->id))
+                        <x-product-card :product="$product" />
                     </li>
                 @endforeach
             </ul>
