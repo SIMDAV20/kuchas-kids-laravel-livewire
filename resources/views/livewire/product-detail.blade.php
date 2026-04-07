@@ -145,11 +145,14 @@
                 <div class="mt-8 border-t pt-6 grid grid-cols-2 gap-4">
                     <div class="flex items-center gap-3">
                         <i class="fas fa-truck text-violet-350 text-xl"></i>
-                        <span class="text-[10px] text-gray-500 font-bold uppercase transition">Envío a todo el Perú</span>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-gray-500 font-bold uppercase transition">Envío a todo el Perú</span>
+                            <span class="text-[9px] text-violet-600 font-bold uppercase leading-tight mt-0.5">Recíbelo de 1 a 3 días útiles</span>
+                        </div>
                     </div>
                     <div class="flex items-center gap-3">
                         <i class="fas fa-undo-alt text-violet-350 text-xl"></i>
-                        <span class="text-[10px] text-gray-500 font-bold uppercase transition">Cambios garantizados</span>
+                        <span class="text-[10px] text-gray-500 font-bold uppercase transition">Garantía garantizada</span>
                     </div>
                 </div>
 
