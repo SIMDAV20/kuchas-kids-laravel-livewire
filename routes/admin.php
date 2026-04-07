@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Livewire\Admin\AttributeComponent;
 use App\Http\Livewire\Admin\BrandComponent;
 use App\Http\Livewire\Admin\CityComponent;
 use App\Http\Livewire\Admin\CreateProduct;
@@ -21,6 +22,7 @@ use Livewire\Livewire;
 
 Route::get('/', ShowProducts::class)->name('admin.index');
 
+Route::get('attributes', AttributeComponent::class)->name('admin.attributes.index');
 Route::get('products/create', CreateProduct::class)->name('admin.products.create');
 Route::get('products/{product}/edit', EditProduct::class)->name('admin.products.edit');
 Route::post('products/{product}/files', [ProductController::class, 'files'])->name('admin.products.files');

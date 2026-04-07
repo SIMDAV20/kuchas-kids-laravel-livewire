@@ -37,6 +37,11 @@
           'name' => 'Usuarios',
       ],
       [
+          'route' => 'admin.attributes.index',
+          'active' => 'admin.attributes.*',
+          'name' => 'Atributos',
+      ],
+      [
           'route' => 'admin.settings.index',
           'active' => 'admin.settings.*',
           'name' => 'Configuración',
