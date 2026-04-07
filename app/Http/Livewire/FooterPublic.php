@@ -16,6 +16,10 @@ class FooterPublic extends Component
      *       → apunta a resources/markdown/pages/{slug}.md
      */
     public array $footerLinks = [
+        'ATENCIÓN AL CLIENTE' => [
+            ['label' => 'Protección de datos personales', 'route' => 'info.page', 'page' => 'privacy-policy'],
+            ['label' => 'Libro de Reclamaciones', 'route' => 'complaints-book', 'image' => 'img/libro_de_reclamaciones.webp'],
+        ],
         'SERVICIO AL CLIENTE' => [
             ['label' => 'Preguntas Frecuentes', 'route' => 'info.page', 'page' => 'frequent-questions'],
             ['label' => 'Políticas de Envío',   'route' => 'info.page', 'page' => 'shipping-policies'],
@@ -29,8 +33,6 @@ class FooterPublic extends Component
 
     public function render()
     {
-        $categories = Category::all();
-
-        return view('livewire.footer-public', compact('categories'));
+        return view('livewire.footer-public');
     }
 }

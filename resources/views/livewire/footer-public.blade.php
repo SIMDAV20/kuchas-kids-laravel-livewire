@@ -21,30 +21,21 @@
                 </li>
             </ul>
         </div>
-        {{-- <div class="w-64 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left">
-            <a href="" class="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
-                <i class="fas fa-cubes fa-lg text-purple-500"></i>
-                <span class="ml-3 text-xl">Tailwind elements</span>
-            </a>
-            <p class="mt-2 text-sm text-gray-500">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Modi,
-                quam?</p>
-        </div> --}}
         <div class="flex-grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center">
-            <div class="lg:w-1/4 md:w-1/2 w-full px-4 mb-6">
-                <h2 class="title-font font-bold text-violet-350 tracking-widest text-sm mb-3">ATENCIÓN AL CLIENTE</h2>
-                <a href="{{ route('complaints-book') }}" class="flex flex-col items-center justify-center border-none shadow-none rounded-lg p-3 transition-colors group bg-white">
-                    <img src="{{ asset('img/libro_de_reclamaciones.webp') }}" alt="Libro de Reclamaciones" class="w-32 h-32 object-contain mb-2">
-                    {{-- <span class="text-xs font-bold text-gray-700 text-center uppercase tracking-wide">Libro de<br>Reclamaciones</span> --}}
-                </a>
-            </div>
             @foreach ($footerLinks as $section => $links)
-            <div class="lg:w-1/4 md:w-1/2 w-full px-4">
+            <div class="lg:w-1/4 md:w-1/2 w-full px-4 mb-6">
                 <h2 class="title-font font-bold text-violet-350 tracking-widest text-sm mb-3">{{ $section }}</h2>
                 <nav class="list-none mb-10">
                     @foreach ($links as $link)
                         <li class="mb-3">
                             <a href="{{ isset($link['page']) ? route($link['route'], ['page' => $link['page']]) : route($link['route']) }}"
-                                class="text-gray-550 hover:text-gray-400">{{ $link['label'] }}</a>
+                                class="{{ isset($link['image']) ? 'flex flex-col items-center justify-center' : 'text-gray-550 hover:text-gray-400 text-sm' }}">
+                                @if(isset($link['image']))
+                                    <img src="{{ asset($link['image']) }}" alt="{{ $link['label'] }}" class="w-32 h-32 object-contain mb-2 shadow-none border-none">
+                                @else
+                                    {{ $link['label'] }}
+                                @endif
+                            </a>
                         </li>
                     @endforeach
                 </nav>

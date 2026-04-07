@@ -22,9 +22,24 @@ class SecondaryPagesController extends Controller
 
         $settings = Setting::first();
         if ($settings) {
+            $company_info = $settings->company_info;
             $raw = str_replace(
-                ['{{whatsapp}}', '{{email_client}}', '{{email_receive}}'],
-                [$settings->whatsapp, $settings->email_client, $settings->email_receive],
+                [
+                    '{{whatsapp}}', 
+                    '{{email_client}}', 
+                    '{{email_receive}}',
+                    '{{business_name}}',
+                    '{{trade_name}}',
+                    '{{ruc}}'
+                ],
+                [
+                    $settings->whatsapp, 
+                    $settings->email_client, 
+                    $settings->email_receive,
+                    $company_info['business_name'] ?? '',
+                    $company_info['trade_name'] ?? '',
+                    $company_info['ruc'] ?? ''
+                ],
                 $raw
             );
         }
