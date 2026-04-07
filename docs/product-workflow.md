@@ -57,8 +57,17 @@ Con el fin de evitar la duplicación excesiva en la carga de archivos, la gesti�
 4. Al "Guardar Asignación", el sistema guarda un Array con los IDs de las imágenes seleccionadas dentro de la columna JSON `images` de la tabla `product_variants`.
 5. La vista de la tabla ahora muestra un *preview* (miniaturas) de las imágenes asignadas a cada variante.
 
-## 5. Frontend & Ofertas Temporales (Flash Offers)
+## 5. Frontend & Selección de Variantes
 Al culminar la configuración administrativa, los datos están optimizados para el Frontend:
 
-* **Matriz Lista:** El componente frontend de detalles del producto recibe directamente del backend qué colores y tallas existen. Si hay imágenes asignadas en el JSON de la variante seleccionada, el slider de producto cambia a esas fotos.
-* **Flash Offers (Ofertas Flash):** Al poseer las variantes en un modelo centralizado `ProductVariant`, el modelo polimórfico temporal `FlashOffer` se puede enganchar fácilmente a cualquier variante, indicando que "El Polo Rojo - Talla 4 tiene 20% dscto de hoy hasta mañana" de forma individual sin afectar al Polo Azul o las Tallas grandes.
+### 5.1. Selección Reactiva (ProductDetail)
+- **Componente:** El sistema frontend de detalles (`ProductDetail`) recibe directamente del backend qué colores y tallas existen.
+- **Filtrado Inteligente:** Al seleccionar un Color, las Tallas se filtran automáticamente basándose en las variantes que realmente tienen stock.
+- **Galería Dinámica:** Si hay imágenes asignadas en el JSON de la variante seleccionada, el slider de producto cambia a esas fotos; si no, muestra la galería general.
+- **Precio & Stock:** El precio se actualiza al instante, priorizando: 
+    1. Oferta Flash (Variante) > 2. Oferta Flash (Producto) > 3. Oferta Normal > 4. Precio Base.
+
+### 5.2. Proceso de Compra
+Una vez seleccionados los atributos, el control pasa al componente unificado de carrito. 
+
+Para más detalles sobre este flujo, consulte: **[docs/cart-workflow.md](cart-workflow.md)**.
