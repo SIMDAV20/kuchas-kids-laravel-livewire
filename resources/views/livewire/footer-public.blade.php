@@ -43,48 +43,19 @@
                     @endforeach
                 </nav>
             </div>
+            @foreach ($footerLinks as $section => $links)
             <div class="lg:w-1/4 md:w-1/2 w-full px-4">
-                <h2 class="title-font font-bold text-violet-350 tracking-widest text-sm mb-3">SERVICIO AL CLIENTE</h2>
+                <h2 class="title-font font-bold text-violet-350 tracking-widest text-sm mb-3">{{ $section }}</h2>
                 <nav class="list-none mb-10">
-                    {{-- <li class="mb-3">
-                        <a href="" class="text-gray-800 hover:text-gray-400">Envíos</a>
-                    </li>
-                    <li class="mb-3">
-                        <a href="" class="text-gray-800 hover:text-gray-400">Medios de Pago</a>
-                    </li> --}}
-                    <li class="mb-3">
-                        <a href="{{ route('frequent-questions') }}"
-                            class="text-gray-550 hover:text-gray-400">Preguntas Frecuentes</a>
-                    </li>
-                    <li class="mb-3">
-                        <a href="{{ route('shipping-policies') }}" class="text-gray-550 hover:text-gray-400">Políticas
-                            de Envío</a>
-                    </li>
-                    {{-- <li class="mb-3">
-                        <a href="" class="text-gray-800 hover:text-gray-400">Cambios y Devoluciones</a>
-                    </li> --}}
-                    <li class="mb-3">
-                        <a href="{{ route('contact.index') }}"
-                            class="text-gray-550 hover:text-gray-400">Contáctanos</a>
-                    </li>
+                    @foreach ($links as $link)
+                        <li class="mb-3">
+                            <a href="{{ isset($link['page']) ? route($link['route'], ['page' => $link['page']]) : route($link['route']) }}"
+                                class="text-gray-550 hover:text-gray-400">{{ $link['label'] }}</a>
+                        </li>
+                    @endforeach
                 </nav>
             </div>
-            <div class="lg:w-1/4 md:w-1/2 w-full px-4">
-                <h2 class="title-font font-bold text-violet-350 tracking-widest text-sm mb-3">INFORMACIÓN DE UTILIDAD</h2>
-                <nav class="list-none mb-10">
-                    {{-- <li class="mb-3">
-                        <a href="{{ route('about-us') }}" class="text-gray-800 hover:text-gray-400">Sobre Nosotros</a>
-                    </li> --}}
-                    <li class="mb-3">
-                        <a href="{{ route('terms-and-conditions') }}"
-                            class="text-gray-550 hover:text-gray-400">Términos y Condiciones</a>
-                    </li>
-                    <li class="mb-3">
-                        <a href="{{ route('returns-exchanges') }}" class="text-gray-550 hover:text-gray-400">Cambios y
-                            devoluciones</a>
-                    </li>
-                </nav>
-            </div>
+            @endforeach
             <div class="lg:w-1/4 md:w-1/2 w-full px-4">
                 <h2 class="title-font font-bold text-violet-350 tracking-widest text-sm mb-3">MÉTODOS DE PAGO</h2>
                 <nav class="list-none mb-10">

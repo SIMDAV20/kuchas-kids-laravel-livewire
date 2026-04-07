@@ -14,14 +14,23 @@ class SettingsComponent extends Component
     'min_amount' => null,
     'headband_one' => null,
     'headband_two' => null,
+    'whatsapp' => null,
+    'email_receive' => null,
+    'email_client' => null,
   ];
 
   protected $rules = [
     'editForm.min_amount' => 'numeric|min:0',
+    'editForm.whatsapp' => 'nullable|string|max:20',
+    'editForm.email_receive' => 'nullable|email|max:255',
+    'editForm.email_client' => 'nullable|email|max:255',
   ];
 
   protected $validationAttributes = [
     'editForm.min_amount' => 'monto mínimo',
+    'editForm.whatsapp' => 'WhatsApp',
+    'editForm.email_receive' => 'correo para recibir mensajes',
+    'editForm.email_client' => 'correo para clientes',
   ];
 
   public function updatingShowHeadband($value)
@@ -47,6 +56,9 @@ class SettingsComponent extends Component
       $this->editForm['min_amount'] = $this->setting->min_amount;
       $this->editForm['headband_one'] = $this->setting->headband_one;
       $this->editForm['headband_two'] = $this->setting->headband_two;
+      $this->editForm['whatsapp'] = $this->setting->whatsapp;
+      $this->editForm['email_receive'] = $this->setting->email_receive;
+      $this->editForm['email_client'] = $this->setting->email_client;
       $this->show_headband = $this->setting->show_headband;
     }
   }

@@ -53,7 +53,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         // en el kernel agrego los roles para la auth con permissions
         Route::prefix('admin')
-            ->middleware(['web', 'auth', 'role:admin'])
+            ->middleware(['web', 'auth', 'role:admin,web'])
             // ->namespace($this->namespace)
             ->group(base_path('routes/admin.php'));
     }

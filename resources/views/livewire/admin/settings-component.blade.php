@@ -50,6 +50,46 @@
     </x-slot>
   </x-form-section>
 
+  <x-form-section submit="update" class="mb-6">
+    <x-slot name="title">
+      Información de Contacto
+    </x-slot>
+    <x-slot name="description">
+      En esta sección podrá configurar el número de WhatsApp y los correos electrónicos para recibir mensajes y de atención al cliente.
+    </x-slot>
+    <x-slot name="form">
+      <div class="col-span-6 sm:col-span-4">
+        <x-label>
+          WhatsApp
+        </x-label>
+        <x-input wire:model.trim="editForm.whatsapp" type="text" class="w-full mt-1" />
+        <x-input-error for="editForm.whatsapp" />
+      </div>
+      <div class="col-span-6 sm:col-span-4">
+        <x-label>
+          Correo electrónico (Recibir mensajes)
+        </x-label>
+        <x-input wire:model.trim="editForm.email_receive" type="email" class="w-full mt-1" />
+        <x-input-error for="editForm.email_receive" />
+      </div>
+      <div class="col-span-6 sm:col-span-4">
+        <x-label>
+          Correo electrónico (Atención al cliente)
+        </x-label>
+        <x-input wire:model.trim="editForm.email_client" type="email" class="w-full mt-1" />
+        <x-input-error for="editForm.email_client" />
+      </div>
+    </x-slot>
+    <x-slot name="actions">
+      <x-action-message class="mr-3" on="saved">
+        Información actualizada
+      </x-action-message>
+      <x-button>
+        Actualizar
+      </x-button>
+    </x-slot>
+  </x-form-section>
+
   @livewire('admin.update-logo-image')
 
   @push('scripts')

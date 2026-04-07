@@ -1,4 +1,6 @@
-<div class="container py-8 min-h-screen">
+<div class="container py-8 min-h-screen flex items-center justify-center">
+
+
     <div class="grid md:grid-cols-1 lg:grid-cols-3 lg:gap-4">
         <form wire:submit.prevent="submit" class="bg-white rounded-lg col-span-2 shadow p-6 mb-4">
             <h1 class="mb-4 font-semibold text-pink-500 text-3xl">CONTÁCTANOS</h1>
@@ -36,21 +38,22 @@
         </form>
         <div class="bg-white rounded-lg shadow col-span-1 p-6 mb-4">
             <div class="flex flex-col">
-                <h3 class="text-lg text-gray-600 font-semibold">Nuestro horario de atención:</h3>
 
-                <p class="mb-4">Lunes a viernes de 9:00am a 6:00pm, sábado 9:00am a 2:00pm</p>
+                <p class="mb-4 text-gray-700">Somos tienda online. Si tienes alguna consulta sobre tu pedido, producto o envío, puedes escribirnos:</p>
 
                 <span class="mb-4">
                     <h3 class="text-lg text-gray-600 font-semibold">Correo:</h3>
-                    <a href="mailto:atencionalcliente@kuchaskids.pe" class="text-blue-600 hover:text-blue-400 mb-4">
-                        atencionalcliente@kuchaskids.pe
+                    <a href="mailto:latienditademadai@gmail.com" class="text-blue-600 hover:text-blue-400">
+                        latienditademadai@gmail.com
                     </a>
                 </span>
-                <span>
-                    <h3 class="text-lg text-gray-600 font-semibold">Celulares:</h3>
-                    <a href="telf:960546859" class="text-blue-600 hover:text-blue-400 mb-4">960-546-859</a> /
-                    <a href="telf:965394560" class="text-blue-600 hover:text-blue-400 mb-4">965-394-560</a>
+
+                <span class="mb-4">
+                    <h3 class="text-lg text-gray-600 font-semibold">WhatsApp de atención:</h3>
+                    <a href="https://wa.me/51960546859" class="text-blue-600 hover:text-blue-400">960-546-859</a>
                 </span>
+
+                <p class="mb-5 text-gray-700">También puedes completar el formulario y te responderemos por WhatsApp lo antes posible.</p>                
             </div>
         </div>
     </div>

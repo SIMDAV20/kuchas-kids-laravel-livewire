@@ -3,26 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SecondaryPagesController extends Controller
 {
-    public function aboutUs() {
-        return view('secondary-pages/about-us');
-    }
+    /**
+     * Renderiza una página de información dinámica desde un archivo .md
+     * Los .md viven en resources/markdown/pages/{page}.md
+     */
+    public function markdownPage(string $page)
+    {
+        $path = resource_path("markdown/pages/{$page}.md");
 
-    public function frecuentQuestions() {
-        return view('secondary-pages/frequent-questions');
-    }
+        abort_if(!file_exists($path), 404);
 
-    public function shippingPolicies() {
-        return view('secondary-pages/shipping-policies');
-    }
+        $raw     = file_get_contents($path);
+        $content = Str::markdown($raw);
 
-    public function returnsExchanges() {
-        return view('secondary-pages/returns-exchanges');
-    }
+        // Extrae el primer # como título de página (sin el '#')
+        preg_match('/^#\s+(.+)$/m', $raw, $matches);
+        $title = $matches[1] ?? ucwords(str_replace('-', ' ', $page));
 
-    public function termsAndConditions(){
-        return view('secondary-pages/terms-and-conditions');
+        return view('secondary-pages.markdown-page', compact('content', 'title'));
     }
 }

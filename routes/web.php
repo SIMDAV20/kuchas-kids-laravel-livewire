@@ -18,11 +18,8 @@ Route::get('/', WelcomeController::class)->name('welcome');
 
 Route::get('search', SearchController::class)->name('search');
 
-Route::get('nosotros',               [SecondaryPagesController::class, 'aboutUs'])->name('about-us');
-Route::get('preguntas-frecuentes',   [SecondaryPagesController::class, 'frecuentQuestions'])->name('frequent-questions');
-Route::get('politicas-envio',        [SecondaryPagesController::class, 'shippingPolicies'])->name('shipping-policies');
-Route::get('cambios-devoluciones',   [SecondaryPagesController::class, 'returnsExchanges'])->name('returns-exchanges');
-Route::get('terminos-y-condiciones', [SecondaryPagesController::class, 'termsAndConditions'])->name('terms-and-conditions');
+// Páginas de información dinámicas servidas desde resources/markdown/pages/{page}.md
+Route::get('info/{page}',            [SecondaryPagesController::class, 'markdownPage'])->name('info.page');
 
 // muestra el id de la categoria
 Route::get('categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
