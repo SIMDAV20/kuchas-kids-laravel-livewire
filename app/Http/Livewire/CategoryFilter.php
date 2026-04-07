@@ -108,17 +108,29 @@ class CategoryFilter extends Component
       $query->where('status', Subcategory::PUBLIC);
     })->whereHas('subcategory.category', function (Builder $query) {
       $query->where('id', $this->category->id);
-    })->with('subcategory');
+    });
+
+    $colorAttrId = \App\Models\Attribute::where('name', 'Color')->value('id');
+
+    $productsQuery = $productsQuery->with([
+        'subcategory', 
+        'images', 
+        'variants' => function($q) {
+            $q->where('status', true);
+        },
+        'variants.attributeOptions' => function($q) use ($colorAttrId) {
+            if ($colorAttrId) $q->where('attribute_id', $colorAttrId);
+        }
+    ]);
 
     $subcategories = $this->category->subcategories()->where('status', Subcategory::PUBLIC)->orderBy('position')->get();
 
     if ($this->subcategoria) {
       $productsQuery = $productsQuery->whereHas('subcategory', function (Builder $query) {
         $query->where('slug', $this->subcategoria);
-      })->orderBy('position');
+      });
       $this->showButton = true;
     }
-
 
     if ($this->marca) {
       $productsQuery = $productsQuery->whereHas('brand', function (Builder $query) {
@@ -128,25 +140,45 @@ class CategoryFilter extends Component
     }
 
     $productsQuery = $productsQuery->where('status', Product::PUBLICADO);
-    $productsQuery = collect($productsQuery->get())->sortBy([['subcategory.position'], ['position']]);
+    
+    // Sort and get results
+    $allProducts = $productsQuery->get()->sortBy([['subcategory.position'], ['position']]);
 
-    $products = $productsQuery;
-    // Calcula el índice inicial y final de los elementos en la página actual
+    // Manual Pagination
     $startIndex = ($this->page - 1) * $this->perPage;
-    $endIndex = $startIndex + $this->perPage;
+    $paginatedProducts = $allProducts->slice($startIndex, $this->perPage);
 
-    // Obtiene los elementos para la página actual
-    $paginatedProducts = $products->slice($startIndex, $this->perPage);
+    // Pre-procesar datos para cada producto en la página actual (Evita N+1 en product-card)
+    $paginatedProducts = $paginatedProducts->map(function($product) use ($colorAttrId) {
+        // Colores para el preview
+        $product->card_colors = collect();
+        if ($colorAttrId) {
+            $product->card_colors = $product->variants
+                ->flatMap(fn($v) => $v->attributeOptions)
+                ->where('attribute_id', $colorAttrId)
+                ->unique('id');
+        }
 
-    // Crea una instancia de LengthAwarePaginator
+        // Precios mínimos
+        if ($product->variants->count() > 0) {
+            $minPrice = $product->variants->min('price');
+            $minOffer = $product->variants->where('offer_price', '>', 0)->min('offer_price');
+            $product->card_min_price = ($minOffer && $minOffer < $minPrice) ? $minOffer : $minPrice;
+            $product->card_has_variants = true;
+        } else {
+            $product->card_min_price = $product->offer_price ?: $product->price;
+            $product->card_has_variants = false;
+        }
+
+        return $product;
+    });
+
     $paginator = new LengthAwarePaginator(
       $paginatedProducts,
-      $products->count(),
+      $allProducts->count(),
       $this->perPage,
       $this->page
     );
-
-    // $products = $productsQuery->paginate(20);
 
     return view('livewire.category-filter', compact('paginatedProducts', 'paginator', 'subcategories'));
   }

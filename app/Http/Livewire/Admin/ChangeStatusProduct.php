@@ -20,16 +20,14 @@ class ChangeStatusProduct extends Component
                 $this->item->status = $value ? Product::PUBLICADO : Product::BORRADOR;
                 break;
 
-            case 'ColorProduct':
-                $this->item->status =  $value ? ColorProduct::PUBLICADO : ColorProduct::BORRADOR;
+            case 'ProductVariant':
+                // En variantes usualmente es booleano (Activo/Inactivo)
+                $this->item->status = $value;
                 break;
 
-            case 'ProductSize':
-                $this->item->status =  $value ? ProductSize::PUBLICADO : ProductSize::BORRADOR;
-                break;
-
-            case 'ColorProductSize':
-                $this->item->status =  $value ? ColorProductSize::PUBLICADO : ColorProductSize::BORRADOR;
+            case 'FlashOffer':
+                // En ofertas flash es booleano (Activo/Inactivo)
+                $this->item->status = $value;
                 break;
         }
 
@@ -40,23 +38,20 @@ class ChangeStatusProduct extends Component
     {
         switch ($this->model) {
             case 'Product':
-                $this->item = Product::find($this->item_id);
+                $this->item = Product::findOrFail($this->item_id);
+                $this->prod_status = $this->item->status == Product::PUBLICADO;
                 break;
 
-            case 'ColorProduct':
-                $this->item = ColorProduct::find($this->item_id);
+            case 'ProductVariant':
+                $this->item = \App\Models\ProductVariant::findOrFail($this->item_id);
+                $this->prod_status = (bool) $this->item->status;
                 break;
 
-            case 'ProductSize':
-                $this->item = ProductSize::find($this->item_id);
-                break;
-
-            case 'ColorProductSize':
-                $this->item = ColorProductSize::find($this->item_id);
+            case 'FlashOffer':
+                $this->item = \App\Models\FlashOffer::findOrFail($this->item_id);
+                $this->prod_status = (bool) $this->item->status;
                 break;
         }
-        // $this->item = DB::table("$this->model")->where('id', $this->item)->first();
-        $this->prod_status = $this->item->status == 2 ? true : false;
     }
 
     public function render()

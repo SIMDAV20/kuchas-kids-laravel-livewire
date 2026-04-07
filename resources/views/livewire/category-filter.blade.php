@@ -49,23 +49,21 @@
     <div class="md:col-span-2 lg:col-span-4">
       @if ($view == 'grid')
         {{-- gap-4 es para que tenga una separacion --}}
-        <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           @forelse ($paginatedProducts as $product)
-            <li class="bg-white rounded-lg shadow">
-              @livewire('product-image', ['product' => $product], key($product->id))
-            </li>
+              <x-product-card :product="$product" />
           @empty
-            <li class="md:col-span-2 lg:col-span-4">
+            <div class="md:col-span-2 lg:col-span-4">
               <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                 <strong class="font-bold">Upss!</strong>
                 <span class="block sm:inline">No existe ningún producto con este filtro</span>
               </div>
-            </li>
+            </div>
           @endforelse
-        </ul>
+        </div>
       @else
         <ul>
-          @forelse ($products as $product)
+          @forelse ($paginatedProducts as $product)
             <x-product-list :product="$product" />
           @empty
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">

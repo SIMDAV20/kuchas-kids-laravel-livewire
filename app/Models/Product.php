@@ -33,23 +33,10 @@ class Product extends Model
   }
 
   // Relacion uno a muchos inversa
-  public function ages()
-  {
-    return $this->belongsTo(Age::class);
-  }
-
-  public function age_product()
-  {
-    return $this->hasMany(AgeProduct::class);
-  }
-
-  // Relacion uno a muchos inversa
   public function subcategory()
   {
     return $this->belongsTo(Subcategory::class);
   }
-
-
 
   // Relacion uno a muchos polimórfica
   public function images()

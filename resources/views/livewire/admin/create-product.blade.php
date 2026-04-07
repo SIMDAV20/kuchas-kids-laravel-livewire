@@ -65,6 +65,12 @@
                         .catch(error => {
                             console.error(error);
                         });" x-ref="miEditor"></textarea>
+                    <style>
+                        .ck-editor__editable_inline {
+                            min-height: 200px;
+                            margin-bottom: 10px;
+                        }
+                    </style>
                 </div>
                 <x-input-error for="description" />
             </div>

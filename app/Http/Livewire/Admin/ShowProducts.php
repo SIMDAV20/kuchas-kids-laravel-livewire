@@ -4,7 +4,6 @@ namespace App\Http\Livewire\Admin;
 
 use App\Models\Product;
 use Livewire\Component;
-
 use Livewire\WithPagination;
 
 class ShowProducts extends Component
@@ -12,29 +11,57 @@ class ShowProducts extends Component
   use WithPagination;
 
   public $search;
+  public $selectedProducts = [];
+  public $selectAll = false;
 
-  protected $listeners = ['delete'];
+  protected $listeners = ['delete', 'render'];
 
   protected $queryString = [
-    'search',
-    'page'
+    'search' => ['except' => ''],
+    'page' => ['except' => 1]
   ];
+
+  public function updatedSelectAll($value)
+  {
+      if ($value) {
+          $this->selectedProducts = Product::searchAll($this->search)
+              ->pluck('id')
+              ->map(fn($id) => (string)$id)
+              ->toArray();
+      } else {
+          $this->selectedProducts = [];
+      }
+  }
+
+  public function publishSelected()
+  {
+      Product::whereIn('id', $this->selectedProducts)->update(['status' => Product::PUBLICADO]);
+      $this->reset(['selectedProducts', 'selectAll']);
+  }
+
+  public function draftSelected()
+  {
+      Product::whereIn('id', $this->selectedProducts)->update(['status' => Product::BORRADOR]);
+      $this->reset(['selectedProducts', 'selectAll']);
+  }
+
+  public function deleteSelected()
+  {
+      foreach (Product::whereIn('id', $this->selectedProducts)->get() as $product) {
+          $product->saveDelete();
+      }
+      $this->reset(['selectedProducts', 'selectAll']);
+  }
 
   public function delete(Product $product)
   {
+      $product->saveDelete();
+  }
 
-    // TODO  MAKE OBSERVER
-    if (count($product->color_product_size)) {
-      // eliminar las relaciones del producto por color y talla
-      $product->color_product_size()->detach();
-    } else if (count($product->product_size)) {
-      // eliminar las relaciones del producto por talla
-      $product->product_size()->detach();
-    } else if (count($product->color_product)) {
-      // eliminar las relaciones del producto por color
-      $product->color_product()->detach();
-    }
-    $product->delete();
+  public function changeStatus(Product $product)
+  {
+      $product->status = ($product->status == Product::BORRADOR) ? Product::PUBLICADO : Product::BORRADOR;
+      $product->save();
   }
 
   public function updatingSearch()
@@ -50,13 +77,15 @@ class ShowProducts extends Component
   public function render()
   {
     $products = Product::searchAll($this->search)
+      ->with([
+          'subcategory.category', 
+          'images', 
+          'flashOffer', 
+          'variants.flashOffer', 
+          'variants.attributeOptions.attribute'
+      ])
       ->orderBy('id', 'desc')
-      ->paginate(10)
-      ->withQueryString($this->queryString)
-      ->setPath(route('admin.index'));
-
-    // Append the current query string parameters to the pagination links
-    $products->appends(['search' => $this->search]);
+      ->paginate(25);
 
     return view('livewire.admin.show-products', compact('products'))->layout('layouts.admin');
   }

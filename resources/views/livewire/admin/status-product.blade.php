@@ -1,9 +1,5 @@
-<div class="bg-white shadow-xl rounded-lg p-6">
-    <p class="text-2xl text-center font-semibold mb-2">
-        Estado del Producto
-    </p>
-
-    <div class="grid md:grid-cols-2 gap-6">
+<div>
+    <div class="grid md:grid-cols-1 gap-4">
 
         <div class="flex">
             <label class="mr-6">
