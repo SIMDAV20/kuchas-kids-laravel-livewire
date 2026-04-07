@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->decimal('offer_price', 10, 2)->nullable();
             $table->integer('stock')->default(0);
+            $table->json('images')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

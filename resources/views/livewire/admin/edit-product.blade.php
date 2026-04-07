@@ -138,34 +138,114 @@
     </div>
   </div>
 
-  <div x-data="{ type_variant: @entangle('type_variant') }" class="bg-white shadow-xl rounded-lg p-6 mb-4">
-
-    <x-label value="¿Quieres agregar variantes a tu producto?" class="text-bold mb-3 text-lg" />
-    <div class="grid md:grid-cols-3 gap-6 mb-4">
-      <div class="col-span-2 flex justify-between">
-        @foreach ($options as $option)
-          <x-label>
-            <x-input wire:model.defer="type_variant" name="type_variant" type="radio" value="{{ $option['value'] }}"
-              wire:click="$emit('confirmChangeVariant', '{{ $option['value'] }}')" />
-            {{ $option['label'] }}
-          </x-label>
-        @endforeach
+  {{-- GESTIÓN DE VARIANTES DINÁMICAS --}}
+  <div class="bg-white shadow-xl rounded-lg p-6 mb-4">
+    <div class="flex items-center mb-6">
+      <h2 class="text-xl font-semibold text-indigo-600">Gestión de Variantes</h2>
+      <div class="ml-auto">
+        <x-button wire:click="generateVariants" wire:loading.attr="disabled" wire:target="generateVariants">
+          Generar Variantes
+        </x-button>
       </div>
     </div>
 
-    @if ($type_variant == 'base')
-      {{-- TODO: UTILIZAR DESPUES EL GLOBAL GALLERY DEL BRANCH TEST --}}
-      @livewire('admin.gallery-images-products', ['item_id' => $product->id, 'model' => 'Product'], key('product-' . $product->id))
+    {{-- Selector de Atributos y Opciones --}}
+    <div class="grid md:grid-cols-2 gap-8 mb-8 border-b pb-8">
+      @foreach ($allAttributes as $attribute)
+        <div>
+          <h3 class="font-bold text-gray-800 mb-3 uppercase text-xs tracking-wider">{{ $attribute->name }}</h3>
+          <div class="flex flex-wrap gap-2">
+            @foreach ($attribute->options as $option)
+              <label class="inline-flex items-center p-2 rounded-lg border cursor-pointer transition-all hover:bg-gray-50 {{ in_array($option->id, $selectedAttributes[$attribute->id] ?? []) ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200' }}">
+                <input type="checkbox" value="{{ $option->id }}" wire:model="selectedAttributes.{{ $attribute->id }}" class="hidden">
+                @if ($option->hex)
+                  <span class="w-4 h-4 rounded-full mr-2 border border-gray-300" style="background-color: {{ $option->hex }}"></span>
+                @endif
+                <span class="text-sm">{{ $option->value }}</span>
+              </label>
+            @endforeach
+          </div>
+        </div>
+      @endforeach
+    </div>
+
+    {{-- Tabla de Variantes Generadas --}}
+    @if ($product->variants->count() > 0)
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Variante</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SKU / Slug</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Precio</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
+              <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @foreach ($product->variants as $variant)
+              <tr wire:key="variant-{{ $variant->id }}">
+                <td class="px-4 py-4">
+                  <div class="text-sm font-bold text-gray-900">
+                    {{ $variant->attributeOptions->pluck('value')->implode(' / ') }}
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <input type="text" value="{{ $variant->sku }}" 
+                        wire:change="updateVariant({{ $variant->id }}, 'sku', $event.target.value)"
+                        class="form-control text-xs w-full border-gray-200 rounded">
+                </td>
+                <td class="px-4 py-4">
+                  <input type="number" value="{{ $variant->price }}" 
+                        wire:change="updateVariant({{ $variant->id }}, 'price', $event.target.value)"
+                        class="form-control text-sm w-24 border-gray-200 rounded">
+                </td>
+                <td class="px-4 py-4">
+                  <input type="number" value="{{ $variant->stock }}" 
+                        wire:change="updateVariant({{ $variant->id }}, 'stock', $event.target.value)"
+                        class="form-control text-sm w-20 border-gray-200 rounded">
+                </td>
+                <td class="px-4 py-4 text-center">
+                  <button wire:click="deleteVariant({{ $variant->id }})" 
+                          onclick="confirm('¿Eliminar esta variante?') || event.stopImmediatePropagation()"
+                          class="text-red-600 hover:text-red-900 mx-2">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
     @else
-      @livewire('admin.upsert-product-variant', ['product' => $product, 'type_variant' => $type_variant], key('upsert-product-variant' . $product->id))
+      <div class="bg-gray-50 p-8 text-center rounded-lg border-2 border-dashed border-gray-200">
+        <p class="text-gray-500 text-sm italic">No hay variantes generadas aún. Selecciona opciones arriba y haz clic en "Generar Variantes".</p>
+      </div>
     @endif
+  </div>
+
+  {{-- GALERÍA DE IMÁGENES DEL PRODUCTO BASE --}}
+  <div class="bg-white shadow-xl rounded-lg p-6 mb-4">
+      <h2 class="text-xl font-semibold text-gray-800 mb-6">Galería del Producto</h2>
+      @livewire('admin.gallery-images-products', ['item_id' => $product->id, 'model' => 'Product'], key('product-' . $product->id))
   </div>
 
   @push('scripts')
     <script>
+      Livewire.on('error', mensaje => {
+        Swal.fire({ icon: 'error', title: 'Oops...', text: mensaje })
+      });
+
+      Livewire.on('variantsGenerated', () => {
+        const Toast = Swal.mixin({
+          toast: true, position: 'top-end', showConfirmButton: false, timer: 3000
+        });
+        Toast.fire({ icon: 'success', title: 'Variantes generadas correctamente' })
+      });
+
       Livewire.on('deleteProduct', () => {
         Swal.fire({
-          title: 'Esta seguro de eliminar el registro?',
+          title: '¿Estás seguro?',
           text: "Acción irreversible",
           icon: 'warning',
           showCancelButton: true,
@@ -175,140 +255,9 @@
         }).then((result) => {
           if (result.isConfirmed) {
             Livewire.emitTo('admin.edit-product', 'delete');
-
-            Swal.fire(
-              'Eliminado!',
-              'El resgistro ha sido eliminado.',
-              'success'
-            )
           }
         })
-      })
-
-      Dropzone.options.myAwesomeDropzone = {
-        headers: {
-          'X-CSRF-TOKEN': "{{ csrf_token() }}"
-        },
-        dictDefaultMessage: "Arrastre una imagen al recuadro",
-        acceptedFiles: 'image/*',
-        paramName: "file", // The name that will be used to transfer the file
-        maxFilesize: 2, // MB
-        complete: function(file) {
-          this.removeFile(file);
-        },
-        queuecomplete: function() {
-          Livewire.emit('refreshImages')
-        }
-      };
-
-      // Livewire.on('deleteSize', sizeId => {
-      //   Swal.fire({
-      //     title: 'Esta seguro de eliminar el registro?',
-      //     text: "Acción irreversible",
-      //     icon: 'warning',
-      //     showCancelButton: true,
-      //     confirmButtonColor: '#3085d6',
-      //     cancelButtonColor: '#d33',
-      //     confirmButtonText: 'Si, eliminar!'
-      //   }).then((result) => {
-      //     if (result.isConfirmed) {
-
-      //       Livewire.emitTo('admin.size-product', 'delete', sizeId);
-
-      //       Swal.fire(
-      //         'Eliminado!',
-      //         'El resgistro ha sido eliminado.',
-      //         'success'
-      //       )
-      //     }
-      //   })
-      // })
-
-      // Livewire.on('deleteColorProduct', pivot => {
-      //   Swal.fire({
-      //     title: 'Esta seguro de eliminar el registro?',
-      //     text: "Acción irreversible",
-      //     icon: 'warning',
-      //     showCancelButton: true,
-      //     confirmButtonColor: '#3085d6',
-      //     cancelButtonColor: '#d33',
-      //     confirmButtonText: 'Si, eliminar!'
-      //   }).then((result) => {
-      //     if (result.isConfirmed) {
-      //       // emit es paratodos, y si uso emitTo es para un componente en especifico
-      //       Livewire.emitTo('admin.color-product', 'delete', pivot);
-
-      //       Swal.fire(
-      //         'Eliminado!',
-      //         'El resgistro ha sido eliminado.',
-      //         'success'
-      //       )
-      //     }
-      //   })
-      // })
-
-      // Livewire.on('deleteProductSize', pivot => {
-      //   Swal.fire({
-      //     title: 'Esta seguro de eliminar el registro?',
-      //     text: "Acción irreversible",
-      //     icon: 'warning',
-      //     showCancelButton: true,
-      //     confirmButtonColor: '#3085d6',
-      //     cancelButtonColor: '#d33',
-      //     confirmButtonText: 'Si, eliminar!'
-      //   }).then((result) => {
-      //     if (result.isConfirmed) {
-      //       // emit es paratodos, y si uso emitTo es para un componente en especifico
-      //       Livewire.emitTo('admin.size-product', 'delete', pivot);
-
-      //       Swal.fire(
-      //         'Eliminado!',
-      //         'El resgistro ha sido eliminado.',
-      //         'success'
-      //       )
-      //     }
-      //   })
-      // })
-
-      // Livewire.on('deleteColorSize', pivot => {
-      //   console.log(pivot);
-      //   Swal.fire({
-      //     title: 'Esta seguro de eliminar el registro?',
-      //     text: "Acción irreversible",
-      //     icon: 'warning',
-      //     showCancelButton: true,
-      //     confirmButtonColor: '#3085d6',
-      //     cancelButtonColor: '#d33',
-      //     confirmButtonText: 'Si, eliminar!'
-      //   }).then((result) => {
-      //     if (result.isConfirmed) {
-      //       // emit es paratodos, y si uso emitTo es para un componente en especifico
-      //       Livewire.emitTo('admin.color-size', 'delete', pivot);
-
-      //       Swal.fire(
-      //         'Eliminado!',
-      //         'El resgistro ha sido eliminado.',
-      //         'success'
-      //       )
-      //     }
-      //   })
-      // })
-
-      // CONFIRMAR AL MOMENTO DE CAMBIAR DE VARIANTE
-      Livewire.on('confirmChangeVariant', (newValue) => {
-        Swal.fire({
-          title: 'Esta seguro de cambiar la variación del producto?',
-          text: "Acción irreversible",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si!',
-          allowOutsideClick: false
-        }).then((result) => {
-          Livewire.emitTo('admin.edit-product', 'changeVariant', newValue, result.isConfirmed);
-        })
-      })
+      });
     </script>
   @endpush
 </div>
