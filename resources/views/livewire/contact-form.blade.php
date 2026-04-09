@@ -5,7 +5,7 @@
         <form wire:submit.prevent="submit" class="bg-white rounded-lg col-span-2 shadow p-6 mb-4">
             <h1 class="mb-4 font-semibold text-pink-500 text-3xl">CONTÁCTANOS</h1>
             <div class="mb-4">
-                <x-label value="Nombre de contacto" />
+                <x-label value="Coloque su nombre y apellidos" />
                 {{-- wire:model.defer una vez continue con el form  --}}
                 <x-input type="text" wire:model.defer="contact"
                     placeholder="Ingrese el nombre de la persona que recibirá el producto" class="w-full" />

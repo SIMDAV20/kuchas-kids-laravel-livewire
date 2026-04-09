@@ -16,7 +16,7 @@ class FooterPublic extends Component
      */
     public array $footerLinks = [
         'ATENCIÓN AL CLIENTE' => [
-            ['label' => 'Protección de datos personales', 'route' => 'info.page', 'page' => 'privacy-policy'],
+            ['label' => 'Política de privacidad y protección de datos personales', 'route' => 'info.page', 'page' => 'privacy-policy'],
             ['label' => 'Libro de Reclamaciones', 'route' => 'complaints-book', 'image' => 'img/libro_de_reclamaciones.webp'],
         ],
         'SERVICIO AL CLIENTE' => [
@@ -26,7 +26,7 @@ class FooterPublic extends Component
         ],
         'INFORMACIÓN DE UTILIDAD' => [
             ['label' => 'Términos y Condiciones', 'route' => 'info.page', 'page' => 'terms-and-conditions'],
-            ['label' => 'Cambios y devoluciones', 'route' => 'info.page', 'page' => 'terms-and-conditions'],
+            ['label' => 'Cambios y devoluciones', 'route' => 'info.page', 'page' => 'changes-and-refunds'],
         ],
     ];
 
