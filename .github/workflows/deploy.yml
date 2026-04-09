@@ -1,0 +1,65 @@
+name: Deploy KuchasKids
+
+on:
+  push:
+    branches: [ main, staging ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.1
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, pdo_mysql, zip, gd, bcmath, intl
+          coverage: none
+
+      - name: Cache Composer
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Composer install
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Setup Node 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: NPM install
+        run: npm ci
+
+      - name: Crear .env
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "${{ secrets.PRODUCTION_ENV }}" > .env
+          else
+            echo "${{ secrets.STAGING_ENV }}" > .env
+          fi
+
+      - name: Vite build
+        run: npm run build
+
+      - name: Deploy FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: ${{ github.ref == 'refs/heads/main' && '/laravel_app/' || '/laravel_staging/' }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/tests/**
+            .env.example
