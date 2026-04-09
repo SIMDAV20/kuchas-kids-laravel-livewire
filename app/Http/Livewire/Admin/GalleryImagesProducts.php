@@ -2,74 +2,103 @@
 
 namespace App\Http\Livewire\Admin;
 
-use App\Models\ColorProduct;
 use App\Models\Image;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
+/**
+ * Componente de Biblioteca de Medios (Estilo WordPress)
+ * Permite subir fotos a un pool global y asignarlas a modelos vía IDs JSON
+ */
 class GalleryImagesProducts extends Component
 {
-  use WithFileUploads;
+    use WithFileUploads;
 
-  public $photo, $images = [], $image, $item_id, $item, $model, $open_gallery = false;
+    public $photo, $image, $item_id, $model, $open_gallery = false;
+    public $search = '';
+    
+    // Filtros de biblioteca
+    public $only_assigned = false;
 
-  protected $listeners = ['delete'];
+    protected $listeners = ['refreshGallery' => '$refresh'];
 
-  protected $rules = [
-    'photo' => 'required|image|mimes:png,jpg,jpeg|max:5120'
-  ];
+    protected $rules = [
+        'photo' => 'required|image|mimes:png,jpg,jpeg|max:5120'
+    ];
 
-  protected $validationAttributes = [
-    'photo' => 'imagen'
-  ];
+    public function uploadImage()
+    {
+        $this->photo = $this->image;
+        $this->validateOnly('photo');
 
-  public function edit()
-  {
-    $this->open_gallery = true;
-  }
+        $url = Storage::put('gallery', $this->photo);
 
-  public function uploadImage()
-  {
-    $this->photo = $this->image;
-    $this->validateOnly('photo');
+        $newImage = Image::create([
+            'url' => $url
+        ]);
 
-    $url = Storage::put('products', $this->photo);
+        // Al subir nueva imagen en el contexto de un producto, la asginamos automáticamente
+        $this->toggleImage($newImage->id);
 
-    $this->item->images()->create([
-      'url' => $url
-    ]);
-
-    $this->photo = '';
-
-    $this->emit('upload_image');
-    $this->reloadImages();
-    $this->reset(['image', 'photo']);
-    $this->resetValidation();
-  }
-
-  public function delete(Image $image)
-  {
-    if (Storage::exists($image->url)) {
-      Storage::delete($image->url); // ruta de la photo
+        $this->reset(['image', 'photo']);
+        $this->emit('upload_success');
     }
-    $image->delete();
-    $this->reloadImages();
-  }
 
-  public function reloadImages()
-  {
-    $this->item = findProduct($this->model, $this->item_id);
-    $this->images = $this->item->images;
-  }
+    public function toggleImage($imageId)
+    {
+        $item = $this->getItem();
+        $assigned = $item->images ?? [];
 
-  public function mount()
-  {
-    $this->reloadImages();
-  }
+        if (in_array((string)$imageId, $assigned) || in_array((int)$imageId, $assigned)) {
+            $item->images = array_values(array_filter($assigned, fn($id) => $id != $imageId));
+        } else {
+            $assigned[] = (string)$imageId;
+            $item->images = $assigned;
+        }
 
-  public function render()
-  {
-    return view('livewire.admin.gallery-images-products');
-  }
+        $item->save();
+        $this->emit('image_toggled');
+        
+        // Si el modelo es Product, emitimos para que EditProduct se refresque si es necesario
+        if ($this->model == 'Product') {
+            $this->emitTo('admin.edit-product', 'refreshImages');
+        }
+    }
+
+    public function delete(Image $image)
+    {
+        if (Storage::exists($image->url)) {
+            Storage::delete($image->url);
+        }
+        $image->delete();
+        $this->emit('image_deleted');
+    }
+
+    private function getItem()
+    {
+        $class = ($this->model == 'Product') ? Product::class : ProductVariant::class;
+        return $class::findOrFail($this->item_id);
+    }
+
+    public function render()
+    {
+        $item = $this->getItem();
+        $assignedIds = $item->images ?? [];
+
+        $query = Image::query()->orderBy('created_at', 'desc');
+
+        if ($this->only_assigned) {
+            $query->whereIn('id', $assignedIds);
+        }
+
+        $allLibraryImages = $query->get();
+
+        return view('livewire.admin.gallery-images-products', [
+            'library' => $allLibraryImages,
+            'assignedIds' => $assignedIds
+        ]);
+    }
 }

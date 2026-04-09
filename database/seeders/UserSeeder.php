@@ -29,7 +29,6 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Rosa Bautista',
             'email' => 'atencionalcliente@kuchaskids.pe',
-            // TODO: copiar a "jupiterimportaciones@gmail.com"
             'password' => bcrypt('atencionalcliente2022!')
         ])->assignRole($role);
     }

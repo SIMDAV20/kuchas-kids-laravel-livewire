@@ -29,8 +29,7 @@ class CategoryProducts extends Component
     $products = $this->category->products()
       ->where('products.status', Product::PUBLICADO)
       ->with([
-        'subcategory', 
-        'images', 
+        'subcategory',
         'variants' => function($q) {
             $q->where('status', true);
         },

@@ -29,6 +29,10 @@ class EditProduct extends Component
     public $editingVariantImagesId = null;
     public $selectedImageIds = [];
 
+    // --- SELECCIÓN MASIVA DE VARIANTES ---
+    public $selectedVariants = [];
+    public $selectAllVariants = false;
+
     protected $listeners = ['refreshImages', 'deleteProduct' => 'delete', 'updateVariant'];
 
     protected $rules = [
@@ -45,6 +49,7 @@ class EditProduct extends Component
     public function mount(Product $product)
     {
         $this->product = $product;
+        $this->categories = Category::all();
         $this->category_id = $product->subcategory->category->id;
         $this->subcategories = Subcategory::where('category_id', $this->category_id)->get();
         $this->slug = $this->product->slug;
@@ -53,6 +58,9 @@ class EditProduct extends Component
         })->get();
 
         $this->allAttributes = Attribute::with('options')->get();
+        foreach ($this->allAttributes as $attribute) {
+            $this->selectedAttributes[$attribute->id] = [];
+        }
     }
 
     public function updatingCategoryId($value)
@@ -195,9 +203,34 @@ class EditProduct extends Component
         return redirect()->route('admin.index');
     }
 
-    public function refreshImages()
+    public function updatedSelectAllVariants($value)
     {
-        $this->product = $this->product->fresh();
+        if ($value) {
+            $this->selectedVariants = $this->product->variants->pluck('id')->map(fn($id) => (string)$id)->toArray();
+        } else {
+            $this->selectedVariants = [];
+        }
+    }
+
+    public function activateSelectedVariants()
+    {
+        ProductVariant::whereIn('id', $this->selectedVariants)->update(['status' => true]);
+        $this->reset(['selectedVariants', 'selectAllVariants']);
+        $this->product->load('variants');
+    }
+
+    public function deactivateSelectedVariants()
+    {
+        ProductVariant::whereIn('id', $this->selectedVariants)->update(['status' => false]);
+        $this->reset(['selectedVariants', 'selectAllVariants']);
+        $this->product->load('variants');
+    }
+
+    public function deleteSelectedVariants()
+    {
+        ProductVariant::whereIn('id', $this->selectedVariants)->delete();
+        $this->reset(['selectedVariants', 'selectAllVariants']);
+        $this->product->load('variants');
     }
 
     public function render()

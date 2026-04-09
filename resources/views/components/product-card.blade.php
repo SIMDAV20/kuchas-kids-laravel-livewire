@@ -4,7 +4,7 @@
   <figure class="relative aspect-square overflow-hidden bg-gray-100 flex-shrink-0">
     <a href="{{ route('products.show', ['slugProduct' => $product->slug]) }}">
       <img class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500"
-           src="{{ Storage::url($product->images->first()->url ?? 'products/default.png') }}" 
+           src="{{ Storage::url($product->getAssignedImagesAttribute()->first()->url ?? 'products/default.png') }}" 
            alt="{{ $product->name }}">
     </a>
     

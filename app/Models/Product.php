@@ -17,6 +17,10 @@ class Product extends Model
 
   protected $guarded = ['id', 'created_at', 'updated_at'];
 
+  protected $casts = [
+      'images' => 'array',
+  ];
+
   // acesor se puede crear, es parecido a un atributo de un obj
   public function getStockAttribute()
   {
@@ -38,10 +42,37 @@ class Product extends Model
     return $this->belongsTo(Subcategory::class);
   }
 
-  // Relacion uno a muchos polimórfica
-  public function images()
+  // Relacion uno a muchos polimórfica (LEGACY - Se usará el campo JSON 'images' en su lugar)
+  public function images_relations()
   {
     return $this->morphMany(Image::class, "imageable");
+  }
+
+  /**
+   * Obtiene los modelos de imagen reales basados en el array de IDs en 'images'.
+   * Si el producto base no tiene imágenes asignadas, recolecta las de sus variantes.
+   */
+  public function getAssignedImagesAttribute()
+  {
+      if (!empty($this->images)) {
+          return Image::whereIn('id', $this->images)
+              ->get()
+              ->sortBy(fn($model) => array_search($model->id, $this->images))
+              ->values();
+      }
+
+      // Fallback: collect unique image IDs from all variants
+      $variantImageIds = $this->variants()
+          ->pluck('images')
+          ->filter()
+          ->flatMap(fn($ids) => $ids)
+          ->unique()
+          ->values()
+          ->all();
+
+      if (empty($variantImageIds)) return collect();
+
+      return Image::whereIn('id', $variantImageIds)->get();
   }
 
   public function deleteVariants()
