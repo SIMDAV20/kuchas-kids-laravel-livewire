@@ -9,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Test DNS
+        run: nslookup ${{ secrets.FTP_HOST }}
+
       - name: Checkout código
         uses: actions/checkout@v4
 
@@ -53,8 +56,10 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          username: deploy_miapp@kuchaskids.pe
+          password: deploy_miapp
+          protocol: ftps
+          port: 21
           local-dir: ./
           server-dir: ${{ github.ref == 'refs/heads/main' && '/laravel_app/' || '/laravel_staging/' }}
           exclude: |
