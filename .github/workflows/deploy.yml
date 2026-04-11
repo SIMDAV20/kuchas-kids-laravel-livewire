@@ -56,12 +56,12 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
-          username: deploy_miapp@kuchaskids.pe
-          password: deploy_miapp
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           port: 21
           local-dir: ./
-          server-dir: ${{ github.ref == 'refs/heads/main' && '/laravel_app/' || '/laravel_staging/' }}
+          server-dir: /
           exclude: |
             **/.git*
             **/.git*/**
