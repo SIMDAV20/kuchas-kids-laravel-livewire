@@ -93,7 +93,7 @@
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-10 w-10">
                                             <img class="h-10 w-10 rounded-lg object-cover shadow-sm"
-                                                src="{{ $product->images->count() ? Storage::url($product->images->first()->url) : asset('img/default.jpg') }}" alt="">
+                                                src="{{ $product->images_relations->count() ? Storage::url($product->images_relations->first()->url) : asset('img/default.jpg') }}" alt="">
                                         </div>
                                         <div class="ml-4">
                                             <div class="text-sm font-bold text-gray-900">{{ $product->name }}</div>

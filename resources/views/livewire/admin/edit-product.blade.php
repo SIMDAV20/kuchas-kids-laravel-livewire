@@ -168,7 +168,7 @@
                                                 <td class="px-4 py-3">
                                                     <div class="flex -space-x-2 overflow-hidden mb-1">
                                                         @php
-                                                            $assignedImages = $product->images->whereIn('id', $variant->images ?? []);
+                                                            $assignedImages = $product->images_relations->whereIn('id', $variant->images ?? []);
                                                         @endphp
                                                         @foreach($assignedImages as $img)
                                                             <img src="{{ Storage::url($img->url) }}" class="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover">
@@ -240,8 +240,8 @@
                 {{-- CARD DE IMAGEN DESTACADA --}}
                 <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
                     <div class="p-1">
-                        @if($product->images->count() > 0)
-                            <img src="{{ Storage::url($product->images->first()->url) }}" class="w-full h-64 object-cover rounded-xl" alt="Preview">
+                        @if($product->images_relations->count() > 0)
+                            <img src="{{ Storage::url($product->images_relations->first()->url) }}" class="w-full h-64 object-cover rounded-xl" alt="Preview">
                         @else
                             <div class="w-full h-64 bg-gray-100 flex items-center justify-center rounded-xl">
                                 <i class="fas fa-image text-gray-300 text-5xl"></i>
@@ -299,7 +299,7 @@
     </div>
 
     {{-- MODAL IMÁGENES (MISMO QUE ANTES) --}}
-    <x-dialog-modal wire:model="isImageModalOpen">
+    {{-- <x-dialog-modal wire:model="isImageModalOpen">
         <x-slot name="title">Asignar Fotos a Variante</x-slot>
         <x-slot name="content">
             <div class="grid grid-cols-4 gap-4">
@@ -315,7 +315,7 @@
             <x-secondary-button wire:click="$set('isImageModalOpen', false)">Cerrar</x-secondary-button>
             <x-button class="ml-2 bg-indigo-600" wire:click="saveVariantImages">Guardar</x-button>
         </x-slot>
-    </x-dialog-modal>
+    </x-dialog-modal> --}}
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
