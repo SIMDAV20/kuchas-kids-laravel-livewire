@@ -151,9 +151,21 @@
                             @if (count($selectedVariants))
                                 <div class="flex items-center gap-3 p-3 bg-violet-50 rounded-xl border border-violet-200 mb-4 animate-fade-in shadow-sm">
                                     <span class="text-xs font-bold text-violet-700 ml-2">{{ count($selectedVariants) }} seleccionadas:</span>
-                                    <button wire:click="activateSelectedVariants" class="text-[10px] font-black uppercase bg-white border border-green-200 text-green-600 px-3 py-1 rounded-lg hover:bg-green-50 transition-colors">Activar</button>
-                                    <button wire:click="deactivateSelectedVariants" class="text-[10px] font-black uppercase bg-white border border-gray-200 text-gray-400 px-3 py-1 rounded-lg hover:bg-gray-50 transition-colors">Desactivar</button>
-                                    <button wire:click="deleteSelectedVariants" onclick="confirm('¿Eliminar seleccionadas?') || event.stopImmediatePropagation()" class="text-[10px] font-black uppercase bg-white border border-red-200 text-red-500 px-3 py-1 rounded-lg hover:bg-red-50 transition-colors">Eliminar</button>
+                                    <button
+                                        x-on:click="Swal.fire({ title: 'Publicar variantes', text: '{{ count($selectedVariants) }} variante(s) pasarán a Publicado.', icon: 'question', showCancelButton: true, confirmButtonColor: '#16a34a', cancelButtonColor: '#6b7280', confirmButtonText: 'Sí, publicar', cancelButtonText: 'Cancelar' }).then(r => { if (r.isConfirmed) $wire.activateSelectedVariants() })"
+                                        class="text-[10px] font-black uppercase bg-white border border-green-200 text-green-600 px-3 py-1 rounded-lg hover:bg-green-50 transition-colors">
+                                        <i class="fas fa-eye mr-1"></i> Publicado
+                                    </button>
+                                    <button
+                                        x-on:click="Swal.fire({ title: 'Pasar a Borrador', text: '{{ count($selectedVariants) }} variante(s) pasarán a Borrador.', icon: 'question', showCancelButton: true, confirmButtonColor: '#6b7280', cancelButtonColor: '#6b7280', confirmButtonText: 'Sí, borrrador', cancelButtonText: 'Cancelar' }).then(r => { if (r.isConfirmed) $wire.deactivateSelectedVariants() })"
+                                        class="text-[10px] font-black uppercase bg-white border border-gray-200 text-gray-400 px-3 py-1 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <i class="fas fa-eye-slash mr-1"></i> Borrador
+                                    </button>
+                                    <button
+                                        x-on:click="Swal.fire({ title: 'Eliminar variantes', text: '{{ count($selectedVariants) }} variante(s) serán eliminadas. Acción irreversible.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#6b7280', confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar' }).then(r => { if (r.isConfirmed) $wire.deleteSelectedVariants() })"
+                                        class="text-[10px] font-black uppercase bg-white border border-red-200 text-red-500 px-3 py-1 rounded-lg hover:bg-red-50 transition-colors">
+                                        <i class="fas fa-trash-alt mr-1"></i> Eliminar
+                                    </button>
                                 </div>
                             @endif
                             
@@ -164,55 +176,33 @@
                                             <th class="px-4 py-3 text-left w-10">
                                                 <input type="checkbox" wire:model="selectAllVariants" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
                                             </th>
-                                            <th class="px-4 py-3 text-left">Imágenes</th>
-                                            <th class="px-4 py-3 text-left">Variante</th>
+                                            <th class="w-6"></th>
                                             <th class="px-4 py-3 text-left">SKU</th>
-                                            <th class="px-4 py-3 text-center">Precio</th>
-                                            <th class="px-4 py-3 text-center">Stock</th>
+                                            <th class="px-4 py-3 text-left">Variante</th>
                                             <th class="px-4 py-3 text-center w-10">Estado</th>
                                             <th class="px-4 py-3 text-center w-10"></th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-gray-100 bg-white">
-                                        @foreach ($product->variants as $variant)
-                                            <tr wire:key="variant-row-{{ $variant->id }}" class="hover:bg-gray-50/50 transition-colors {{ in_array($variant->id, $selectedVariants) ? 'bg-indigo-50/30' : '' }}">
+                                    @foreach ($product->variants as $variant)
+                                        <tbody x-data="{ open: false }" wire:key="variant-tbody-{{ $variant->id }}" class="divide-y divide-gray-100 bg-white">
+                                            <tr class="hover:bg-gray-50/50 transition-colors {{ in_array($variant->id, $selectedVariants) ? 'bg-indigo-50/30' : '' }}">
                                                 <td class="px-4 py-3">
                                                     <input type="checkbox" value="{{ $variant->id }}" wire:model="selectedVariants" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
                                                 </td>
-                                                <td class="px-4 py-3">
-                                                    <div class="flex -space-x-2 overflow-hidden mb-1">
-                                                        @php
-                                                            $assignedImages = $product->images_morph->whereIn('id', $variant->images ?? []);
-                                                        @endphp
-                                                        @foreach($assignedImages as $img)
-                                                            <img src="{{ Storage::url($img->url) }}" class="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover">
-                                                        @endforeach
-                                                    </div>
-                                                    <button wire:click="openImageModal({{ $variant->id }})" class="text-[10px] font-bold text-indigo-500 uppercase">
-                                                        <i class="fas fa-camera"></i> Asignar
+                                                <td class="px-2 py-3 text-center">
+                                                    <button x-on:click="open = !open" class="text-gray-400 hover:text-indigo-500 transition-colors">
+                                                        <i class="fas fa-chevron-right text-[10px] transition-transform duration-200" :class="open ? 'rotate-90' : ''"></i>
                                                     </button>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <input type="text" value="{{ $variant->sku }}"
+                                                        wire:change="updateVariant({{ $variant->id }}, 'sku', $event.target.value)"
+                                                        class="text-[10px] font-mono border-gray-200 rounded-md w-full bg-gray-50 focus:bg-white transition-all">
                                                 </td>
                                                 <td class="px-4 py-3">
                                                     <span class="text-xs font-black text-gray-800 tracking-tight">
                                                         {{ $variant->attributeOptions->pluck('value')->implode(' + ') }}
                                                     </span>
-                                                </td>
-                                                <td class="px-4 py-3">
-                                                    <input type="text" value="{{ $variant->sku }}" 
-                                                        wire:change="updateVariant({{ $variant->id }}, 'sku', $event.target.value)"
-                                                        class="text-[10px] font-mono border-gray-200 rounded-md w-full bg-gray-50 focus:bg-white transition-all">
-                                                </td>
-                                                <td class="px-4 py-3 text-center">
-                                                    @php $displayPrice = $variant->price > 0 ? $variant->price : $product->price; @endphp
-                                                    <input type="number" step="0.01" value="{{ $displayPrice }}"
-                                                        wire:change="updateVariant({{ $variant->id }}, 'price', $event.target.value)"
-                                                        class="text-xs font-bold border-gray-200 rounded-md w-20 text-center {{ $variant->price == 0 ? 'text-gray-400 italic' : 'text-gray-700' }}"
-                                                        title="{{ $variant->price == 0 ? 'Usando precio base del producto' : '' }}">
-                                                </td>
-                                                <td class="px-4 py-3 text-center">
-                                                    <input type="number" value="{{ $variant->stock }}" 
-                                                        wire:change="updateVariant({{ $variant->id }}, 'stock', $event.target.value)"
-                                                        class="text-xs font-bold border-gray-200 rounded-md w-16 text-center {{ $variant->stock < 5 ? 'text-red-500' : 'text-gray-700' }}">
                                                 </td>
                                                 <td class="px-4 py-3 text-center">
                                                     @livewire('admin.change-status-product', ['item_id' => $variant->id, 'model' => 'ProductVariant'], key('status-variant-' . $variant->id))
@@ -224,8 +214,42 @@
                                                     </button>
                                                 </td>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
+                                            <tr x-show="open" x-collapse class="bg-indigo-50/20">
+                                                <td colspan="6" class="px-6 py-4 space-y-6">
+                                                    {{-- Precios y Stock --}}
+                                                    <div class="grid grid-cols-3 gap-6">
+                                                        <div>
+                                                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Stock</p>
+                                                            <input type="number" value="{{ $variant->stock }}"
+                                                                wire:change="updateVariant({{ $variant->id }}, 'stock', $event.target.value)"
+                                                                class="text-xs font-bold border-gray-200 rounded-md w-20 text-center {{ $variant->stock < 5 ? 'text-red-500' : 'text-gray-700' }}">
+                                                        </div>
+                                                        <div>
+                                                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Precio (S/)</p>
+                                                            @php $displayPrice = $variant->price > 0 ? $variant->price : $product->price; @endphp
+                                                            <input type="number" step="0.01" value="{{ $displayPrice }}"
+                                                                wire:change="updateVariant({{ $variant->id }}, 'price', $event.target.value)"
+                                                                class="text-xs font-bold border-gray-200 rounded-md w-24 text-center {{ $variant->price == 0 ? 'text-gray-400 italic' : 'text-gray-700' }}"
+                                                                title="{{ $variant->price == 0 ? 'Usando precio base del producto' : '' }}">
+                                                        </div>
+                                                        <div>
+                                                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Precio Oferta (S/)</p>
+                                                            @php $displayOfferPrice = $variant->offer_price > 0 ? $variant->offer_price : $product->offer_price; @endphp
+                                                            <input type="number" step="0.01" value="{{ $displayOfferPrice }}"
+                                                                wire:change="updateVariant({{ $variant->id }}, 'offer_price', $event.target.value)"
+                                                                class="text-xs font-bold border-gray-200 rounded-md w-24 text-center {{ $variant->offer_price == 0 ? 'text-gray-400 italic' : 'text-orange-500' }}"
+                                                                title="{{ $variant->offer_price == 0 ? 'Usando precio oferta base del producto' : '' }}">
+                                                        </div>
+                                                    </div>
+                                                    {{-- Galería de Imágenes --}}
+                                                    <div>
+                                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Imágenes de la Variante</p>
+                                                        @livewire('admin.gallery-images-products', ['item_id' => $variant->id, 'model' => 'ProductVariant'], key('gallery-variant-' . $variant->id))
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    @endforeach
                                 </table>
                             </x-table-fixed-header>
                         </div>
@@ -314,25 +338,6 @@
             </div>
         </div>
     </div>
-
-    {{-- MODAL IMÁGENES (MISMO QUE ANTES) --}}
-    {{-- <x-dialog-modal wire:model="isImageModalOpen">
-        <x-slot name="title">Asignar Fotos a Variante</x-slot>
-        <x-slot name="content">
-            <div class="grid grid-cols-4 gap-4">
-                @foreach($product->images as $image)
-                    <div wire:click="toggleImageSelection({{ $image->id }})" 
-                        class="relative cursor-pointer border-2 rounded-xl overflow-hidden {{ in_array($image->id, $selectedImageIds) ? 'border-indigo-500 ring-2 ring-indigo-200' : 'border-transparent' }}">
-                        <img src="{{ Storage::url($image->url) }}" class="w-full h-24 object-cover">
-                    </div>
-                @endforeach
-            </div>
-        </x-slot>
-        <x-slot name="footer">
-            <x-secondary-button wire:click="$set('isImageModalOpen', false)">Cerrar</x-secondary-button>
-            <x-button class="ml-2 bg-indigo-600" wire:click="saveVariantImages">Guardar</x-button>
-        </x-slot>
-    </x-dialog-modal> --}}
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

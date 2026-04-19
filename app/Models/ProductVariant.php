@@ -9,7 +9,7 @@ class ProductVariant extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_id', 'sku', 'price', 'offer_price', 'stock', 'status', 'images'];
+    protected $fillable = ['product_id', 'sku', 'slug', 'price', 'offer_price', 'stock', 'status', 'images'];
 
     protected $casts = [
         'images' => 'array',

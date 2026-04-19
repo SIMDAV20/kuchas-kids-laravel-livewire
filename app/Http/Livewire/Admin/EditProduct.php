@@ -128,12 +128,13 @@ class EditProduct extends Component
             }
             $variantSlug = implode('-', $slugParts);
 
-            // Evitar duplicados (Unique Index Logic)
-            $existingVariant = ProductVariant::where('sku', $variantSlug)->first();
+            // Evitar duplicados por slug
+            $existingVariant = ProductVariant::where('slug', $variantSlug)->first();
             if (!$existingVariant) {
                 $variant = ProductVariant::create([
                     'product_id' => $this->product->id,
-                    'sku' => $variantSlug,
+                    'slug'  => $variantSlug,
+                    'sku'   => null,
                     'price' => $this->product->price ?? 0,
                     'stock' => 0,
                     'status' => true

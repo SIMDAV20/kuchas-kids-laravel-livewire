@@ -72,7 +72,10 @@
     <div class="absolute inset-0">
       <div class="relative w-full overflow-hidden shadow-inner" style="padding-bottom: 100%">
         @if(collect(['jpg', 'png', 'jpeg', 'webp'])->contains($file->getClientOriginalExtension()))
-        <img src="{{ $file->temporaryUrl() }}" class="inset-0 w-full h-full absolute object-cover">
+        <div x-data="{ loaded: false }" x-init="if ($refs.img.complete) loaded = true" class="inset-0 w-full h-full absolute">
+            <div x-show="!loaded" class="absolute inset-0 bg-gray-200 animate-pulse rounded-lg"></div>
+            <img x-ref="img" src="{{ $file->temporaryUrl() }}" x-on:load="loaded = true" :class="loaded ? 'opacity-100' : 'opacity-0'" class="w-full h-full absolute object-cover transition-opacity duration-300">
+        </div>
 
         <div
           class="h-10 w-10 my-auto flex items-center justify-center inset-0 mx-auto rounded-full group-hover:bg-gray-400 group-hover:bg-opacity-25 text-white absolute z-10">
@@ -160,8 +163,9 @@
     <div class="py-3 flex {{ !$loop->last ? 'border-b border-gray-200' : '' }}">
       <div class="w-16 mr-4 flex-shrink-0 shadow-xs rounded-lg">
         @if(collect(['jpg', 'png', 'jpeg', 'webp'])->contains($f->getClientOriginalExtension()))
-        <div class="relative pb-16 overflow-hidden rounded-lg border border-gray-100">
-          <img src="{{ $f->temporaryUrl() }}" class="w-full h-full absolute object-cover rounded-lg">
+        <div x-data="{ loaded: false }" x-init="if ($refs.img.complete) loaded = true" class="relative pb-16 overflow-hidden rounded-lg border border-gray-100">
+            <div x-show="!loaded" class="absolute inset-0 bg-gray-200 animate-pulse"></div>
+            <img x-ref="img" src="{{ $f->temporaryUrl() }}" x-on:load="loaded = true" :class="loaded ? 'opacity-100' : 'opacity-0'" class="w-full h-full absolute object-cover rounded-lg transition-opacity duration-300">
         </div>
         @else
         <div
@@ -202,8 +206,9 @@
     <div class="mt-3 flex">
       <div class="w-16 mr-4 flex-shrink-0 shadow-xs rounded-lg">
         @if(collect(['jpg', 'png', 'jpeg', 'webp'])->contains($file->getClientOriginalExtension()))
-        <div class="relative pb-16 w-full overflow-hidden rounded-lg border border-gray-100">
-          <img src="{{ $file->temporaryUrl() }}" class="w-full h-full absolute object-cover rounded-lg">
+        <div x-data="{ loaded: false }" x-init="if ($refs.img.complete) loaded = true" class="relative pb-16 w-full overflow-hidden rounded-lg border border-gray-100">
+            <div x-show="!loaded" class="absolute inset-0 bg-gray-200 animate-pulse"></div>
+            <img x-ref="img" src="{{ $file->temporaryUrl() }}" x-on:load="loaded = true" :class="loaded ? 'opacity-100' : 'opacity-0'" class="w-full h-full absolute object-cover rounded-lg transition-opacity duration-300">
         </div>
         @else
         <div

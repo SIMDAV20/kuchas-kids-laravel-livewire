@@ -60,6 +60,17 @@ trigger: always_on
   - `$wire.methodName()` to call Livewire methods from Alpine
   - `@this.on('eventName', callback)` to listen to Livewire events in Alpine
 - Avoid mixing Alpine state with Livewire state unless necessary
+- **Inline `x-data`** is fine for simple reactive state (e.g. `x-data="{ open: false }"`).
+- **Complex or reusable Alpine logic** (more than ~3 lines, or used in multiple places) must be
+  extracted to `Alpine.data()` and registered inside the `alpine:init` event in `@push('scripts')`:
+  ```js
+  document.addEventListener('alpine:init', () => {
+      Alpine.data('myComponent', () => ({
+          // logic here
+      }))
+  })
+  ```
+  This prevents race conditions where Alpine has already started before the definition is registered.
 
 ---
 
