@@ -168,23 +168,4 @@ if (!function_exists('setSEOTools')) {
         SEOTools::setDescription($description);
     }
 
-    // foreach ($products as $key => $product) {
-    //     $product->low_price = 9999999;
-    //     if (count($product->sizes) > 0) {
-    //         foreach ($product->product_size as $s_product) {
-    //             if (
-    //                 $s_product->offer_price > 0 &&
-    //                 (Carbon::parse($product->offer_date)->format('Y-m-d') >= Carbon::now()->format('Y-m-d')) &&
-    //                 $product->offer_date !== null
-    //             ) {
-    //                 $product->low_price = $s_product->offer_price;
-    //                 // SI LA FECHA LIMITE ES INDEFINIDO
-    //             } elseif ($product->offer_price > 0 && $product->offer_date == null) {
-    //                 $product->low_price = $s_product->offer_price;
-    //             } elseif ($product->low_price > $s_product->price) {
-    //                 $product->low_price = $s_product->price;
-    //             }
-    //         }
-    //     }
-    // }
 }

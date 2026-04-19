@@ -2,9 +2,11 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Image;
 use App\Models\Product;
 use App\Models\Attribute;
 use App\Models\ProductVariant;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 
 class ProductDetail extends Component
@@ -116,7 +118,18 @@ class ProductDetail extends Component
 
     public function updateGallery()
     {
-        $this->emit('swiperRefresh');
+        if ($this->currentVariant && !empty($this->currentVariant->images)) {
+            $images = Image::whereIn('id', $this->currentVariant->images)
+                ->get()
+                ->sortBy(fn($img) => array_search($img->id, $this->currentVariant->images))
+                ->values();
+        } else {
+            $images = $this->product->assigned_images;
+        }
+
+        $urls = $images->map(fn($img) => Storage::url($img->url))->values()->toArray();
+
+        $this->emit('swiperRefresh', $urls);
     }
 
     public function checkFlashOffer()
@@ -162,7 +175,7 @@ class ProductDetail extends Component
         }
 
         if ($this->currentVariant && !empty($this->currentVariant->images)) {
-            $currentImages = \App\Models\Image::whereIn('id', $this->currentVariant->images)
+            $currentImages = Image::whereIn('id', $this->currentVariant->images)
                 ->get()
                 ->sortBy(fn($img) => array_search($img->id, $this->currentVariant->images))
                 ->values();

@@ -2,15 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\AgeProduct;
-use Carbon\Carbon;
-
-use App\Models\Color;
-use App\Models\ColorProduct;
 use App\Models\Image;
 use App\Models\Product;
-use App\Models\ProductSize;
-use App\Models\Size;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
@@ -664,73 +657,8 @@ class ProductSeeder extends Seeder
                 'description'    => @$product['description']
             ])->orderBy('id', 'desc')->first();
 
-            if (isset($product['ages'])) {
-                for ($i = 0; $i < $product['ages']; $i++) {
-                    AgeProduct::create([
-                        'age_id' => $i + 1,
-                        'product_id' => $new_product->id
-                    ]);
-                }
-            }
-
-            if (isset($product['qty-img']) && array_key_exists('variantes', $product)) {
-                for ($i = 0; $i < $product['qty-img']; $i++) {
-                    Image::create([
-                        'url'            => 'products/' . $product['slug'] . '-' . ($i + 1) . '.jpg',
-                        'imageable_id'   => $new_product->id,
-                        'imageable_type' => Product::class
-                    ]);
-                }
-            }
-
-            if (array_key_exists('variantes', $product)) {
-                foreach ($product['variantes'] as $key => $var) {
-                    if (isset($var['color_id'])) {
-                        $color_product = ColorProduct::create([
-                            'color_id'   => $var['color_id'],
-                            'slug'       => Str::slug($product['name'] . '-' . Color::find($var['color_id'])->name),
-                            'quantity'   => $var['quantity'],
-                            'product_id' => $new_product->id,
-                        ])->orderBy('id', 'desc')->first();
-                    } elseif (isset($var['size_id'])) {
-                        $product_size = ProductSize::create([
-                            'size_id'    => $var['size_id'],
-                            'slug'       => Str::slug($product['name'] . '-' . Size::find($var['size_id'])->name),
-                            'quantity'   => $var['quantity'],
-                            'price'      => $var['price'],
-                            'product_id' => $new_product->id,
-                        ])->orderBy('id', 'desc')->first();
-                    }
-                    if (isset($var['qty-img'])) {
-                        for ($i = 0; $i < $var['qty-img']; $i++) {
-                            Image::create([
-                                'url'            => 'products/' . $product['slug'] . '-' . $color_product->color->slug . '-' . ($i + 1) . '.jpg',
-                                'imageable_id'   => $color_product->id,
-                                'imageable_type' => ColorProduct::class
-                            ]);
-                        }
-                    }
-                }
-            } else {
-                $new_product->quantity = $product['quantity'];
-                $new_product->save();
-
-                if (isset($product['qty-img'])) {
-                    for ($i = 0; $i < $product['qty-img']; $i++) {
-                        Image::create([
-                            'url' => 'products/' . $product['slug'] . '-' . ($i + 1) . '.jpg',
-                            'imageable_id' => $new_product->id,
-                            'imageable_type' => Product::class
-                        ]);
-                    }
-                } else {
-                    Image::create([
-                        'url' => 'products/' . $product['slug'] . '.jpg',
-                        'imageable_id' => $new_product->id,
-                        'imageable_type' => Product::class
-                    ]);
-                }
-            }
+            $new_product->quantity = $product['quantity'] ?? 0;
+            $new_product->save();
         }
 
         // Product::factory(250)->create()->each(function(Product $product) {

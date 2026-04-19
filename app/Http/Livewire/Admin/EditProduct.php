@@ -132,12 +132,13 @@ class EditProduct extends Component
             $existingVariant = ProductVariant::where('slug', $variantSlug)->first();
             if (!$existingVariant) {
                 $variant = ProductVariant::create([
-                    'product_id' => $this->product->id,
-                    'slug'  => $variantSlug,
-                    'sku'   => null,
-                    'price' => $this->product->price ?? 0,
-                    'stock' => 0,
-                    'status' => true
+                    'product_id'  => $this->product->id,
+                    'slug'        => $variantSlug,
+                    'sku'         => null,
+                    'price'       => $this->product->price ?? 0,
+                    'offer_price' => $this->product->offer_price ?? 0,
+                    'stock'       => 0,
+                    'status'      => true
                 ]);
 
                 // Sincronizar las opciones del atributo

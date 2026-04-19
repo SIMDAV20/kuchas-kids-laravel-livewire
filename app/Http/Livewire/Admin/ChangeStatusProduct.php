@@ -2,11 +2,7 @@
 
 namespace App\Http\Livewire\Admin;
 
-use App\Models\ColorProduct;
-use App\Models\ColorProductSize;
 use App\Models\Product;
-use App\Models\ProductSize;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class ChangeStatusProduct extends Component
