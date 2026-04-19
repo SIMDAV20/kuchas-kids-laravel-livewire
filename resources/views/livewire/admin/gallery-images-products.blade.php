@@ -3,14 +3,14 @@
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
         @php $assigned = \App\Models\Image::whereIn('id', $assignedIds ?? [])->get()->sortBy(fn($img) => array_search($img->id, $assignedIds)); @endphp
         
-        @foreach($assigned as $image)
-            <div class="relative group aspect-square rounded-xl overflow-hidden border-2 border-indigo-100 shadow-sm" wire:key="assigned-{{ $image->id }}">
-                <img src="{{ Storage::url($image->url) }}" class="w-full h-full object-cover transition-transform group-hover:scale-105">
+        @foreach($assigned as $assignedImg)
+            <div class="relative group aspect-square rounded-xl overflow-hidden border-2 border-indigo-100 shadow-sm" wire:key="assigned-{{ $assignedImg->id }}">
+                <img src="{{ Storage::url($assignedImg->url) }}" class="w-full h-full object-cover transition-transform group-hover:scale-105">
                 <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <button wire:click="toggleImage({{ $image->id }})" class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg">
+                    <button wire:click="toggleImage({{ $assignedImg->id }})" class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg">
                         <i class="fas fa-unlink text-xs"></i>
                     </button>
-                    <span class="absolute top-2 left-2 bg-indigo-500 text-white text-[10px] px-2 py-0.5 rounded font-black">#{{ array_search($image->id, $assignedIds) + 1 }}</span>
+                    <span class="absolute top-2 left-2 bg-indigo-500 text-white text-[10px] px-2 py-0.5 rounded font-black">#{{ array_search($assignedImg->id, $assignedIds) + 1 }}</span>
                 </div>
             </div>
         @endforeach

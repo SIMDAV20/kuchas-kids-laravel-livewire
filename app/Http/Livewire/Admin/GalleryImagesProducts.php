@@ -36,12 +36,9 @@ class GalleryImagesProducts extends Component
 
         $url = Storage::put('gallery', $this->photo);
 
-        $newImage = Image::create([
+        Image::create([
             'url' => $url
         ]);
-
-        // Al subir nueva imagen en el contexto de un producto, la asginamos automáticamente
-        $this->toggleImage($newImage->id);
 
         $this->reset(['image', 'photo']);
         $this->emit('upload_success');
@@ -61,11 +58,6 @@ class GalleryImagesProducts extends Component
 
         $item->save();
         $this->emit('image_toggled');
-        
-        // Si el modelo es Product, emitimos para que EditProduct se refresque si es necesario
-        if ($this->model == 'Product') {
-            $this->emitTo('admin.edit-product', 'refreshImages');
-        }
     }
 
     public function delete(Image $image)

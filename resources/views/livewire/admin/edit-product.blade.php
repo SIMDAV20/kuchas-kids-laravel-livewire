@@ -71,6 +71,20 @@
                             <x-input type="text" wire:model="product.video" class="w-full rounded-xl" placeholder="https://..." />
                         </div>
                     </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <x-label value="Precio Base (S/)" class="text-xs font-bold uppercase text-gray-400 mb-1" />
+                            <x-input type="number" step="0.01" wire:model="product.price" class="w-full rounded-xl" placeholder="0.00" />
+                            <x-input-error for="product.price" />
+                            <p class="text-[10px] text-gray-400 mt-1">Precio por defecto para variantes sin precio asignado.</p>
+                        </div>
+                        <div>
+                            <x-label value="Precio Oferta (S/)" class="text-xs font-bold uppercase text-gray-400 mb-1" />
+                            <x-input type="number" step="0.01" wire:model="product.offer_price" class="w-full rounded-xl" placeholder="0.00" />
+                            <x-input-error for="product.offer_price" />
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -168,7 +182,7 @@
                                                 <td class="px-4 py-3">
                                                     <div class="flex -space-x-2 overflow-hidden mb-1">
                                                         @php
-                                                            $assignedImages = $product->images_relations->whereIn('id', $variant->images ?? []);
+                                                            $assignedImages = $product->images_morph->whereIn('id', $variant->images ?? []);
                                                         @endphp
                                                         @foreach($assignedImages as $img)
                                                             <img src="{{ Storage::url($img->url) }}" class="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover">
@@ -189,9 +203,11 @@
                                                         class="text-[10px] font-mono border-gray-200 rounded-md w-full bg-gray-50 focus:bg-white transition-all">
                                                 </td>
                                                 <td class="px-4 py-3 text-center">
-                                                    <input type="number" step="0.01" value="{{ $variant->price }}" 
+                                                    @php $displayPrice = $variant->price > 0 ? $variant->price : $product->price; @endphp
+                                                    <input type="number" step="0.01" value="{{ $displayPrice }}"
                                                         wire:change="updateVariant({{ $variant->id }}, 'price', $event.target.value)"
-                                                        class="text-xs font-bold border-gray-200 rounded-md w-20 text-center">
+                                                        class="text-xs font-bold border-gray-200 rounded-md w-20 text-center {{ $variant->price == 0 ? 'text-gray-400 italic' : 'text-gray-700' }}"
+                                                        title="{{ $variant->price == 0 ? 'Usando precio base del producto' : '' }}">
                                                 </td>
                                                 <td class="px-4 py-3 text-center">
                                                     <input type="number" value="{{ $variant->stock }}" 
@@ -202,7 +218,8 @@
                                                     @livewire('admin.change-status-product', ['item_id' => $variant->id, 'model' => 'ProductVariant'], key('status-variant-' . $variant->id))
                                                 </td>
                                                 <td class="px-4 py-3 text-center">
-                                                    <button wire:click="deleteVariant({{ $variant->id }})" class="text-gray-300 hover:text-red-500 transition-colors">
+                                                    <button wire:click="$emit('confirmDeleteVariant', {{ $variant->id }})"
+                                                        class="text-gray-300 hover:text-red-500 transition-colors">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </td>
@@ -240,8 +257,8 @@
                 {{-- CARD DE IMAGEN DESTACADA --}}
                 <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
                     <div class="p-1">
-                        @if($product->images_relations->count() > 0)
-                            <img src="{{ Storage::url($product->images_relations->first()->url) }}" class="w-full h-64 object-cover rounded-xl" alt="Preview">
+                        @if($product->images_morph->count() > 0)
+                            <img src="{{ Storage::url($product->images_morph->first()->url) }}" class="w-full h-64 object-cover rounded-xl" alt="Preview">
                         @else
                             <div class="w-full h-64 bg-gray-100 flex items-center justify-center rounded-xl">
                                 <i class="fas fa-image text-gray-300 text-5xl"></i>
@@ -323,6 +340,22 @@
             Livewire.on('saved', () => {
                 const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
                 Toast.fire({ icon: 'success', title: 'Producto actualizado con éxito' });
+            });
+            Livewire.on('confirmDeleteVariant', variantId => {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Esta acción es irreversible.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminar!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Livewire.emitTo('admin.edit-product', 'deleteVariant', variantId);
+                        Swal.fire('Eliminada!', 'La variante ha sido eliminada.', 'success');
+                    }
+                });
             });
             Livewire.on('deleteProduct', () => {
                 Swal.fire({

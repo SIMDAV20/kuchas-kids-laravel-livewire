@@ -33,7 +33,7 @@ class EditProduct extends Component
     public $selectedVariants = [];
     public $selectAllVariants = false;
 
-    protected $listeners = ['refreshImages', 'deleteProduct' => 'delete', 'updateVariant'];
+    protected $listeners = ['refreshImages', 'deleteProduct' => 'delete', 'updateVariant', 'deleteVariant'];
 
     protected $rules = [
         'product.subcategory_id' => 'required',
@@ -48,7 +48,7 @@ class EditProduct extends Component
 
     public function mount(Product $product)
     {
-        $this->product = $product;
+        $this->product = $product->load('images_morph');
         $this->categories = Category::all();
         $this->category_id = $product->subcategory->category->id;
         $this->subcategories = Subcategory::where('category_id', $this->category_id)->get();
@@ -145,7 +145,7 @@ class EditProduct extends Component
             }
         }
 
-        $this->reset('selectedAttributes');
+        $this->selectedAttributes = $this->allAttributes->mapWithKeys(fn($attr) => [$attr->id => []])->toArray();
         $this->product->load('variants');
         $this->emit('variantsGenerated');
     }

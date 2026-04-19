@@ -5,20 +5,15 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Livewire\Admin\AttributeComponent;
 use App\Http\Livewire\Admin\BrandComponent;
-use App\Http\Livewire\Admin\CityComponent;
 use App\Http\Livewire\Admin\CreateProduct;
-use App\Http\Livewire\Admin\DepartmentComponent;
 use App\Http\Livewire\Admin\ShowProducts;
 use App\Http\Livewire\Admin\EditProduct;
 use App\Http\Livewire\Admin\ShowCategory;
-use App\Http\Livewire\Admin\ShowCity;
-use App\Http\Livewire\Admin\ShowDepartment;
 use App\Http\Livewire\Admin\UserComponent;
 use App\Http\Livewire\Admin\DeliveryZone;
 use App\Http\Livewire\Admin\SettingsComponent;
 use App\Http\Livewire\Admin\UploadBanner;
 use Illuminate\Support\Facades\Route;
-use Livewire\Livewire;
 
 Route::get('/', ShowProducts::class)->name('admin.index');
 

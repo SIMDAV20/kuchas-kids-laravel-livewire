@@ -2,21 +2,21 @@
     <div class="md:grid md:grid-cols-3 md:gap-6">
         {{-- Crear Atributo --}}
         <div class="md:col-span-1">
-            <x-jet-section-title>
-                <x-slot name="title">Atributos del Producto</x-slot>
-                <x-slot name="description">Crea características dinámicas como Color, Talla, Tela, etc.</x-slot>
-            </x-jet-section-title>
+            <div class="mb-4">
+                <h2 class="text-lg font-bold text-gray-800">Atributos del Producto</h2>
+                <p class="text-sm text-gray-500 mt-1">Crea características dinámicas como Color, Talla, Tela, etc.</p>
+            </div>
 
             <div class="bg-white p-6 rounded shadow mt-4">
                 <div class="mb-4">
-                    <x-jet-label for="name" value="Nombre del Atributo" />
-                    <x-jet-input id="name" type="text" class="mt-1 block w-full" wire:model="name" placeholder="Ej: Color, Talla" />
-                    <x-jet-input-error for="name" class="mt-2" />
+                    <x-label for="name" value="Nombre del Atributo" />
+                    <x-input id="name" type="text" class="mt-1 block w-full" wire:model="name" placeholder="Ej: Color, Talla" />
+                    <x-input-error for="name" class="mt-2" />
                 </div>
                 <div class="flex items-center justify-end">
-                    <x-jet-button wire:click="saveAttribute">
+                    <x-button wire:click="saveAttribute">
                         Crear Atributo
-                    </x-jet-button>
+                    </x-button>
                 </div>
             </div>
         </div>
@@ -54,8 +54,8 @@
                                 </div>
                                 {{-- Añadir Opción --}}
                                 <div class="mt-2 flex items-center gap-2">
-                                    <input type="text" placeholder="Nueva opción" 
-                                           wire:model.defer="optionValue" 
+                                    <input type="text" placeholder="Nueva opción"
+                                           wire:model.defer="optionValue"
                                            wire:click="editOptions({{ $attribute->id }})"
                                            class="mt-1 block w-32 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md h-8">
                                     @if($attribute->name == 'Color')
@@ -67,8 +67,8 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                <button onclick="confirm('¿Estás seguro de eliminar este atributo?') || event.stopImmediatePropagation()" 
-                                        wire:click="deleteAttribute({{ $attribute->id }})" 
+                                <button onclick="confirm('¿Estás seguro de eliminar este atributo?') || event.stopImmediatePropagation()"
+                                        wire:click="deleteAttribute({{ $attribute->id }})"
                                         class="text-red-600 hover:text-red-900">
                                     Eliminar
                                 </button>
