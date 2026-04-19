@@ -37,22 +37,24 @@ class AddCartItem extends Component
     {
         if ($this->variant) {
             $this->quantity = qty_available($this->product->id, $this->variant->id);
-            // Default image from variant if available
             $variantImages = $this->variant->images ?? [];
-            if (count($variantImages) > 0) {
-                $img = $this->product->images->where('id', $variantImages[0])->first();
-                $this->options['image'] = Storage::url($img->url ?? $this->product->images->first()->url);
-            } else {
-                $this->options['image'] = Storage::url($this->product->images->first()->url);
-            }
+            $this->options['image'] = $this->firstImageUrl($variantImages)
+                ?? $this->firstImageUrl($this->product->images ?? []);
         } else {
             $this->quantity = qty_available($this->product->id);
-            $this->options['image'] = Storage::url($this->product->images->first()->url);
+            $this->options['image'] = $this->firstImageUrl($this->product->images ?? []);
         }
-        
+
         if ($this->qty > $this->quantity) {
             $this->qty = $this->quantity > 0 ? 1 : 0;
         }
+    }
+
+    private function firstImageUrl(array $ids): ?string
+    {
+        if (empty($ids)) return null;
+        $img = \App\Models\Image::find($ids[0]);
+        return $img ? Storage::url($img->url) : null;
     }
 
     public function decrement()

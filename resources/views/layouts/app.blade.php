@@ -78,6 +78,9 @@
   {{-- FlexSlider --}}
   <link rel="stylesheet" href="{{ asset('vendor/FlexSlider/flexslider.css') }}">
 
+  {{-- Swiper --}}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
   {{-- Image Viewer --}}
   <link rel="stylesheet" href="{{ asset('vendor/images-viewer/css/master.css') }}">
 
@@ -152,6 +155,9 @@
       }
     }
   </script>
+
+  {{-- Swiper --}}
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
   {{-- Modernizer --}}
   <script src="{{ asset('vendor/plugins/modernizr-custom.js') }}"></script>

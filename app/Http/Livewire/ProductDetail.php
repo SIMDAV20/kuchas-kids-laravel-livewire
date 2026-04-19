@@ -22,8 +22,7 @@ class ProductDetail extends Component
     public $stock;
     public $quantity = 1;
     
-    // Gallery
-    public $currentImages = [];
+    // Gallery — computed in render(), not stored as Livewire state
     
     // Flash Offer
     public $flashOffer;
@@ -117,16 +116,7 @@ class ProductDetail extends Component
 
     public function updateGallery()
     {
-        // Si hay una variante seleccionada y tiene imágenes asignadas (Fase 2)
-        if ($this->currentVariant && $this->currentVariant->images && count($this->currentVariant->images) > 0) {
-            $this->currentImages = $this->product->images->whereIn('id', $this->currentVariant->images);
-        } else {
-            // Galería base del producto
-            $this->currentImages = $this->product->images;
-        }
-        
-        // Emitir para que el Slider (Glider/FlexSlider) se reinicie si es necesario
-        $this->emit('galleryUpdated');
+        $this->emit('swiperRefresh');
     }
 
     public function checkFlashOffer()
@@ -171,9 +161,19 @@ class ProductDetail extends Component
                 ->unique('id');
         }
 
+        if ($this->currentVariant && !empty($this->currentVariant->images)) {
+            $currentImages = \App\Models\Image::whereIn('id', $this->currentVariant->images)
+                ->get()
+                ->sortBy(fn($img) => array_search($img->id, $this->currentVariant->images))
+                ->values();
+        } else {
+            $currentImages = $this->product->assigned_images;
+        }
+
         return view('livewire.product-detail', [
             'availableColors' => $availableColors,
-            'availableSizes' => $availableSizes,
+            'availableSizes'  => $availableSizes,
+            'currentImages'   => $currentImages,
         ]);
     }
 }

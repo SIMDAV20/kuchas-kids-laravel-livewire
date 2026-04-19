@@ -1,17 +1,27 @@
 <div class="space-y-6">
-    {{-- Vista Previa de Imágenes Asignadas --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        @php $assigned = \App\Models\Image::whereIn('id', $assignedIds ?? [])->get()->sortBy(fn($img) => array_search($img->id, $assignedIds)); @endphp
+    {{-- Vista Previa de Imágenes Asignadas (Sortable) --}}
+    @php $assigned = \App\Models\Image::whereIn('id', $assignedIds ?? [])->get()->sortBy(fn($img) => array_search($img->id, $assignedIds))->values(); @endphp
+    <div x-data="sortableGallery" x-ref="sortableGrid"
+         class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
 
         @foreach($assigned as $assignedImg)
-            <div class="relative group aspect-square rounded-xl overflow-hidden border-2 border-indigo-100 shadow-sm" wire:key="assigned-{{ $assignedImg->id }}">
-                <img src="{{ Storage::url($assignedImg->url) }}" class="w-full h-full object-cover transition-transform group-hover:scale-105">
-                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <button wire:click="toggleImage({{ $assignedImg->id }})" class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg">
+            <div class="relative group aspect-square rounded-xl overflow-hidden border-2 border-indigo-100 shadow-sm cursor-grab active:cursor-grabbing"
+                 wire:key="assigned-{{ $assignedImg->id }}"
+                 data-id="{{ $assignedImg->id }}">
+                <img src="{{ Storage::url($assignedImg->url) }}" class="w-full h-full object-cover transition-transform group-hover:scale-105 pointer-events-none">
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button wire:click="toggleImage({{ $assignedImg->id }})"
+                            x-on:click.stop
+                            class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg">
                         <i class="fas fa-unlink text-xs"></i>
                     </button>
-                    <span class="absolute top-2 left-2 bg-indigo-500 text-white text-[10px] px-2 py-0.5 rounded font-black">#{{ array_search($assignedImg->id, $assignedIds) + 1 }}</span>
                 </div>
+                <span class="absolute top-1 left-1 bg-indigo-500 text-white text-[10px] px-1.5 py-0.5 rounded font-black pointer-events-none">
+                    #{{ $loop->iteration }}
+                </span>
+                <span class="absolute bottom-1 right-1 text-white/70 pointer-events-none">
+                    <i class="fas fa-grip-dots text-[10px]"></i>
+                </span>
             </div>
         @endforeach
 
@@ -39,20 +49,34 @@
                         {{ count($blockedImages) }} imagen(es) no se pudieron eliminar por estar en uso:
                     </p>
                     <ul class="space-y-2">
-                        @foreach($blockedImages as $blocked)
+                        @php
+                            $byProduct = [];
+                            foreach ($blockedImages as $blocked) {
+                                foreach ($blocked['products'] as $product) {
+                                    $key = $product['link'];
+                                    if (!isset($byProduct[$key])) {
+                                        $byProduct[$key] = ['name' => $product['name'], 'link' => $product['link'], 'images' => []];
+                                    }
+                                    $byProduct[$key]['images'][] = $blocked['url'];
+                                }
+                            }
+                        @endphp
+                        @foreach($byProduct as $entry)
                             <li class="flex items-start gap-3 text-xs">
-                                <img src="{{ Storage::url($blocked['url']) }}" class="w-10 h-10 rounded object-cover flex-shrink-0 border border-red-200">
+                                <div class="flex -space-x-2 flex-shrink-0">
+                                    @foreach($entry['images'] as $imgUrl)
+                                        <img src="{{ Storage::url($imgUrl) }}" class="w-8 h-8 rounded-full ring-2 ring-white object-cover border border-red-200">
+                                    @endforeach
+                                </div>
                                 <div>
-                                    <p class="text-[10px] text-gray-500 font-mono truncate mb-1">{{ basename($blocked['url']) }}</p>
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach($blocked['products'] as $product)
-                                            <a href="{{ $product['link'] }}" target="_blank"
-                                               class="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded hover:bg-indigo-100 transition-colors">
-                                                {{ $product['name'] }}
-                                                <i class="fas fa-external-link-alt text-[8px]"></i>
-                                            </a>
-                                        @endforeach
-                                    </div>
+                                    <a href="{{ $entry['link'] }}" target="_blank"
+                                       class="inline-flex items-center gap-1 font-bold text-indigo-600 hover:underline">
+                                        {{ $entry['name'] }}
+                                        <i class="fas fa-external-link-alt text-[8px]"></i>
+                                    </a>
+                                    <p class="text-[10px] text-gray-400 mt-0.5">
+                                        {{ count($entry['images']) }} imagen(es) en uso
+                                    </p>
                                 </div>
                             </li>
                         @endforeach
@@ -89,7 +113,7 @@
         </x-slot>
 
         <x-slot name="footer">
-            <x-secondary-button wire:click="$set('open_gallery', false)">Terminar</x-secondary-button>
+            <x-secondary-button wire:click="$set('open_gallery', false)">Asignar</x-secondary-button>
         </x-slot>
     </x-dialog-modal>
 
@@ -100,3 +124,25 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
     </style>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('sortableGallery', () => ({
+            init() {
+                Sortable.create(this.$refs.sortableGrid, {
+                    animation: 150,
+                    ghostClass: 'opacity-30',
+                    filter: 'button, a',
+                    preventOnFilter: false,
+                    onEnd: () => {
+                        const ids = [...this.$refs.sortableGrid.querySelectorAll('[data-id]')]
+                            .map(el => el.dataset.id);
+                        this.$wire.reorderImages(ids);
+                    }
+                });
+            }
+        }))
+    })
+</script>
+@endpush

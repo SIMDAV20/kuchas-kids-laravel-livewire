@@ -50,17 +50,27 @@ class GalleryImagesProducts extends Component
             $image = Image::find($id);
             if (!$image) continue;
 
-            $usedByProducts  = Product::where('images', 'like', '%"' . $id . '"%')->get(['id', 'name', 'slug']);
-            $usedByVariants  = ProductVariant::where('images', 'like', '%"' . $id . '"%')
-                ->with('product:id,name,slug')
-                ->get();
+            $productsQuery = Product::where('images', 'like', '%"' . $id . '"%');
+            $variantsQuery = ProductVariant::where('images', 'like', '%"' . $id . '"%');
 
-            // Merge unique products from direct + variant usage
+            // Exclude current item so editing-context doesn't block deletion
+            if ($this->model === 'Product') {
+                $productsQuery->where('id', '!=', $this->item_id);
+                $variantsQuery->where('product_id', '!=', $this->item_id);
+            } else {
+                $variantsQuery->where('id', '!=', $this->item_id);
+            }
+
+            $usedByProducts = $productsQuery->get(['id', 'name', 'slug']);
+            $usedByVariants = $variantsQuery->with('product:id,name,slug')->get();
+
             $products = $usedByProducts->concat(
                 $usedByVariants->map(fn($v) => $v->product)->filter()
             )->unique('id')->values();
 
             if ($products->isEmpty()) {
+                $this->removeImageFromAssignments($id);
+
                 if (Storage::exists($image->url)) {
                     Storage::delete($image->url);
                 }
@@ -77,6 +87,30 @@ class GalleryImagesProducts extends Component
         }
 
         $this->emit('image_deleted');
+    }
+
+    private function removeImageFromAssignments($imageId)
+    {
+        $removeFrom = function ($items) use ($imageId) {
+            foreach ($items as $item) {
+                $current = $item->images ?? [];
+                $updated = array_values(array_filter($current, fn($id) => $id != $imageId));
+                if (count($updated) !== count($current)) {
+                    $item->images = $updated;
+                    $item->save();
+                }
+            }
+        };
+
+        $removeFrom(Product::where('images', 'like', '%"' . $imageId . '"%')->get());
+        $removeFrom(ProductVariant::where('images', 'like', '%"' . $imageId . '"%')->get());
+    }
+
+    public function reorderImages(array $orderedIds)
+    {
+        $item         = $this->getItem();
+        $item->images = array_values(array_map('strval', $orderedIds));
+        $item->save();
     }
 
     public function toggleImage($imageId)

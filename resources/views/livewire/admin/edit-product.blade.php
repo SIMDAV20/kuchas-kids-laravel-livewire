@@ -113,6 +113,21 @@
                 </div>
             </div>
 
+            {{-- GALERÍA --}}
+            <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
+                <div class="p-6 border-b border-gray-100 bg-gray-50/50">
+                    <h3 class="font-bold text-gray-800 flex items-center uppercase text-sm tracking-tight">
+                        <i class="fas fa-images mr-2 text-indigo-500"></i> Fotos del Producto
+                        <span class="ml-2 text-[10px] font-normal text-gray-400 normal-case tracking-normal">
+                            <i class="fas fa-grip-dots mr-1"></i>Arrastra las fotos para cambiar el orden
+                        </span>
+                    </h3>
+                </div>
+                <div class="p-6">
+                    @livewire('admin.gallery-images-products', ['item_id' => $product->id, 'model' => 'Product'], key('gallery-' . $product->id))
+                </div>
+            </div>
+
             {{-- VARIANTES --}}
             <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
                 <div class="p-6 border-b border-gray-100 bg-indigo-50/30 flex justify-between items-center">
@@ -261,17 +276,6 @@
                 </div>
             </div>
 
-            {{-- GALERÍA --}}
-            <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
-                <div class="p-6 border-b border-gray-100 bg-gray-50/50">
-                    <h3 class="font-bold text-gray-800 flex items-center uppercase text-sm tracking-tight">
-                        <i class="fas fa-images mr-2 text-indigo-500"></i> Fotos del Producto
-                    </h3>
-                </div>
-                <div class="p-6">
-                    @livewire('admin.gallery-images-products', ['item_id' => $product->id, 'model' => 'Product'], key('gallery-' . $product->id))
-                </div>
-            </div>
         </div>
 
         {{-- SIDEBAR STICKY (DERECHA) --}}
