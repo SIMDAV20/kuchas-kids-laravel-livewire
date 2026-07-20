@@ -75,13 +75,30 @@
 <body class="font-sans antialiased">
   <x-banner />
 
-  <div class="min-h-screen bg-gray-100 flex">
+  <div class="min-h-screen bg-gray-100 flex" x-data="adminShell()" @keydown.escape.window="closeMobile()">
     @include('navigation-admin-menu')
 
-    <!-- Page Content -->
-    <main class="flex-1 min-w-0 overflow-x-hidden">
-      {{ $slot }}
-    </main>
+    <div class="flex-1 min-w-0 flex flex-col">
+      {{-- Mobile topbar --}}
+      <header class="lg:hidden sticky top-0 z-20 flex items-center justify-between gap-3 bg-white border-b border-gray-200 px-4 py-3">
+        <button @click="openMobile()" class="h-9 w-9 flex items-center justify-center text-gray-600 hover:text-gray-900 -ml-2" aria-label="Abrir menú">
+          <i class="fas fa-bars text-lg"></i>
+        </button>
+        <img src="{{ Storage::url($settings_company->logo) }}" class="h-8 w-auto" alt="logo">
+        <span class="w-9"></span>
+      </header>
+
+      @isset($header)
+        <header class="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4">
+          {{ $header }}
+        </header>
+      @endisset
+
+      <!-- Page Content -->
+      <main class="flex-1 min-w-0 overflow-x-hidden">
+        {{ $slot }}
+      </main>
+    </div>
   </div>
 
   @stack('modals')
@@ -123,6 +140,28 @@
 
   {{-- Livewire Sortable --}}
   <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('adminShell', () => ({
+            collapsed: localStorage.getItem('admin_sidebar_collapsed') === 'true',
+            mobileOpen: false,
+
+            toggleCollapsed() {
+                this.collapsed = !this.collapsed;
+                localStorage.setItem('admin_sidebar_collapsed', this.collapsed);
+            },
+
+            openMobile() {
+                this.mobileOpen = true;
+            },
+
+            closeMobile() {
+                this.mobileOpen = false;
+            },
+        }));
+    });
+  </script>
 
   @stack('scripts')
 </body>

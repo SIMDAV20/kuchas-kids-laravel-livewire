@@ -111,7 +111,7 @@ class ShowCategory extends Component
     $this->category->subcategories()->create([
       'name'  => $this->createForm['name'],
       'slug'  => $this->createForm['slug'],
-      'keywords'  => json_encode($this->createForm['keywords']),
+      'keywords'  => $this->createForm['keywords'],
     ]);
 
     $this->rand = rand();
@@ -129,7 +129,7 @@ class ShowCategory extends Component
     $this->editForm['id'] = $subcategory->id;
     $this->editForm['name']   = $subcategory->name;
     $this->editForm['slug']   = $subcategory->slug;
-    $this->editForm['keywords'] = json_decode($subcategory->keywords);
+    $this->editForm['keywords'] = $subcategory->keywords ?? [];
   }
 
   public function updateSubCategoriesPosition($list)
@@ -176,7 +176,7 @@ class ShowCategory extends Component
     $this->subcategory->update([
       'name'  => $this->editForm['name'],
       'slug' => $this->editForm['slug'],
-      'keywords'  => json_encode($this->editForm['keywords']),
+      'keywords'  => $this->editForm['keywords'],
     ]);
 
     $this->reset(['editForm']); // , 'editImage' , iba adentro

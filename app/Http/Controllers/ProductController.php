@@ -23,7 +23,7 @@ class ProductController extends Controller
         $subcategory = $product->subcategory;
         
         if (!empty($subcategory->keywords)) {
-            $seoItems->push(json_decode($subcategory->keywords));
+            $seoItems->push($subcategory->keywords);
         }
 
         $seoItems->push($subcategory->name);

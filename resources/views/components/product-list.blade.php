@@ -17,7 +17,10 @@
         <div>
           <h1 class="text-lg font-semibold text-violet-350">{{ $product->name }}</h1>
           <hr class="my-1">
-          @if ($product->offer_price > 0)
+          @if ($product->variants->count() > 0)
+            <p class="text-xs text-gray-400 font-bold uppercase mb-0.5">Desde</p>
+            <p class="font-bold text-violet-350">S/ {{ number_format($product->getMinPrice(), 2) }}</p>
+          @elseif ($product->offer_price > 0)
             <del class="text-sm font-bold text-gray-350">S/ {{ $product->price }}</del>
             <p class="text-violet-350 font-bold">S/ {{ $product->offer_price }}</p>
           @else

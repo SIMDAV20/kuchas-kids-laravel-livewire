@@ -31,7 +31,7 @@ class UserComponent extends Component
                         $query->where('name', 'LIKE', '%' . $this->search . '%');
                         $query->orWhere('email', 'LIKE', '%' . $this->search . '%');
                     })
-                    ->paginate(10);
+                    ->paginate(10)->onEachSide(1);
         return view('livewire.admin.user-component', compact('users'))->layout('layouts.admin');
     }
 }

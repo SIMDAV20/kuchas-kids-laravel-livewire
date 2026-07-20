@@ -100,24 +100,25 @@ class ShowOrders extends Component
     public function render()
     {
         $s = $this->search;
-        $orders = Order::orderId($s)
-            // ->shippingCost($s)
-            // ->total($s)
-            ->contact($s)
-            // ->phone($s)
-            // ->docnumber($s)
-            ->otherContact($s)
-            // ->otherPhone($s)
-            // ->otherDocnumber($s)
-            // ->extraNote($s)
-            ->paymentMethod($s)
-            ->orderBy('id', 'desc');
+        $orders = Order::where(function ($query) use ($s) {
+            $query->orderId($s)
+                // ->shippingCost($s)
+                // ->total($s)
+                ->contact($s)
+                // ->phone($s)
+                // ->docnumber($s)
+                ->otherContact($s)
+                // ->otherPhone($s)
+                // ->otherDocnumber($s)
+                // ->extraNote($s)
+                ->paymentMethod($s);
+        })->orderBy('id', 'desc');
 
         if ($this->status > 0) {
             $orders = $orders->where('status', $this->status);
         }
 
-        $orders = $orders->paginate(10);
+        $orders = $orders->paginate(10)->onEachSide(1);
 
         foreach ($orders as $key => $order) {
             $arrays[] = [];

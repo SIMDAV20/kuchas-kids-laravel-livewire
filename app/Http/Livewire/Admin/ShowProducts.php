@@ -13,12 +13,14 @@ class ShowProducts extends Component
     public $search;
     public $selectedProducts = [];
     public $selectAll = false;
+    public $perPage = 25;
 
     protected $listeners = ['delete', 'render'];
 
     protected $queryString = [
         'search' => ['except' => ''],
-        'page' => ['except' => 1]
+        'page' => ['except' => 1],
+        'perPage' => ['except' => 25],
     ];
 
     public function updatedSelectAll($value)
@@ -69,6 +71,15 @@ class ShowProducts extends Component
         $this->resetPage();
     }
 
+    public function updatingPerPage($value)
+    {
+        if (!in_array((int) $value, [25, 50, 100])) {
+            $this->perPage = 25;
+        }
+
+        $this->resetPage();
+    }
+
     public function mount()
     {
         $this->search = request()->query('search', $this->search);
@@ -85,7 +96,7 @@ class ShowProducts extends Component
                 'variants.attributeOptions.attribute'
             ])
             ->orderBy('id', 'desc')
-            ->paginate(25);
+            ->paginate($this->perPage)->onEachSide(1);
 
         return view('livewire.admin.show-products', compact('products'))->layout('layouts.admin');
     }

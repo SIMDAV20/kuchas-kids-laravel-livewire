@@ -59,16 +59,18 @@ class AddCartItem extends Component
 
     public function decrement()
     {
-        $this->qty = $this->qty - 1;
+        $this->qty = max(1, $this->qty - 1);
     }
 
     public function increment()
     {
-        $this->qty = $this->qty + 1;
+        $this->qty = min($this->quantity, $this->qty + 1);
     }
 
     public function addItem()
     {
+        $this->qty = max(1, min($this->qty, $this->quantity));
+
         $itemToPrice = $this->variant ?? $this->product;
         [$base_price, $price] = applyOffer($itemToPrice);
         

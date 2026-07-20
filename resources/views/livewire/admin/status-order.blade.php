@@ -243,6 +243,16 @@
             </p>
             <p class="text-xl font-bold text-center mr-0 md:mr-4 ">S/ {{ $order->shipping_cost }}</p>
         </div>
+        @if ($order->coupon_code)
+            <div class="w-full flex items-center justify-end mt-4">
+                <p class="text-gray-700 mr-4">
+                    <span class="font-bold text-lg">Cupón aplicado:</span>
+                </p>
+                <p class="text-xl font-bold text-center text-green-600 mr-0 md:mr-4">
+                    {{ $order->coupon_code }} (&minus; S/ {{ number_format($order->discount, 2) }})
+                </p>
+            </div>
+        @endif
         <div class="w-full flex items-center justify-end mt-4">
             <p class="text-gray-700 mr-4">
                 <span class="font-bold text-lg">Total:</span>

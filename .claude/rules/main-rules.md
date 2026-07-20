@@ -6,9 +6,9 @@ trigger: always_on
 
 ## Project Context
 - **Location**: Laragon `www` folder (e.g., `C:/laragon/www/kuchas-kids`)
-- **Stack**: Laravel 8, Livewire 2, Alpine.js
+- **Stack**: Laravel 10, Livewire 2, Alpine.js
 - **Styling**: Tailwind CSS (custom colors defined in `tailwind.config.js`)
-- **Environment**: Local development via Laragon (Apache/Nginx + MariaDB + PHP 8)
+- **Environment**: Local development via Laragon (Apache/Nginx + MariaDB + PHP 8.1)
 
 ---
 

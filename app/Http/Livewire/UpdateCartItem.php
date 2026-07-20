@@ -24,7 +24,7 @@ class UpdateCartItem extends Component
 
     public function decrement()
     {
-        $this->qty = $this->qty - 1;
+        $this->qty = max(1, $this->qty - 1);
         Cart::update($this->rowId, $this->qty);
 
         $this->emit('render');
@@ -34,7 +34,7 @@ class UpdateCartItem extends Component
 
     public function increment()
     {
-        $this->qty = $this->qty + 1;
+        $this->qty = min($this->quantity, $this->qty + 1);
         Cart::update($this->rowId, $this->qty);
 
         $this->emit('render');

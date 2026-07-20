@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Livewire\Admin\AttributeComponent;
 use App\Http\Livewire\Admin\BrandComponent;
+use App\Http\Livewire\Admin\CouponComponent;
 use App\Http\Livewire\Admin\CreateProduct;
 use App\Http\Livewire\Admin\ShowProducts;
 use App\Http\Livewire\Admin\EditProduct;
@@ -29,6 +30,7 @@ Route::get('brands', BrandComponent::class)->name('admin.brands.index');
 
 Route::get('orders', [OrderController::class, 'index'])->name('admin.orders.index');
 Route::get('orders/{order}', [OrderController::class, 'show'])->name('admin.orders.show');
+Route::get('coupons', CouponComponent::class)->name('admin.coupons.index');
 
 // Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 

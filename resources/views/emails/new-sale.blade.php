@@ -63,7 +63,6 @@
 
     @php
         $settings_company = \App\Models\Setting::first();
-        $order = $msg['order'];
         $items = json_decode($order->content);
         $envio = json_decode($order->envio);
     @endphp
@@ -248,11 +247,25 @@
                 </tbody>
             </table>
 
-            <div style="margin-top: 20px" class="flex">
-                <p class="text-gray-700" style="margin-right: 10px">
-                    <span class="font-bold text-lg">Total:</span>
+            <div style="margin-top: 20px">
+                <p class="flex" style="margin-bottom: 5px">
+                    <span style="margin-right: 10px">Subtotal:</span>
+                    <span class="font-bold">S/ {{ number_format($order->total - $order->shipping_cost + $order->discount, 2) }}</span>
                 </p>
-                <p class="text-xl font-bold text-center mr-0 md:mr-4 ">S/ {{ $order->total }}</p>
+                <p class="flex" style="margin-bottom: 5px">
+                    <span style="margin-right: 10px">Envío:</span>
+                    <span class="font-bold">{{ $order->shipping_cost > 0 ? 'S/ ' . number_format($order->shipping_cost, 2) : 'Gratis' }}</span>
+                </p>
+                @if ($order->discount > 0)
+                    <p class="flex" style="margin-bottom: 5px; color: #16a34a">
+                        <span style="margin-right: 10px">Descuento (cupón {{ $order->coupon_code }}):</span>
+                        <span class="font-bold">- S/ {{ number_format($order->discount, 2) }}</span>
+                    </p>
+                @endif
+                <p class="flex" style="margin-top: 10px">
+                    <span style="margin-right: 10px" class="font-bold text-lg">Total:</span>
+                    <span class="text-xl font-bold">S/ {{ number_format($order->total, 2) }}</span>
+                </p>
             </div>
         </div>
     </div>

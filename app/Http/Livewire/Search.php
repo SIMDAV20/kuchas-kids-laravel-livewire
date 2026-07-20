@@ -25,8 +25,9 @@ class Search extends Component
     {
         // setSEOTools();
         $products = collect([]);
+        $hasMore = false;
         if ($this->search) {
-            $take = 8;
+            $take = 5;
             $subcategories = Subcategory::name($this->search)->get();
             // dd($subcategories);
             if (count($subcategories) > 0) {
@@ -34,15 +35,18 @@ class Search extends Component
                     $products = $products->merge(
                         Product::where('subcategory_id', $subcategory->id)
                             ->search($this->search)
-                            ->take($take)
                             ->get()
                     );
                     // $products = $products->merge($subcategory->products()
                     //     ->search($this->search)->take($take));
                 }
-                $products = $products->unique()->sortBy(['position'])->take($take);
+                $products = $products->unique()->sortBy(['position']);
+                $hasMore = $products->count() > $take;
+                $products = $products->take($take);
             } else {
-                $products = Product::search($this->search)
+                $query = Product::search($this->search);
+                $hasMore = (clone $query)->count() > $take;
+                $products = $query
                     ->orderBy('name', 'asc')
                     ->orderBy('position')
                     ->take($take)
@@ -70,6 +74,6 @@ class Search extends Component
             // }
         }
 
-        return view('livewire.search', compact('products'));
+        return view('livewire.search', compact('products', 'hasMore'));
     }
 }

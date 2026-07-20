@@ -5,7 +5,6 @@ namespace App\Http\Livewire;
 use App\Models\Image;
 use App\Models\Product;
 use App\Models\Attribute;
-use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 
@@ -67,7 +66,6 @@ class ProductDetail extends Component
             $this->stock = $this->product->quantity;
         }
 
-        $this->updateGallery();
         $this->checkFlashOffer();
     }
 
@@ -118,18 +116,31 @@ class ProductDetail extends Component
 
     public function updateGallery()
     {
+        $urls = $this->resolveCurrentImages()
+            ->map(fn($img) => Storage::url($img->url))
+            ->values()
+            ->toArray();
+
+        $this->emit('swiperRefresh', $urls);
+    }
+
+    private function resolveCurrentImages()
+    {
+        $currentImages = collect();
+
         if ($this->currentVariant && !empty($this->currentVariant->images)) {
-            $images = Image::whereIn('id', $this->currentVariant->images)
+            $currentImages = Image::whereIn('id', $this->currentVariant->images)
                 ->get()
                 ->sortBy(fn($img) => array_search($img->id, $this->currentVariant->images))
                 ->values();
-        } else {
-            $images = $this->product->assigned_images;
         }
 
-        $urls = $images->map(fn($img) => Storage::url($img->url))->values()->toArray();
+        // Fallback: si la variante no resuelve imágenes reales (vacía o IDs huérfanos), usar la galería principal del producto.
+        if ($currentImages->isEmpty()) {
+            $currentImages = $this->product->assigned_images;
+        }
 
-        $this->emit('swiperRefresh', $urls);
+        return $currentImages;
     }
 
     public function checkFlashOffer()
@@ -174,14 +185,7 @@ class ProductDetail extends Component
                 ->unique('id');
         }
 
-        if ($this->currentVariant && !empty($this->currentVariant->images)) {
-            $currentImages = Image::whereIn('id', $this->currentVariant->images)
-                ->get()
-                ->sortBy(fn($img) => array_search($img->id, $this->currentVariant->images))
-                ->values();
-        } else {
-            $currentImages = $this->product->assigned_images;
-        }
+        $currentImages = $this->resolveCurrentImages();
 
         return view('livewire.product-detail', [
             'availableColors' => $availableColors,

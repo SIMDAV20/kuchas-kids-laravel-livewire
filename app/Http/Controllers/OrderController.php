@@ -46,6 +46,8 @@ class OrderController extends Controller
 
     public function annuled(Order $order, Request $request)
     {
+        $this->authorize('author', $order);
+
         DB::beginTransaction();
         try {
             $order->status = ORDER::ANULADO;
@@ -83,7 +85,7 @@ class OrderController extends Controller
 
         $payment_id = $request->get('payment_id');
 
-        $response = Http::get("https://api.mercadopago.com/v1/payments/$payment_id" . "?access_token=APP_USR-7619090548261657-021123-f56511b1fb376a2d0be49fb4f8226646-1072979634");
+        $response = Http::get("https://api.mercadopago.com/v1/payments/$payment_id" . "?access_token=" . config('services.mercadopago.token'));
 
         $response = json_decode($response);
 
@@ -137,20 +139,20 @@ class OrderController extends Controller
     public function izipay(Request $request)
     {
         $order = Order::find($request->order_id);
+
+        if (!$order) {
+            abort(404, 'Orden no encontrada.');
+        }
+
         $response = json_decode($request["kr-answer"]);
 
         $status = $response->orderStatus;
 
-        if ($order) {
-            $payment = new Payment();
-            $payment->amount        = $order->total;
-            $payment->user_id       = auth()->user()->id;
-            $payment->order_id      = $order->id;
-            $order->payment_method = 1;  // 1 es mercado pago, 2 yape
-        } else {
-            $payment = Payment::find('order_id', $order->id);
-            $order = $payment->order;
-        }
+        $payment = new Payment();
+        $payment->amount        = $order->total;
+        $payment->user_id       = auth()->user()->id;
+        $payment->order_id      = $order->id;
+        $order->payment_method = 1;  // 1 es Izipay
 
         if ($status == 'PAID') {
             $order->status   = 2;
@@ -163,6 +165,9 @@ class OrderController extends Controller
             $payment->status = 3;
             $order->status   = 5;
             $mensaje = "El pago a sido rechazado! comuníquese con nosotros";
+        } else {
+            $payment->status = 2;
+            $mensaje = "No pudimos confirmar el estado de tu pago. Nos pondremos en contacto contigo.";
         }
 
         $order->save();
@@ -185,12 +190,8 @@ class OrderController extends Controller
 
     public function orderFailure(Request $request)
     {
-        // $this->authorize('author', $order);
-        // $items = json_decode($order->content); // es como un json_parse en js
-        // $envio = json_decode($order->envio);
-        // return view('orders.failure', compact('order', 'items', 'envio'));
         $mensaje = 'Su tarjeta ha sido rechazada por favor comuníquese con su entidad financiera';
         session()->flash('flash.banner', $mensaje);
-        return view('welcome');
+        return redirect()->route('welcome');
     }
 }

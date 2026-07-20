@@ -26,6 +26,10 @@ class CreateOrder extends Component
     public $department_id = '', $province_id = '', $district_id = '',
         $address, $references, $shipping_cost = 0, $extra_note;
 
+    public float  $discount_amount = 0;
+    public bool   $coupon_shipping_free = false;
+    public string $coupon_code = '';
+
     // reglas de variaciones
     public $rules = [
         'contact'    => 'required',
@@ -35,11 +39,27 @@ class CreateOrder extends Component
         // 'references' => 'required|min: 5',
     ];
 
+    protected $listeners = ['couponApplied' => 'onCouponApplied', 'couponRemoved' => 'onCouponRemoved'];
+
     public $contact, $phone, $doc;
 
     public $other_contact, $other_phone, $other_doc;
 
     public $ruc, $social_reason, $address_invoice;
+
+    public function onCouponApplied(array $data)
+    {
+        $this->discount_amount      = $data['discount_amount'] ?? 0;
+        $this->coupon_shipping_free = $data['shipping_free'] ?? false;
+        $this->coupon_code          = $data['coupon_code'] ?? '';
+    }
+
+    public function onCouponRemoved()
+    {
+        $this->discount_amount      = 0;
+        $this->coupon_shipping_free = false;
+        $this->coupon_code          = '';
+    }
 
     public function updatingOtherPerson($value)
     {
@@ -117,6 +137,16 @@ class CreateOrder extends Component
 
         $this->validate($rules);
 
+        foreach (Cart::content() as $item) {
+            $variantId = $item->options->variant_id ?? null;
+            $available = current_quantity($item->id, $variantId);
+
+            if ($available < $item->qty) {
+                $this->addError('stock', "No hay stock suficiente para \"{$item->name}\". Disponible: {$available}.");
+                return;
+            }
+        }
+
         $order = new Order();
 
         $order->user_id       = auth()->user()->id;
@@ -134,11 +164,10 @@ class CreateOrder extends Component
         }
 
         if ($this->envio_type == 2) {
-            if (Cart::subtotal() > $this->min_amount && $this->min_amount > 0) {
-                $order->shipping_cost = 0;
-            } else {
-                $order->shipping_cost = $this->shipping_cost;
-            }
+            $freeShipping = $this->coupon_shipping_free
+                || (Cart::subtotal() > $this->min_amount && $this->min_amount > 0);
+
+            $order->shipping_cost = $freeShipping ? 0 : $this->shipping_cost;
 
             $order->envio = json_encode([
                 'department' => Department::find($this->department_id)->name,
@@ -149,9 +178,15 @@ class CreateOrder extends Component
             ]);
         }
 
-        $order->extra_note = $this->extra_note;
-        $order->total      = $order->shipping_cost + Cart::subtotal();
+        $order->extra_note   = $this->extra_note;
+        $order->coupon_code  = $this->coupon_code ?: null;
+        $order->discount     = $this->discount_amount;
+        $order->total        = max(0, $order->shipping_cost + Cart::subtotal() - $this->discount_amount);
         $order->save();
+
+        if ($this->coupon_code) {
+            \App\Models\Coupon::where('code', $this->coupon_code)->increment('used_count');
+        }
 
         $user = User::find(auth()->user()->id);
         $user->phone       = $this->phone;

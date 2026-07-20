@@ -260,6 +260,7 @@
             </div>
 
             <div class="lg:hidden sm:block w-full text-right">
+                <x-input-error for="stock" class="mb-2" />
                 <x-button wire.loading.attr="disabled" wire.target="create_order" class="mt-6 mb-4"
                     wire:click="create_order">
                     Continuar con la compra
@@ -320,14 +321,13 @@
                     </p>
                     <p class="flex justify-between items-center">
                         Envío
-                        {{-- {{ $settings_company->min_amount }} --}}
                         <span class="font-semibold">
                             @if ($envio_type == 1 && $shipping_cost == 0)
                                 Gratis
                             @elseif ($envio_type == 3 && $shipping_cost == 0)
                                 Por coordinar
                             @else
-                                @if (Cart::subtotal() > $settings_company->min_amount && $settings_company->min_amount > 0)
+                                @if ($coupon_shipping_free || (Cart::subtotal() > $settings_company->min_amount && $settings_company->min_amount > 0))
                                     <span class="text-pink-500">Gratis</span>
                                 @else
                                     S/ {{ number_format($shipping_cost, 2) }}
@@ -336,18 +336,30 @@
                         </span>
                     </p>
 
+                    @if ($discount_amount > 0)
+                        <p class="flex justify-between items-center text-green-600">
+                            Descuento (cupón)
+                            <span class="font-semibold">- S/ {{ number_format($discount_amount, 2) }}</span>
+                        </p>
+                    @endif
+
                     <hr class="mt-4 mb-3">
 
                     <p class="flex justify-between items-center font-semibold">
                         <span class="text-lg">Total</span>
-                        @if ($envio_type == 1 || $shipping_cost == 0)
-                            S/ {{ Cart::subtotal() }}
-                        @else
-                            S/ {{ Cart::subtotal() + $shipping_cost }}
-                        @endif
-
+                        @php
+                            $shippingDisplay = ($coupon_shipping_free || $envio_type == 1 || $shipping_cost == 0 || (Cart::subtotal() > $settings_company->min_amount && $settings_company->min_amount > 0))
+                                ? 0
+                                : $shipping_cost;
+                            $totalDisplay = max(0, Cart::subtotal() + $shippingDisplay - $discount_amount);
+                        @endphp
+                        S/ {{ number_format($totalDisplay, 2) }}
                     </p>
                 </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mt-4">
+                @livewire('apply-coupon')
             </div>
 
             <div class="bg-white rounded-lg shadow p-6 mt-4">
@@ -360,6 +372,7 @@
             </div>
 
             <div class="sm:hidden md:hidden lg:block w-full text-right">
+                <x-input-error for="stock" class="mb-2" />
                 <x-button wire.loading.attr="disabled" wire.target="create_order" class="mt-6 mb-4"
                     wire:click="create_order">
                     Continuar con la compra

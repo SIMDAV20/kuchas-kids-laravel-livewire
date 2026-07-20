@@ -7,7 +7,7 @@
 
       <p class="text-gray-400 my-2 text-sm">Tamaño: 731px * 316px</p>
 
-      @error($photo)
+      @error('photo')
         <p class="text-sm text-red-600">{{ $message }}</p>
       @enderror
     </div>

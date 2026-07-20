@@ -14,6 +14,10 @@ class Subcategory extends Model
 
   protected $guarded = ['id', 'created_at', 'updated_at'];
 
+  protected $casts = [
+    'keywords' => 'array',
+  ];
+
   // Relacion de uno a muchos
   public function products()
   {

@@ -1,4 +1,4 @@
-<div class="container py-12">
+<div class="container py-12" wire:init="loadDistricts">
     <x-form-section submit="save" class="mb-6">
         <x-slot name="title">
             Agregar nueva zona
@@ -27,6 +27,19 @@
                 <x-label>
                     Distritos
                 </x-label>
+
+                {{-- Buscador --}}
+                <div class="mt-2 mb-3">
+                    <x-input wire:model="search" type="text" placeholder="Buscar distrito..."
+                        class="w-full sm:w-1/2" />
+                </div>
+
+                {{-- Estado de carga --}}
+                @if (!$districtsLoaded)
+                    <p class="text-gray-400 text-sm animate-pulse">Cargando distritos...</p>
+                @endif
+
+                {{-- Grid de checkboxes --}}
                 <div class="grid grid-cols-3 mt-2">
                     @forelse ($districts as $district)
                         <x-label>
@@ -35,9 +48,19 @@
                             {{ $district->name }}
                         </x-label>
                     @empty
-                        <h3 class="mt-2 text-lg text-blue-400">Sin distritos libres de zonas</h3>
+                        @if ($districtsLoaded)
+                            <h3 class="mt-2 text-lg text-blue-400">Sin distritos libres de zonas</h3>
+                        @endif
                     @endforelse
                 </div>
+
+                {{-- Paginación --}}
+                @if ($districts->hasPages())
+                    <div class="mt-3">
+                        {{ $districts->links() }}
+                    </div>
+                @endif
+
                 <x-input-error for="createForm.districts" />
             </div>
         </x-slot>
@@ -45,7 +68,7 @@
             <x-action-message class="mr-3" on="saved">
                 zona creada
             </x-action-message>
-            @if ($districts->count() > 0)
+            @if ($districts->total() > 0)
                 <x-button>
                     Agregar
                 </x-button>
@@ -129,8 +152,15 @@
                 <x-label class="mb-2">
                     Distritos de la zona
                 </x-label>
+
+                {{-- Buscador modal --}}
+                <div class="mb-3">
+                    <x-input wire:model="editSearch" type="text" placeholder="Buscar distrito..."
+                        class="w-full sm:w-1/2" />
+                </div>
+
                 <div class="grid grid-cols-3">
-                    @forelse ($editDistricts as $key => $district)
+                    @forelse ($editDistricts as $district)
                         <x-label>
                             <x-checkbox wire:model.defer="editForm.districts" name="districts[]"
                                 value="{{ $district->id }}" />
@@ -140,6 +170,14 @@
                         <h3 class="mt-2 text-lg text-blue-400">Sin distritos libres de zonas</h3>
                     @endforelse
                 </div>
+
+                {{-- Paginación modal --}}
+                @if ($editDistricts->hasPages())
+                    <div class="mt-3">
+                        {{ $editDistricts->links() }}
+                    </div>
+                @endif
+
                 <x-input-error for="editForm.districts" />
             </div>
         </x-slot>

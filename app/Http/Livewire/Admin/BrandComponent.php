@@ -71,8 +71,8 @@ class BrandComponent extends Component
 
     public function update() {
         $this->validate([
-            'editForm.name' => 'unique:brands,name,'.$this->brand->name,
-            'editForm.slug' => 'unique:brands,slug,'.$this->brand->slug,
+            'editForm.name' => 'unique:brands,name,'.$this->brand->id,
+            'editForm.slug' => 'unique:brands,slug,'.$this->brand->id,
         ]);
 
         $this->brand->update($this->editForm);

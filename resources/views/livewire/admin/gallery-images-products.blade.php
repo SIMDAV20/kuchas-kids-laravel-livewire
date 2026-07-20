@@ -33,7 +33,7 @@
     </div>
 
     {{-- MODAL DE BIBLIOTECA --}}
-    <x-dialog-modal wire:model="open_gallery" maxWidth="4xl">
+    <x-dialog-modal wire:model="open_gallery" maxWidth="7xl">
         <x-slot name="title">
             <span class="flex items-center">
                 <i class="fas fa-photo-video mr-2 text-indigo-500"></i> Biblioteca de Medios
@@ -113,7 +113,8 @@
         </x-slot>
 
         <x-slot name="footer">
-            <x-secondary-button wire:click="$set('open_gallery', false)">Asignar</x-secondary-button>
+            <x-secondary-button wire:click="$set('open_gallery', false)">Cancelar</x-secondary-button>
+            <x-button class="ml-3" wire:click="$set('open_gallery', false)">Asignar</x-button>
         </x-slot>
     </x-dialog-modal>
 

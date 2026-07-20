@@ -13,7 +13,7 @@ class CreateBannersTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('settings')) {
+        if (!Schema::hasTable('banners')) {
             Schema::create('banners', function (Blueprint $table) {
                 $table->id();
                 $table->string('photo');

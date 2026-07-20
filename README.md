@@ -7,6 +7,47 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Kuchas Kids
+
+This is the Kuchas Kids e-commerce project: a Laravel 9-style / Livewire 2 storefront + admin panel
+(see `CLAUDE.md` for the full stack constraints and architecture notes). The sections below are the
+commands you actually need day to day; everything after "About Laravel" is the stock Laravel
+framework boilerplate.
+
+### Commands
+
+```bash
+# Install
+composer install
+npm install
+
+# Dev
+php artisan serve          # or use Laragon's virtual host: http://kuchas-kids.test
+npm run dev                # Vite dev server
+npm run build               # Vite production build
+
+# Tests (PHPUnit, no Pest)
+php artisan test
+vendor/bin/phpunit
+vendor/bin/phpunit --filter TestName          # single test
+vendor/bin/phpunit tests/Feature/SomeTest.php # single file
+
+# Lint / format
+vendor/bin/pint            # Laravel Pint (PHP code style)
+
+# DB
+php artisan migrate
+php artisan migrate:fresh --seed
+php artisan db:seed
+```
+
+Test DB config in `phpunit.xml` has the sqlite in-memory lines commented out — tests currently run
+against whatever `DB_CONNECTION`/`DB_DATABASE` is set in the environment, not an isolated sqlite DB.
+
+For architecture notes (routing, Livewire component split, cart/checkout flow, product/catalog model
+shape, auth) see `CLAUDE.md`. For deeper module-by-module documentation see `docs/` — start with
+`docs/ecommerce-technical-processes.md`.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

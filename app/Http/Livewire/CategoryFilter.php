@@ -6,7 +6,6 @@ use App\Models\Product;
 use App\Models\Subcategory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Arr;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -70,7 +69,7 @@ class CategoryFilter extends Component
 
     $seoItems = collect([]);
     foreach ($subcategories as $key => $subcategory) {
-      if (!empty($subcategory->keywords))  $seoItems->push(json_decode($subcategory->keywords));
+      if (!empty($subcategory->keywords))  $seoItems->push($subcategory->keywords);
     }
     $seoItems->push($this->category->brands()->select('brands.name')->get()->pluck('name')->toArray());
     $seoItems->push($subcategories->map(fn ($subcategory) => $subcategory->name)->toArray());
@@ -87,19 +86,8 @@ class CategoryFilter extends Component
       if ($key !== $lastKey) $description .= ',';
     }
 
-    $data = [];
-    foreach ($this->queryString as $key => $value) {
-      $data[$value] = $this->$value;
-    }
-
-    if (!is_null($this->page)) {
-      $data['page'] = $this->page;
-    }
-
-    $query = Arr::query($data);
-    $url = url()->current() . ($query ? ('?' . $query) : '');
-
-    setSEOTools($this->category->name, $description, $url);
+    // URL canónica sin query params de filtro/paginación (evita contenido duplicado indexado)
+    setSEOTools($this->category->name, $description, url()->current());
   }
 
   public function render()
@@ -113,8 +101,7 @@ class CategoryFilter extends Component
     $colorAttrId = \App\Models\Attribute::where('name', 'Color')->value('id');
 
     $productsQuery = $productsQuery->with([
-        'subcategory', 
-        'images', 
+        'subcategory',
         'variants' => function($q) {
             $q->where('status', true);
         },

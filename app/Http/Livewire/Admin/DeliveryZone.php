@@ -5,15 +5,18 @@ namespace App\Http\Livewire\Admin;
 use App\Models\District;
 use App\Models\Zone;
 use Livewire\Component;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
+use Livewire\WithPagination;
 
 class DeliveryZone extends Component
 {
+    use WithPagination;
 
-    public $districts = [], $zones = [], $editZone, $editDistricts = [], $editDistrictsBef = [];
+    public $zones = [], $editZone;
+    public $districtsLoaded = false;
+    public $search = '';
+    public $editSearch = '';
 
-    protected  $listeners = ['delete'];
+    protected $listeners = ['delete'];
 
     public $createForm = [
         'name' => null,
@@ -29,8 +32,8 @@ class DeliveryZone extends Component
     ];
 
     protected $rules = [
-        'createForm.name'   => 'required|unique:zones,name',
-        'createForm.cost'   => 'required|min:1|max:1000',
+        'createForm.name' => 'required|unique:zones,name',
+        'createForm.cost' => 'required|min:1|max:1000',
     ];
 
     protected $validationAttributes = [
@@ -46,7 +49,21 @@ class DeliveryZone extends Component
     public function mount()
     {
         $this->getZones();
-        $this->getDistricts();
+    }
+
+    public function loadDistricts()
+    {
+        $this->districtsLoaded = true;
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage('page');
+    }
+
+    public function updatingEditSearch()
+    {
+        $this->resetPage('editPage');
     }
 
     public function getZones()
@@ -54,60 +71,44 @@ class DeliveryZone extends Component
         $this->zones = Zone::all();
     }
 
-    public function getDistricts()
-    {
-        $this->districts = District::orderBy('name')
-            ->get();
-    }
-
     public function save()
     {
         $this->validate();
 
         $zone = Zone::create([
-            'name'  => $this->createForm['name'],
-            'cost'  => $this->createForm['cost'],
+            'name' => $this->createForm['name'],
+            'cost' => $this->createForm['cost'],
         ]);
 
-        foreach ($this->createForm['districts'] as $key => $dist_id) {
+        foreach ($this->createForm['districts'] as $dist_id) {
             $district = District::find($dist_id);
             $district->zone_id = $zone->id;
             $district->save();
         }
 
         $this->reset('createForm');
-
+        $this->search = '';
+        $this->resetPage('page');
         $this->getZones();
-        $this->getDistricts();
-        $this->emit("saved"); //mensaje de que ha sido creada la zona
+        $this->emit('saved');
     }
 
     public function edit(Zone $zone)
     {
         $this->resetValidation();
         $this->editZone = $zone;
-        // dd($this->editZone);
 
-        $this->editForm['open']  = true;
-        $this->editForm['name']  = $zone->name;
-        $this->editForm['cost']  = $zone->cost;
-
-        $this->editDistricts = $this->districts;
-        // $this->editDistrictsBef = $zone->districts;
-
-        // $districts = $this->getDistricts();
-        // $editDistricts = $editDistricts->concat($this->districts);
-
-        // se guardan los ids de cada distrito
-        $this->editForm['districts'] = $zone->districts->pluck('id') ?: [];
+        $this->editForm['open']      = true;
+        $this->editForm['name']      = $zone->name;
+        $this->editForm['cost']      = $zone->cost;
+        $this->editForm['districts'] = $zone->districts->pluck('id')->toArray() ?: [];
     }
 
     public function update()
     {
-
         $rules = [
-            'editForm.name'   => 'required|unique:zones,name,' . $this->editZone->id,
-            'editForm.cost'   => 'required|min:1|max:100',
+            'editForm.name'      => 'required|unique:zones,name,' . $this->editZone->id,
+            'editForm.cost'      => 'required|min:1|max:100',
             'editForm.districts' => 'required'
         ];
 
@@ -115,26 +116,42 @@ class DeliveryZone extends Component
 
         $this->editZone->update($this->editForm);
 
-        foreach ($this->editForm['districts'] as $key => $distrito_id) { // 15
+        foreach ($this->editForm['districts'] as $distrito_id) {
             $distrito = District::find($distrito_id);
             if ($distrito) {
                 $distrito->zone_id = $this->editZone->id;
                 $distrito->save();
             }
         }
+
         $this->reset('editForm');
-        $this->mount();
+        $this->editSearch = '';
+        $this->resetPage('editPage');
+        $this->getZones();
     }
 
     public function delete(Zone $zone)
     {
-        $districts = $zone->districts()->update(['zone_id' => null]);
+        $zone->districts()->update(['zone_id' => null]);
         $zone->delete();
-        $this->mount();
+        $this->getZones();
     }
 
     public function render()
     {
-        return view('livewire.admin.delivery-zone')->layout('layouts.admin');;
+        $districts = $this->districtsLoaded
+            ? District::orderBy('name')
+                ->when($this->search, fn($q) => $q->where('name', 'like', "%{$this->search}%"))
+                ->paginate(30, ['*'], 'page')->onEachSide(1)
+            : District::whereRaw('0=1')->paginate(30, ['*'], 'page')->onEachSide(1);
+
+        $editDistricts = ($this->editForm['open'] && $this->districtsLoaded)
+            ? District::orderBy('name')
+                ->when($this->editSearch, fn($q) => $q->where('name', 'like', "%{$this->editSearch}%"))
+                ->paginate(30, ['*'], 'editPage')->onEachSide(1)
+            : District::whereRaw('0=1')->paginate(30, ['*'], 'editPage')->onEachSide(1);
+
+        return view('livewire.admin.delivery-zone', compact('districts', 'editDistricts'))
+            ->layout('layouts.admin');
     }
 }

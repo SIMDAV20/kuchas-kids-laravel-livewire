@@ -20,13 +20,13 @@ class SearchController extends Controller
       ->orderBy('products.name', 'asc')
       ->orderBy('subcategories.position')
       ->orderBy('position')
-      ->paginate(8);
+      ->paginate(8)->onEachSide(1);
 
     if (!$products->isEmpty()) {
       $seoItems = collect([]);
       foreach ($products as $key => $product) {
         $subcategory = $product->subcategory;
-        if (!empty($subcategory->keywords)) $seoItems->push(json_decode($subcategory->keywords));
+        if (!empty($subcategory->keywords)) $seoItems->push($subcategory->keywords);
         $seoItems->push($product->brand->name);
       }
 

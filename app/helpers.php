@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Product;
-use App\Models\ProductVariant;
 use Artesaos\SEOTools\Facades\SEOTools;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Carbon\Carbon;
@@ -83,24 +82,6 @@ if (!function_exists('increase')) {
                 $product->save();
             }
         }
-    }
-}
-
-
-if (!function_exists('findProduct')) {
-    function findProduct($model, $id)
-    {
-        switch ($model) {
-            case 'ProductVariant':
-                $item = ProductVariant::findOrFail($id);
-                break;
-            case 'Product':
-            default:
-                $item = Product::findOrFail($id);
-                break;
-        }
-
-        return $item;
     }
 }
 

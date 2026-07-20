@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Admin;
 
 use App\Models\Payment;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class StatusOrder extends Component
@@ -14,24 +15,36 @@ class StatusOrder extends Component
     }
 
     public function update() {
-        $this->order->status = $this->status;
-        $this->order->save();
+        DB::beginTransaction();
+        try {
+            $this->order->status = $this->status;
+            $this->order->save();
 
-        if(!$this->order->payment) {
-            $payment = new Payment();
-            $payment->order_id = $this->order->id;
-            $payment->amount   = $this->order->total;
-            $payment->user_id  = $this->order->user_id;
-            $payment->save();
-        }
+            $payment = $this->order->payment;
+            if (!$payment) {
+                $payment = new Payment();
+                $payment->order_id = $this->order->id;
+                $payment->amount   = $this->order->total;
+                $payment->user_id  = $this->order->user_id;
+                $payment->save();
+            }
 
-        if ($this->status > 1 && $this->status > 5) {
-            $this->order->payment->status = Payment::APROBADO;
-            $this->order->payment->save();
-        } elseif($this->status == 5) {
-            $payment = Payment::where('order_id', $this->order->id)->first();
-            $payment->status = Payment::ANULADO;
-            $payment->save();
+            if ($this->status > 1 && $this->status < 5) {
+                $payment->status = Payment::APROBADO;
+                $payment->save();
+            } elseif ($this->status == 5) {
+                $payment->status = Payment::ANULADO;
+                $payment->save();
+
+                foreach (json_decode($this->order->content) as $item) {
+                    increase($item);
+                }
+            }
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
         }
 
         $this->render();

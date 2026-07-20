@@ -43,19 +43,19 @@ Esta es la interfaz principal donde sucede la magia de la personalización de pr
 3. Se puede eliminar cualquier variante específica con el botón de papelera.
 
 ## 4. Gestión de la Galería de Imágenes
-Con el fin de evitar la duplicación excesiva en la carga de archivos, la gestión de imágenes se separa en dos pasos simples:
+El modelo `Image` **no pertenece** a ningún producto: es una biblioteca/pool global de fotos compartido por toda la tienda. El campo `imageable_id`/`imageable_type` (relación polimórfica `imageable()`) es **legacy** y ya no se usa para resolver qué imagen pertenece a qué producto. La asignación real se hace por **referencia de IDs**.
 
-### 4.1. Galería Maestra del Producto
-1. En la parte inferior de la pantalla de edición se encuentra el módulo "Galería del Producto".
-2. Se suben en bloque (Dropzone) todas las fotografías disponibles de ese producto, sin importar la variante.
-3. Estas imágenes se enlazan polimórficamente a la tabla `products` mediante el modelo `Image` (`imageable_type = 'App\Models\Product'`).
+### 4.1. Biblioteca de Medios (pool global)
+1. Cada instancia de `Product` y `ProductVariant` tiene su propio módulo `admin.gallery-images-products` (componente Livewire `GalleryImagesProducts`), embebido tanto en la Galería principal del producto como en el acordeón de cada variante en `edit-product.blade.php`.
+2. Al subir una foto (Dropzone), `GalleryImagesProducts::uploadImage()` solo hace `Image::create(['url' => ...])` — la crea en el pool, sin vincularla todavía a nada.
+3. El modal "Biblioteca de Medios" (`admin.image-library`, componente `ImageLibrary`) lista **todas** las imágenes del pool (con búsqueda y filtro "solo asignadas"), para poder reutilizar una misma foto en varios productos/variantes.
 
-### 4.2. Asignación Individual a Variantes
-1. Regresando a la tabla de variantes generadas, cada fila posee un botón **"Asignar"** en la columna "Imágenes".
-2. Pulsar este botón abre un **Modal de Selección** mostrando la Galería Maestra del producto.
-3. El administrador selecciona las fotografías pertenecientes a esa variante específica (marcando con un *check* azul).
-4. Al "Guardar Asignación", el sistema guarda un Array con los IDs de las imágenes seleccionadas dentro de la columna JSON `images` de la tabla `product_variants`.
-5. La vista de la tabla ahora muestra un *preview* (miniaturas) de las imágenes asignadas a cada variante.
+### 4.2. Asignación por columna JSON `images`
+1. Tanto `products` como `product_variants` tienen una columna JSON `images` (cast `array`) que guarda una **lista ordenada de IDs de `Image`** — no hay relación FK real.
+2. Marcar/desmarcar una foto en la biblioteca (`toggleImage($imageId)`) agrega o quita ese ID del array `images` del ítem actual (Product o ProductVariant) y hace `$item->save()`.
+3. Arrastrar las miniaturas asignadas (Sortable.js) reordena el array vía `reorderImages(array $orderedIds)`, controlando el orden de la galería/slider.
+4. Como es solo una referencia por ID, **la misma imagen puede estar asignada a múltiples productos y variantes a la vez**. Al eliminar una imagen del pool, `bulkDeleteImages()` primero revisa con `Product::where('images', 'like', '%"id"%')` y `ProductVariant::where('images', 'like', ...)` si algún otro producto/variante la sigue usando, y bloquea el borrado (mostrando en qué productos está en uso) si es así.
+5. Para renderizar: `Product::getAssignedImagesAttribute()` (accesor `$product->assigned_images`) resuelve el array de IDs a modelos reales con `Image::whereIn('id', $this->images)`, respetando el orden guardado. Si el producto base no tiene imágenes propias, hace fallback recolectando las de todas sus variantes.
 
 ## 5. Frontend & Selección de Variantes
 Al culminar la configuración administrativa, los datos están optimizados para el Frontend:

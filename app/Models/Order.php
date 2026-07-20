@@ -17,22 +17,6 @@ class Order extends Model
     const ENTREGADO = 4;
     const ANULADO  = 5; // VIGENTE POR 15 MINUTOS
 
-    // Relacion de uno a muchos inversa
-    public function department()
-    {
-        return $this->belongsTo(Department::class);
-    }
-
-    public function city()
-    {
-        return $this->belongsTo(Province::class);
-    }
-
-    public function district()
-    {
-        return $this->belongsTo(District::class);
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -107,19 +91,19 @@ class Order extends Model
     public function scopeOtherContact($query, $contact)
     {
         if ($contact) {
-            return $query->orWhere('contact', 'LIKE', "%$contact%");
+            return $query->orWhere('other_contact', 'LIKE', "%$contact%");
         }
     }
     public function scopeOtherPhone($query, $phone)
     {
         if ($phone) {
-            return $query->orWhere('phone', 'LIKE', "%$phone%");
+            return $query->orWhere('other_phone', 'LIKE', "%$phone%");
         }
     }
     public function scopeOtherDocnumber($query, $doc_number)
     {
         if ($doc_number) {
-            return $query->orWhere('doc_number', 'LIKE', "%$doc_number%");
+            return $query->orWhere('other_doc_number', 'LIKE', "%$doc_number%");
         }
     }
     public function scopeExtraNote($query, $note)

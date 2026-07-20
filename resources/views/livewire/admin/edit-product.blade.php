@@ -72,7 +72,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-6">
+                    <div class="grid grid-cols-3 gap-6">
                         <div>
                             <x-label value="Precio Base (S/)" class="text-xs font-bold uppercase text-gray-400 mb-1" />
                             <x-input type="number" step="0.01" wire:model="product.price" class="w-full rounded-xl" placeholder="0.00" />
@@ -83,6 +83,12 @@
                             <x-label value="Precio Oferta (S/)" class="text-xs font-bold uppercase text-gray-400 mb-1" />
                             <x-input type="number" step="0.01" wire:model="product.offer_price" class="w-full rounded-xl" placeholder="0.00" />
                             <x-input-error for="product.offer_price" />
+                        </div>
+                        <div>
+                            <x-label value="Stock Base" class="text-xs font-bold uppercase text-gray-400 mb-1" />
+                            <x-input type="number" step="1" wire:model="product.quantity" class="w-full rounded-xl" placeholder="0" />
+                            <x-input-error for="product.quantity" />
+                            <p class="text-[10px] text-gray-400 mt-1">Solo aplica si el producto no tiene variantes.</p>
                         </div>
                     </div>
                 </div>
@@ -285,8 +291,8 @@
                 {{-- CARD DE IMAGEN DESTACADA --}}
                 <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
                     <div class="p-1">
-                        @if($product->images_morph->count() > 0)
-                            <img src="{{ Storage::url($product->images_morph->first()->url) }}" class="w-full h-64 object-cover rounded-xl" alt="Preview">
+                        @if($product->assigned_images->count() > 0)
+                            <img src="{{ Storage::url($product->assigned_images->first()->url) }}" class="w-full h-64 object-cover rounded-xl" alt="Preview">
                         @else
                             <div class="w-full h-64 bg-gray-100 flex items-center justify-center rounded-xl">
                                 <i class="fas fa-image text-gray-300 text-5xl"></i>

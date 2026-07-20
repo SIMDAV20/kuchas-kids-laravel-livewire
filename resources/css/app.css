@@ -6,6 +6,10 @@
 @tailwind components;
 @tailwind utilities;
 
+[x-cloak] {
+    display: none !important;
+}
+
 main {
     background-color: aliceblue;
 }

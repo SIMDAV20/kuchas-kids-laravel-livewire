@@ -11,7 +11,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SecondaryPagesController;
-use App\Http\Controllers\WebhooksController;
 use App\Http\Livewire\ContactForm;
 use App\Http\Livewire\ComplaintsBook;
 
@@ -53,8 +52,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('orders/izipay', [OrderController::class, 'izipay'])->name('orders.izipay');
 
     // Route::get('orders/izipay', [OrderController::class, 'izipay'])->name('orders.izipay');
-
-    Route::post('webhooks', [WebhooksController::class])->name('webhooks.pay');
 
     Route::get('orders/failure', [OrderController::class, 'orderFailure'])->name('orders.failure');
 });

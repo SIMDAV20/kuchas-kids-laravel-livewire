@@ -43,6 +43,7 @@ class EditProduct extends Component
         'product.description'    => 'required',
         'product.price'          => 'nullable|numeric',
         'product.offer_price'    => 'nullable|lt:product.price',
+        'product.quantity'       => 'nullable|numeric|min:0',
         'product.video'          => 'nullable',
     ];
 

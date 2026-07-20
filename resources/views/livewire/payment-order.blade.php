@@ -32,8 +32,6 @@
                 'email' => auth()->user()->email,
             ],
         ];
-        header('Authorization', 'NDg3MTY5NDg6dGVzdHBhc3N3b3JkX3pEUnlLMnpYTTlERkVGTkdVUFAwUDRvVXdVVEJKS21OdWM0ajlSYnc4SURmZg==');
-        header('Content-Type', 'application/json');
         $response = $client->post('V4/Charge/CreatePayment', $store);
 
         /* I check if there are some errors */
@@ -158,12 +156,18 @@
                     <div class="text-gray-700 content-prices">
                         <p class="flex items-center justify-between text-sm font-semibold mb-1">
                             <span class="mr-1">Subtotal:</span> <span>S/
-                                {{ $order->total - $order->shipping_cost }}</span>
+                                {{ number_format($order->total - $order->shipping_cost + $order->discount, 2) }}</span>
                         </p>
                         <p class="flex items-center justify-between text-sm font-semibold mb-1">
                             <span class="mr-1">Envío:</span>
                             <span>{{ $order->shipping_cost > 0 ? 'S/ ' . $order->shipping_cost : ' Gratis ' }}</span>
                         </p>
+                        @if ($order->discount > 0)
+                            <p class="flex items-center justify-between text-sm font-semibold mb-1 text-green-600">
+                                <span class="mr-1">Descuento (cupón):</span> <span>- S/
+                                    {{ number_format($order->discount, 2) }}</span>
+                            </p>
+                        @endif
                         <p class="flex items-center justify-between text-lg font-semibold uppercase">
                             <span class="mr-1">Pago:</span> <span>S/ {{ $order->total }}</span>
                         </p>
@@ -236,9 +240,52 @@
                             </div>
 
 
-                            <x-input wire:model.lazy="photo" accept="image/*" type="file"
-                                id="{{ $rand }}" class="my-2" wire:loading.attr="disabled"
-                                wire:target="saveYape, photo" />
+                            <div x-data="yapeUpload()" class="my-2">
+                                <input
+                                    type="file"
+                                    wire:model.lazy="photo"
+                                    accept="image/*"
+                                    id="{{ $rand }}"
+                                    x-ref="fileInput"
+                                    @change="onFileChange($event)"
+                                    wire:loading.attr="disabled"
+                                    wire:target="saveYape, photo"
+                                    class="hidden"
+                                />
+
+                                <div
+                                    @click="$refs.fileInput.click()"
+                                    @dragover.prevent="dragging = true"
+                                    @dragleave.prevent="dragging = false"
+                                    @drop.prevent="handleDrop($event)"
+                                    :class="dragging ? 'border-violet-500 bg-violet-50' : 'border-gray-300'"
+                                    class="relative flex flex-col items-center justify-center gap-1 border-2 border-dashed rounded-lg py-6 px-4 cursor-pointer transition-colors hover:border-violet-400"
+                                >
+                                    <div x-show="!preview" class="flex flex-col items-center text-center">
+                                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                        <p class="text-sm font-medium text-gray-600">
+                                            Arrastra tu comprobante aquí o <span class="text-violet-600 underline">haz clic para elegir</span>
+                                        </p>
+                                        <p class="text-xs text-gray-400 mt-1">PNG o JPG, máx. 2MB</p>
+                                    </div>
+
+                                    <div x-show="preview" class="relative w-full flex flex-col items-center">
+                                        <img :src="preview" class="max-h-48 rounded-md object-contain shadow">
+                                        <p class="text-xs text-gray-500 mt-2 truncate max-w-full" x-text="fileName"></p>
+                                        <button
+                                            type="button"
+                                            @click.stop="clearFile()"
+                                            class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow"
+                                        >
+                                            &times;
+                                        </button>
+                                    </div>
+
+                                    <div wire:loading wire:target="photo" class="absolute inset-0 bg-white/80 flex items-center justify-center rounded-lg">
+                                        <span class="text-sm text-violet-600 font-semibold">Subiendo...</span>
+                                    </div>
+                                </div>
+                            </div>
                             <x-input-error for="photo" class="mb-2" />
 
                             <x-button color="blue" class="w-full" wire:loading.attr="disabled"
@@ -252,3 +299,50 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('yapeUpload', () => ({
+                dragging: false,
+                preview: null,
+                fileName: '',
+
+                onFileChange(event) {
+                    this.setPreview(event.target.files[0]);
+                },
+
+                handleDrop(event) {
+                    this.dragging = false;
+
+                    const file = event.dataTransfer.files[0];
+                    if (!file) return;
+
+                    const transfer = new DataTransfer();
+                    transfer.items.add(file);
+                    this.$refs.fileInput.files = transfer.files;
+                    this.$refs.fileInput.dispatchEvent(new Event('change'));
+
+                    this.setPreview(file);
+                },
+
+                setPreview(file) {
+                    if (!file) return;
+
+                    this.fileName = file.name;
+
+                    const reader = new FileReader();
+                    reader.onload = e => { this.preview = e.target.result; };
+                    reader.readAsDataURL(file);
+                },
+
+                clearFile() {
+                    this.preview = null;
+                    this.fileName = '';
+                    this.$refs.fileInput.value = '';
+                    this.$wire.set('photo', null);
+                },
+            }));
+        });
+    </script>
+@endpush

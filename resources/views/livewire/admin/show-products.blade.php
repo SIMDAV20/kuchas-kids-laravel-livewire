@@ -24,6 +24,17 @@
                         </div>
                     </div>
 
+                    {{-- Items por página --}}
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <label for="perPage" class="text-xs font-medium text-gray-500 whitespace-nowrap">Por página</label>
+                        <select id="perPage" wire:model="perPage"
+                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm text-sm">
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+
                     {{-- Acciones Masivas --}}
                     @if (count($selectedProducts))
                         <div class="flex items-center gap-2 animate-fade-in">
@@ -73,13 +84,13 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach ($products as $product)
-                            <tr x-data="{ open: false }" class="hover:bg-gray-50 transition-colors border-b">
+                    @foreach ($products as $product)
+                    <tbody x-data="{ open: false }" class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-4 py-4">
                                     <input type="checkbox" value="{{ $product->id }}" wire:model="selectedProducts" class="rounded border-gray-300 text-violet-600 focus:ring-violet-500">
                                 </td>
-                                
+
                                 {{-- Botón de Toggle --}}
                                 <td class="px-2 py-4">
                                     @if ($product->variants->count() > 0)
@@ -155,58 +166,58 @@
                                         </button>
                                     </div>
                                 </td>
-
-                                {{-- SUB-FILA DE VARIANTES --}}
-                                <template x-if="open">
-                                    <tr class="bg-gray-50/50">
-                                        <td colspan="8" class="px-8 py-4 border-l-4 border-violet-500 shadow-inner">
-                                            <div class="py-2">
-                                                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Variantes ({{ $product->variants->count() }})</h4>
-                                                <table class="w-full text-left">
-                                                    <thead>
-                                                        <tr class="text-[10px] text-gray-400 uppercase">
-                                                            <th class="pb-2">SKU</th>
-                                                            <th class="pb-2">Atributos</th>
-                                                            <th class="pb-2 text-center">Precio</th>
-                                                            <th class="pb-2 text-center">Stock</th>
-                                                            <th class="pb-2 text-center">Oferta Flash</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody class="text-sm">
-                                                        @foreach($product->variants as $variant)
-                                                            <tr class="border-t border-gray-200 bg-white/50">
-                                                                <td class="py-2 text-gray-600 font-mono text-xs">{{ $variant->sku }}</td>
-                                                                <td class="py-2">
-                                                                    <div class="flex flex-wrap gap-1">
-                                                                        @foreach($variant->attributeOptions as $option)
-                                                                            <span class="px-2 py-0.5 bg-white border border-gray-200 rounded text-[10px] font-bold text-gray-700">
-                                                                                {{ $option->attribute->name }}: {{ $option->value }}
-                                                                            </span>
-                                                                        @endforeach
-                                                                    </div>
-                                                                </td>
-                                                                <td class="py-2 text-center font-bold text-gray-800">S/ {{ number_format($variant->price, 2) }}</td>
-                                                                <td class="py-2 text-center">
-                                                                    <span class="font-black {{ $variant->stock > 5 ? 'text-gray-700' : 'text-red-600' }}">{{ $variant->stock }}</span>
-                                                                </td>
-                                                                <td class="py-2 text-center">
-                                                                    @if($variant->flashOffer?->status)
-                                                                        <span class="text-orange-500 font-bold text-xs">S/ {{ number_format($variant->flashOffer->flash_price, 2) }}</span>
-                                                                    @else
-                                                                        <span class="text-gray-300">---</span>
-                                                                    @endif
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </template>
                             </tr>
-                        @endforeach
+
+                            {{-- SUB-FILA DE VARIANTES --}}
+                            @if ($product->variants->count() > 0)
+                                <tr x-show="open" class="bg-violet-50/30">
+                                    <td colspan="8" class="px-8 py-4 border-l-4 border-violet-500 shadow-inner">
+                                        <div class="py-2">
+                                            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Variantes ({{ $product->variants->count() }})</h4>
+                                            <table class="w-full text-left">
+                                                <thead>
+                                                    <tr class="text-[10px] text-gray-400 uppercase">
+                                                        <th class="pb-2">SKU</th>
+                                                        <th class="pb-2">Atributos</th>
+                                                        <th class="pb-2 text-center">Precio</th>
+                                                        <th class="pb-2 text-center">Stock</th>
+                                                        <th class="pb-2 text-center">Oferta Flash</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="text-sm">
+                                                    @foreach($product->variants as $variant)
+                                                        <tr class="border-t border-gray-200 bg-white/50">
+                                                            <td class="py-2 text-gray-600 font-mono text-xs">{{ $variant->sku }}</td>
+                                                            <td class="py-2">
+                                                                <div class="flex flex-wrap gap-1">
+                                                                    @foreach($variant->attributeOptions as $option)
+                                                                        <span class="px-2 py-0.5 bg-white border border-gray-200 rounded text-[10px] font-bold text-gray-700">
+                                                                            {{ $option->attribute->name }}: {{ $option->value }}
+                                                                        </span>
+                                                                    @endforeach
+                                                                </div>
+                                                            </td>
+                                                            <td class="py-2 text-center font-bold text-gray-800">S/ {{ number_format($variant->price, 2) }}</td>
+                                                            <td class="py-2 text-center">
+                                                                <span class="font-black {{ $variant->stock > 5 ? 'text-gray-700' : 'text-red-600' }}">{{ $variant->stock }}</span>
+                                                            </td>
+                                                            <td class="py-2 text-center">
+                                                                @if($variant->flashOffer?->status)
+                                                                    <span class="text-orange-500 font-bold text-xs">S/ {{ number_format($variant->flashOffer->flash_price, 2) }}</span>
+                                                                @else
+                                                                    <span class="text-gray-300">---</span>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endif
                     </tbody>
+                    @endforeach
                 </table>
             @else
                 <div class="px-6 py-12 text-center">
@@ -215,9 +226,11 @@
                 </div>
             @endif
 
-            <div class="px-6 py-4 bg-gray-50 border-t">
-                {{ $products->links() }}
-            </div>
+            @if ($products->hasPages())
+                <div class="px-6 py-4 bg-gray-50 border-t">
+                    {{ $products->links() }}
+                </div>
+            @endif
         </x-table-fixed-header>
     </div>
 

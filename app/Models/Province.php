@@ -11,7 +11,7 @@ class Province extends Model
 
     protected $table = 'provinces';
 
-    protected $fillable = ['id', 'name', 'deparment_id'];
+    protected $fillable = ['id', 'name', 'department_id'];
 
     protected $keyType = 'string';
 

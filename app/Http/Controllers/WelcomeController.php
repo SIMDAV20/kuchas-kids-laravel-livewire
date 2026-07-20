@@ -15,7 +15,7 @@ class WelcomeController extends Controller
     $seoItems = collect([]);
     $subcategories = Subcategory::orderBy('position', 'ASC')->get();
     foreach ($subcategories as $key => $subcategory) {
-      if (!empty($subcategory->keywords))  $seoItems->push(json_decode($subcategory->keywords));
+      if (!empty($subcategory->keywords))  $seoItems->push($subcategory->keywords);
     }
     // $seoItems[] = $categories;
     // $seoItems[] = Subcategory::select('name')->get();

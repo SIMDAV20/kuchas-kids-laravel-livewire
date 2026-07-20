@@ -13,19 +13,18 @@ class CreateDistrictsTable extends Migration
      */
     public function up()
     {
-        // Schema::create('districts', function (Blueprint $table) {
-        //     $table->id();
-
-        //     $table->string('name');
-
-        //     $table->unsignedBigInteger('province_id');
-        //     $table->foreign('province_id')->references('id')->on('provinces')->onDelete('cascade');
-
-        //     $table->unsignedBigInteger('zone_id')->nullable();
-        //     $table->foreign('zone_id')->references('id')->on('zones')->onDelete('set null');
-
-        //     $table->timestamps();
-        // });
+        // Esquema reconstruido a partir de la tabla real en producción (esta migración tenía el
+        // Schema::create comentado, así que nunca creó la tabla — ver docs/incidencias.md).
+        // Claves ubigeo (string), sin timestamps (District::$timestamps = false), sin FK a
+        // provinces/departments (solo se guarda el código como referencia).
+        Schema::create('districts', function (Blueprint $table) {
+            $table->string('id', 6)->primary();
+            $table->string('name', 45)->nullable();
+            $table->string('province_id', 4)->nullable();
+            $table->string('department_id', 2)->nullable();
+            $table->unsignedBigInteger('zone_id')->nullable();
+            $table->foreign('zone_id')->references('id')->on('zones');
+        });
     }
 
     /**
